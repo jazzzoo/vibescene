@@ -1,0 +1,9 @@
+export const COLORS = {
+  BACKGROUND: '#000000',
+  CARD_BACKGROUND: 'rgba(0, 0, 0, 0.6)',
+  TEXT_PRIMARY: '#FFFFFF',
+  TEXT_SECONDARY: 'rgba(255, 255, 255, 0.6)',
+  ACCENT: '#F5C842',
+  BUTTON_TEXT: '#000000',
+  MOOD_TAG: 'rgba(255, 255, 255, 0.5)',
+};
