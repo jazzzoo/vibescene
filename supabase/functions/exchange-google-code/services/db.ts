@@ -1,4 +1,5 @@
 import { SafeError } from "../errors.ts";
+import type { GooglePlatform } from "./google.ts";
 
 // deno-lint-ignore no-explicit-any
 type SupabaseAdmin = any;
@@ -35,6 +36,7 @@ export async function upsertProfile(
 
 export type OauthTokensInput = {
   provider: string;
+  platform: GooglePlatform;
   refreshToken: string;
   accessToken: string;
   scope: string;
@@ -54,6 +56,7 @@ export async function upsertOauthTokens(
       {
         user_id: userId,
         provider: tokens.provider,
+        platform: tokens.platform,
         refresh_token_encrypted: tokens.refreshToken,
         access_token_encrypted: tokens.accessToken,
         scope: tokens.scope,

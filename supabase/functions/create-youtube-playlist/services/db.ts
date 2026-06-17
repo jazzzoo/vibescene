@@ -1,4 +1,5 @@
 import { SafeError } from "../errors.ts";
+import type { GooglePlatform } from "./google.ts";
 
 // deno-lint-ignore no-explicit-any
 type SupabaseAdmin = any;
@@ -58,23 +59,37 @@ export async function getTracks(
   return (data ?? []) as TrackRow[];
 }
 
+export type OauthTokenRow = {
+  refreshToken: string;
+  platform: GooglePlatform;
+};
+
 // refresh_token_encrypted 컬럼에 평문으로 저장됨 (컬럼명은 미래 암호화를 위한 예약)
+// platform이 없는(레거시) 토큰은 어떤 client_id로 갱신해야 할지 알 수 없으므로
+// 재로그인을 안내한다 (oauth_tokens.platform이 null인 기존 행 포함).
 export async function getOauthToken(
   supabase: SupabaseAdmin,
   userId: string,
-): Promise<string> {
+): Promise<OauthTokenRow> {
   const { data, error } = await supabase
     .from("oauth_tokens")
-    .select("refresh_token_encrypted")
+    .select("refresh_token_encrypted, platform")
     .eq("user_id", userId)
     .eq("provider", "google")
     .single();
 
-  if (error || !data?.refresh_token_encrypted) {
+  if (
+    error ||
+    !data?.refresh_token_encrypted ||
+    (data.platform !== "ios" && data.platform !== "android")
+  ) {
     throw new SafeError("YouTube 연동 정보를 찾을 수 없습니다. Google 로그인을 다시 시도해 주세요.");
   }
 
-  return data.refresh_token_encrypted as string;
+  return {
+    refreshToken: data.refresh_token_encrypted as string,
+    platform: data.platform,
+  };
 }
 
 export async function updatePlaylistStatus(

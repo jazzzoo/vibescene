@@ -10,10 +10,13 @@ import {
   updatePlaylistFailed,
   updatePlaylistStatus,
 } from "./services/db.ts";
+import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
 
 const MIN_TRACKS = 5;
 const IMAGE_BUCKET = "user-images";
 const SIGNED_URL_TTL_SECONDS = 300; // GPT 호출 시간을 고려한 5분
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export default {
   fetch: withSupabase({ auth: ["publishable"] }, async (req, ctx) => {
@@ -24,6 +27,17 @@ export default {
     let playlistId: string | null = null;
 
     try {
+      // ── 0. IP 기반 Rate Limit 검사 (인증 전, 요청 초반) ────────────────────
+      // GPT-4o Vision + YouTube Search API를 호출하는 비용 발생 함수이므로
+      // GPT 호출(6번) 이전에 반드시 통과해야 한다.
+      const clientIp = getClientIp(req);
+      if (!checkRateLimit(`ip:${clientIp}`, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS).allowed) {
+        return Response.json(
+          { success: false, error: "Too many requests. Please try again later." },
+          { status: 429 },
+        );
+      }
+
       // ── 1. Authorization 헤더에서 JWT 추출 및 검증 ───────────────────────
       const authHeader = req.headers.get("Authorization");
       if (!authHeader?.startsWith("Bearer ")) {
@@ -39,6 +53,14 @@ export default {
 
       // 클라이언트가 보낸 user_id를 절대 신뢰하지 않음 — JWT에서만 추출
       const userId = user.id;
+
+      // ── 1-1. user_id 기반 Rate Limit 검사 (JWT 검증 후) ─────────────────────
+      if (!checkRateLimit(`user:${userId}`, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS).allowed) {
+        return Response.json(
+          { success: false, error: "Too many requests. Please try again later." },
+          { status: 429 },
+        );
+      }
 
       // ── 2. 요청 바디 파싱 및 검증 ────────────────────────────────────────
       let body: unknown;

@@ -30,9 +30,10 @@
       "expo-secure-store",
       "expo-web-browser"
     ],
+    "owner": "jaejoolee",
     "extra": {
       "eas": {
-        "projectId": "80332b6e-0297-40ea-af21-f1affedfd73b"
+        "projectId": "db1867bc-494e-40ba-8737-fe7649c2af6c"
       }
     }
   }

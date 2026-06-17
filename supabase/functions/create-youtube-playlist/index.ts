@@ -51,12 +51,12 @@ Deno.serve(async (req) => {
     }
 
     // ── 1. 서버 환경변수 확인 ────────────────────────────────────────────────
+    // GOOGLE_IOS_CLIENT_ID / GOOGLE_ANDROID_CLIENT_ID는 oauth_tokens.platform 확보 후
+    // refreshAccessToken 내부에서 선택되므로 여기서는 확인하지 않는다 (exchange-google-code와 동일 패턴).
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SERVICE_ROLE_KEY");
-    const googleClientId = Deno.env.get("GOOGLE_CLIENT_ID");
-    const googleClientSecret = Deno.env.get("GOOGLE_CLIENT_SECRET");
 
-    if (!supabaseUrl || !serviceRoleKey || !googleClientId || !googleClientSecret) {
+    if (!supabaseUrl || !serviceRoleKey) {
       throw new SafeError("서버 설정이 올바르지 않습니다.");
     }
 
@@ -123,14 +123,14 @@ Deno.serve(async (req) => {
     // ── 4. 플레이리스트 소유권 + status='searching' 검증 ────────────────────
     const playlist = await getPlaylist(supabaseAdmin, playlistId, userId);
 
-    // ── 5. Google refresh_token 조회 ────────────────────────────────────────
-    const refreshToken = await getOauthToken(supabaseAdmin, userId);
+    // ── 5. Google refresh_token + platform 조회 ───────────────────────────────
+    const { refreshToken, platform } = await getOauthToken(supabaseAdmin, userId);
 
     // ── 6. status → 'creating' ───────────────────────────────────────────────
     await updatePlaylistStatus(supabaseAdmin, playlistId, "creating");
 
-    // ── 7. Google access_token 갱신 ─────────────────────────────────────────
-    const accessToken = await refreshAccessToken(refreshToken, googleClientId, googleClientSecret);
+    // ── 7. Google access_token 갱신 (발급 시 platform과 동일한 client_id 사용) ───
+    const accessToken = await refreshAccessToken(refreshToken, platform);
 
     // ── 8. 트랙 목록 조회 ───────────────────────────────────────────────────
     const tracks = await getTracks(supabaseAdmin, playlistId);

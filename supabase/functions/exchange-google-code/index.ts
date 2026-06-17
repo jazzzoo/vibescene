@@ -87,6 +87,7 @@ Deno.serve(async (req) => {
     // ── 9. oauth_tokens 테이블 UPSERT ─────────────────────────────────────
     await upsertOauthTokens(supabaseAdmin, userId, {
       provider: "google",
+      platform,
       refreshToken: tokenResponse.refresh_token,
       accessToken: tokenResponse.access_token,
       scope: tokenResponse.scope,
