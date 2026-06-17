@@ -1,16 +1,3 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/HomeScreen';
-import HistoryScreen from '../screens/HistoryScreen';
-import ResultScreen from '../screens/ResultScreen';
-
-const Stack = createNativeStackNavigator();
-
-export default function MainTabNavigator() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="History" component={HistoryScreen} />
-      <Stack.Screen name="Result" component={ResultScreen} />
-    </Stack.Navigator>
-  );
-}
+// MainTabNavigator → MainNavigator로 이름이 변경되었습니다.
+// 이 파일은 하위 호환성을 위한 re-export shim입니다. 직접 임포트하지 마세요.
+export { default } from './MainNavigator';

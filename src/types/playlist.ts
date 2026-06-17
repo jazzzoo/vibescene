@@ -8,32 +8,41 @@ export type Track = {
   reason: string;
 };
 
+// primary_genre, secondary_genre, energy_score는 playlists 테이블 개별 컬럼
 export type MusicProfile = {
-  energyScore: number;
-  tempo: 'slow' | 'mid' | 'uptempo';
-  valence: 'positive' | 'neutral' | 'negative';
   primaryGenre: string;
   secondaryGenre: string;
+  energyScore: number;
 };
 
+// analysis JSONB: imageType + 이미지 분석 + tempo/valence/confidence 포함
 export type Analysis = {
   imageType: 'SCENE' | 'PERSON' | 'MIXED';
-  location: string;
-  timeOfDay: string;
-  season: string;
-  moodKeywords: string[];
-  sensoryImpressions: string[];
-  culturalContext: string;
+  // music_profile에서 이동된 필드
+  confidence: number;
+  tempo: string;
+  valence: string;
+  // SCENE/MIXED 분석 필드
+  location?: string;
+  timeOfDay?: string;
+  season?: string;
+  moodKeywords?: string[];
+  sensoryImpressions?: string[];
+  culturalContext?: string;
+  // PERSON/MIXED 분석 필드
+  styleVibe?: string;
+  energy?: string;
+  colorTone?: string;
 };
 
 export type PlaylistResult = {
-  imageUri: string;
+  imageUri: string | null;       // Supabase Storage signed URL (실패 시 null)
   analysis: Analysis;
   musicProfile: MusicProfile;
   playlistConcept: string;
   tracks: Track[];
-  youtubePlaylistId: string;
-  youtubePlaylistUrl: string;
+  youtubePlaylistId: string | null;  // Edge Function 2 실행 전까지 null
+  youtubePlaylistUrl: string | null; // Edge Function 2 실행 전까지 null
   confidence: number;
   createdAt: string;
 };
@@ -42,4 +51,20 @@ export type ResultScreenParams = {
   playlistResult: PlaylistResult;
   fromHistory?: boolean;
   historyDate?: string;
+};
+
+export type PlaylistStatus =
+  | 'pending'
+  | 'analyzing'
+  | 'searching'
+  | 'creating'
+  | 'created'
+  | 'failed';
+
+export type PlaylistHistoryItem = {
+  id: string;
+  imageUri: string | null;   // signed URL (실패 시 null)
+  playlistConcept: string;
+  status: PlaylistStatus;
+  createdAt: string;
 };

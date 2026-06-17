@@ -1,1 +1,230 @@
-export {};
+import { supabase } from '../lib/supabaseClient';
+import { SafeError } from './errors';
+import { createSignedImageUrl } from './storage';
+import type { Analysis, MusicProfile, PlaylistHistoryItem, PlaylistResult, PlaylistStatus, Track } from '../types/playlist';
+
+// Supabase 쿼리 결과 로컬 타입 (generated types 없이 안전하게 캐스팅)
+type PlaylistRow = {
+  image_storage_path: string;
+  analysis: unknown;
+  playlist_concept: string | null;
+  primary_genre: string | null;
+  secondary_genre: string | null;
+  energy_score: number | null;
+  youtube_playlist_id: string | null;
+  youtube_playlist_url: string | null;
+  created_at: string;
+};
+
+type TrackRow = {
+  rank: number;
+  title: string;
+  artist: string;
+  youtube_video_id: string;
+  youtube_video_url: string;
+  thumbnail_url: string;
+  reason: string;
+};
+
+function hasStringField<K extends string>(
+  data: unknown,
+  key: K,
+): data is Record<K, string> {
+  return (
+    data !== null &&
+    typeof data === 'object' &&
+    key in data &&
+    typeof (data as Record<string, unknown>)[key] === 'string'
+  );
+}
+
+/**
+ * playlists + tracks 테이블에서 결과를 조회하고 PlaylistResult로 변환한다.
+ * RLS에 의해 현재 사용자 소유 데이터만 조회됨.
+ */
+export async function getPlaylistResult(playlistId: string): Promise<PlaylistResult> {
+  const [playlistRes, tracksRes] = await Promise.all([
+    supabase
+      .from('playlists')
+      .select(
+        'image_storage_path, analysis, playlist_concept, primary_genre, secondary_genre, energy_score, youtube_playlist_id, youtube_playlist_url, created_at',
+      )
+      .eq('id', playlistId)
+      .single(),
+    supabase
+      .from('tracks')
+      .select('rank, title, artist, youtube_video_id, youtube_video_url, thumbnail_url, reason')
+      .eq('playlist_id', playlistId)
+      .order('rank', { ascending: true }),
+  ]);
+
+  if (playlistRes.error || !playlistRes.data) {
+    throw new SafeError('플레이리스트를 불러오는 데 실패했습니다.');
+  }
+  if (tracksRes.error || !tracksRes.data) {
+    throw new SafeError('트랙 목록을 불러오는 데 실패했습니다.');
+  }
+
+  const row = playlistRes.data as unknown as PlaylistRow;
+  const trackRows = tracksRes.data as unknown as TrackRow[];
+
+  const analysis = row.analysis as Analysis | null;
+  if (!analysis) throw new SafeError('분석 데이터를 불러오는 데 실패했습니다.');
+
+  // private bucket이므로 signed URL 발급 (실패 시 null — UI는 fallback 처리)
+  const imageUri = await createSignedImageUrl(row.image_storage_path);
+
+  const tracks: Track[] = trackRows.map((t) => ({
+    rank: t.rank,
+    title: t.title,
+    artist: t.artist,
+    youtubeVideoId: t.youtube_video_id,
+    youtubeVideoUrl: t.youtube_video_url,
+    thumbnailUrl: t.thumbnail_url,
+    reason: t.reason,
+  }));
+
+  const musicProfile: MusicProfile = {
+    primaryGenre: row.primary_genre ?? '',
+    secondaryGenre: row.secondary_genre ?? '',
+    energyScore: row.energy_score ?? 0,
+  };
+
+  return {
+    imageUri,
+    analysis,
+    musicProfile,
+    playlistConcept: row.playlist_concept ?? '',
+    tracks,
+    youtubePlaylistId: row.youtube_playlist_id,
+    youtubePlaylistUrl: row.youtube_playlist_url,
+    confidence: analysis.confidence,
+    createdAt: row.created_at,
+  };
+}
+
+/**
+ * Edge Function 1(analyze-and-search)을 호출해 이미지 분석 + YouTube 검색을 수행한다.
+ * LoadingScreen에서 직접 사용하는 함수.
+ * - image_storage_path만 전달 (user_id는 Edge Function이 JWT에서 추출)
+ * - 성공 시 { playlistId } 반환 (status = 'searching')
+ */
+export async function analyzeAndSearchPlaylist(
+  imageStoragePath: string,
+): Promise<{ playlistId: string }> {
+  const { data, error } = await supabase.functions.invoke('analyze-and-search', {
+    body: { image_storage_path: imageStoragePath },
+  });
+
+  if (error) {
+    const serverError = hasStringField(data, 'error') ? data.error : null;
+    throw new SafeError(
+      serverError ?? '플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.',
+    );
+  }
+
+  const playlistId = hasStringField(data, 'playlist_id') ? data.playlist_id : null;
+  if (!playlistId) {
+    throw new SafeError('플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.');
+  }
+
+  return { playlistId };
+}
+
+export type CreateYouTubePlaylistResult = {
+  youtubePlaylistId: string;
+  youtubePlaylistUrl: string;
+};
+
+/**
+ * Edge Function 2(create-youtube-playlist)를 호출해 YouTube 플레이리스트를 생성한다.
+ * ResultScreen에서 사용. user_id는 Edge Function이 JWT에서 추출.
+ */
+export async function createYouTubePlaylist(
+  playlistId: string,
+): Promise<CreateYouTubePlaylistResult> {
+  const { data, error } = await supabase.functions.invoke('create-youtube-playlist', {
+    body: { playlist_id: playlistId },
+  });
+
+  if (error) {
+    const serverError = hasStringField(data, 'error') ? data.error : null;
+    throw new SafeError(
+      serverError ?? 'YouTube 플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.',
+    );
+  }
+
+  const youtubePlaylistId = hasStringField(data, 'youtube_playlist_id')
+    ? data.youtube_playlist_id
+    : null;
+  const youtubePlaylistUrl = hasStringField(data, 'youtube_playlist_url')
+    ? data.youtube_playlist_url
+    : null;
+
+  if (!youtubePlaylistId || !youtubePlaylistUrl) {
+    throw new SafeError('YouTube 플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.');
+  }
+
+  return { youtubePlaylistId, youtubePlaylistUrl };
+}
+
+type HistoryRow = {
+  id: string;
+  image_storage_path: string | null;
+  playlist_concept: string | null;
+  status: string;
+  created_at: string;
+};
+
+/**
+ * 현재 사용자의 플레이리스트 히스토리를 조회한다.
+ * RLS에 의해 본인 데이터만 반환되므로 별도 user_id 필터 불필요.
+ * image_storage_path가 있으면 signed URL 발급 (실패 시 null).
+ */
+export async function getPlaylistHistory(): Promise<PlaylistHistoryItem[]> {
+  const { data, error } = await supabase
+    .from('playlists')
+    .select('id, image_storage_path, playlist_concept, status, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw new SafeError('히스토리를 불러오는 데 실패했습니다. 다시 시도해 주세요.');
+  }
+
+  const rows = (data ?? []) as unknown as HistoryRow[];
+
+  const items = await Promise.all(
+    rows.map(async (row): Promise<PlaylistHistoryItem> => ({
+      id: row.id,
+      imageUri: row.image_storage_path
+        ? await createSignedImageUrl(row.image_storage_path)
+        : null,
+      playlistConcept: row.playlist_concept ?? '',
+      status: row.status as PlaylistStatus,
+      createdAt: row.created_at,
+    })),
+  );
+
+  return items;
+}
+
+/**
+ * Edge Function 1(analyze-and-search)을 호출해 이미지 분석 + YouTube 검색을 수행한다.
+ * usePlaylistGeneration hook에서 사용하는 레거시 함수. 신규 코드는 analyzeAndSearchPlaylist 사용.
+ */
+export async function generatePlaylist(imageStoragePath: string): Promise<string> {
+  const { data, error } = await supabase.functions.invoke('analyze-and-search', {
+    body: { image_storage_path: imageStoragePath },
+  });
+
+  if (error) {
+    // functions.invoke는 4xx/5xx일 때 error를 세팅하고, data에 body가 담김
+    const serverMessage = (data as { error?: string } | null)?.error;
+    throw new Error(serverMessage ?? '플레이리스트 생성에 실패했습니다.');
+  }
+
+  const playlistId = (data as { playlist_id?: string } | null)?.playlist_id;
+  if (!playlistId) throw new Error('플레이리스트 생성에 실패했습니다.');
+
+  return playlistId;
+}
