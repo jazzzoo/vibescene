@@ -141,10 +141,30 @@ Deno.serve(async (req) => {
       playlist.playlist_concept,
     );
 
-    // ── 10. 트랙 추가 ────────────────────────────────────────────────────────
-    await addTracksToPlaylist(accessToken, youtubePlaylistId, tracks);
+    // ── 10. 트랙 추가 (성공/실패 건수 집계) ─────────────────────────────────
+    const { addedCount, failedCount } = await addTracksToPlaylist(
+      accessToken,
+      youtubePlaylistId,
+      tracks,
+    );
 
-    // ── 11. status → 'created' + YouTube 정보 저장 ──────────────────────────
+    // ── 11. 한 곡도 추가되지 못했으면 실패로 처리 ────────────────────────────
+    if (addedCount === 0) {
+      const safeMessage = "YouTube에 트랙을 추가하지 못했습니다. 다시 시도해 주세요.";
+      await updatePlaylistFailed(supabaseAdmin, playlistId, safeMessage).catch(() => {});
+
+      return Response.json(
+        {
+          success: false,
+          error: safeMessage,
+          added_count: addedCount,
+          failed_count: failedCount,
+        },
+        { status: 500, headers: CORS_HEADERS },
+      );
+    }
+
+    // ── 12. status → 'created' + YouTube 정보 저장 ──────────────────────────
     await updatePlaylistCreated(supabaseAdmin, playlistId, youtubePlaylistId, youtubePlaylistUrl);
 
     return Response.json(
@@ -152,6 +172,8 @@ Deno.serve(async (req) => {
         success: true,
         youtube_playlist_id: youtubePlaylistId,
         youtube_playlist_url: youtubePlaylistUrl,
+        added_count: addedCount,
+        failed_count: failedCount,
       },
       { status: 200, headers: CORS_HEADERS },
     );

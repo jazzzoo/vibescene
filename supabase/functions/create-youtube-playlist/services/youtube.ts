@@ -65,15 +65,27 @@ export async function createYouTubePlaylist(
   };
 }
 
+export type AddTracksResult = {
+  addedCount: number;
+  failedCount: number;
+};
+
 // 트랙을 순서대로 플레이리스트에 추가한다.
-// 일부 추가 실패 시 나머지 트랙은 계속 시도한다.
+// 일부 추가 실패 시 나머지 트랙은 계속 시도하고, 성공/실패 건수를 집계해 반환한다.
+// (호출부에서 addedCount === 0이면 전체 실패로 판단할 수 있도록)
 export async function addTracksToPlaylist(
   accessToken: string,
   youtubePlaylistId: string,
   tracks: TrackRow[],
-): Promise<void> {
+): Promise<AddTracksResult> {
+  let addedCount = 0;
+  let failedCount = 0;
+
   for (const track of tracks) {
-    if (!track.youtube_video_id) continue;
+    if (!track.youtube_video_id) {
+      failedCount += 1;
+      continue;
+    }
 
     let response: Response;
     try {
@@ -95,10 +107,20 @@ export async function addTracksToPlaylist(
       });
     } catch {
       // 개별 트랙 추가 실패 시 다음 트랙으로 넘어감
+      failedCount += 1;
       continue;
     }
 
-    // 응답을 소비해 연결을 닫는다 (성공/실패 여부는 무시)
+    // 응답을 소비해 연결을 닫는다
     await response.text().catch(() => {});
+
+    // YouTube API 에러 원문은 로그/응답에 노출하지 않고 성공 여부만 집계
+    if (response.ok) {
+      addedCount += 1;
+    } else {
+      failedCount += 1;
+    }
   }
+
+  return { addedCount, failedCount };
 }

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../common/Button';
 import { COLORS } from '../../constants/colors';
@@ -17,10 +17,17 @@ interface ShareCardModalProps {
 
 export default function ShareCardModal({ visible, onClose, result }: ShareCardModalProps) {
   const [ratio, setRatio] = useState<CardRatio>('story');
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
 
+  // 모달이 닫히면 다음에 열었을 때 안내 메시지가 남아있지 않도록 초기화
+  useEffect(() => {
+    if (!visible) setSaveMessage(null);
+  }, [visible]);
+
   function handleSaveImage() {
-    // TODO: 실제 이미지 캡처 및 저장 구현 예정
+    // 실제 이미지 캡처/저장은 추후 구현 예정 — 지금은 안내 메시지만 표시
+    setSaveMessage('Image saving will be connected later.');
   }
 
   return (
@@ -75,6 +82,12 @@ export default function ShareCardModal({ visible, onClose, result }: ShareCardMo
               />
             </View>
           </View>
+
+          {saveMessage !== null && (
+            <Text style={styles.saveMessage} accessibilityLiveRegion="polite">
+              {saveMessage}
+            </Text>
+          )}
         </View>
       </View>
     </Modal>
@@ -112,5 +125,11 @@ const styles = StyleSheet.create({
   },
   actionItem: {
     flex: 1,
+  },
+  saveMessage: {
+    color: COLORS.TEXT_SECONDARY,
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: SPACING.BASE,
   },
 });
