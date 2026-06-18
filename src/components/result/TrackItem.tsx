@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
 import type { Track } from '../../types/playlist';
@@ -8,8 +8,22 @@ interface TrackItemProps {
 }
 
 export default function TrackItem({ track }: TrackItemProps) {
+  const canOpenOnYoutube = Boolean(track.youtubeVideoId);
+
+  function handlePress() {
+    if (!track.youtubeVideoId) return;
+    Linking.openURL(`https://www.youtube.com/watch?v=${track.youtubeVideoId}`).catch(() => {});
+  }
+
   return (
-    <View style={styles.container} accessibilityLabel={`${track.rank}번 ${track.title}, ${track.artist}`}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={handlePress}
+      disabled={!canOpenOnYoutube}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={`${track.rank}번 ${track.title}, ${track.artist}. YouTube에서 열기`}
+    >
       <View style={styles.rank}>
         <Text style={styles.rankText}>{track.rank}</Text>
       </View>
@@ -29,7 +43,7 @@ export default function TrackItem({ track }: TrackItemProps) {
         <Text style={styles.title} numberOfLines={1}>{track.title}</Text>
         <Text style={styles.artist} numberOfLines={1}>{track.artist}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
