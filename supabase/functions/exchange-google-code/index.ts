@@ -9,9 +9,20 @@ import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+};
+
 Deno.serve(async (req) => {
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
   if (req.method !== "POST") {
-    return Response.json({ success: false, error: "Method not allowed" }, { status: 405 });
+    return Response.json({ success: false, error: "Method not allowed" }, { status: 405, headers: CORS_HEADERS });
   }
 
   try {
@@ -20,14 +31,14 @@ Deno.serve(async (req) => {
     if (!checkRateLimit(`ip:${clientIp}`, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS).allowed) {
       return Response.json(
         { success: false, error: "Too many requests. Please try again later." },
-        { status: 429 },
+        { status: 429, headers: CORS_HEADERS },
       );
     }
 
     // ── 1. Authorization 헤더에서 Supabase JWT 추출 ──────────────────────
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return Response.json({ success: false, error: "인증이 필요합니다." }, { status: 401 });
+      return Response.json({ success: false, error: "인증이 필요합니다." }, { status: 401, headers: CORS_HEADERS });
     }
     const token = authHeader.replace("Bearer ", "");
 
@@ -42,7 +53,7 @@ Deno.serve(async (req) => {
     // (request body의 user_id는 절대 신뢰/사용하지 않음)
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
     if (authError || !user) {
-      return Response.json({ success: false, error: "유효하지 않은 인증 토큰입니다." }, { status: 401 });
+      return Response.json({ success: false, error: "유효하지 않은 인증 토큰입니다." }, { status: 401, headers: CORS_HEADERS });
     }
     const userId = user.id;
 
@@ -50,7 +61,7 @@ Deno.serve(async (req) => {
     if (!checkRateLimit(`user:${userId}`, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS).allowed) {
       return Response.json(
         { success: false, error: "Too many requests. Please try again later." },
-        { status: 429 },
+        { status: 429, headers: CORS_HEADERS },
       );
     }
 
@@ -59,14 +70,14 @@ Deno.serve(async (req) => {
     try {
       body = await req.json();
     } catch {
-      return Response.json({ success: false, error: "요청 형식이 올바르지 않습니다." }, { status: 400 });
+      return Response.json({ success: false, error: "요청 형식이 올바르지 않습니다." }, { status: 400, headers: CORS_HEADERS });
     }
 
     const { code, codeVerifier, redirectUri, platform } = parseRequestBody(body);
     if (!code || !codeVerifier || !redirectUri || !platform) {
       return Response.json(
         { success: false, error: "code, code_verifier, redirect_uri, platform이 필요합니다." },
-        { status: 400 },
+        { status: 400, headers: CORS_HEADERS },
       );
     }
 
@@ -94,13 +105,13 @@ Deno.serve(async (req) => {
       expiresInSeconds: tokenResponse.expires_in,
     });
 
-    return Response.json({ success: true }, { status: 200 });
+    return Response.json({ success: true }, { status: 200, headers: CORS_HEADERS });
   } catch (err) {
     const message = err instanceof SafeError
       ? err.message
       : "Google 로그인 처리 중 오류가 발생했습니다.";
 
-    return Response.json({ success: false, error: message }, { status: 500 });
+    return Response.json({ success: false, error: message }, { status: 500, headers: CORS_HEADERS });
   }
 });
 

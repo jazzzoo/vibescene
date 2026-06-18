@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomNavigation from '../../components/common/BottomNavigation';
 import Button from '../../components/common/Button';
@@ -42,6 +42,8 @@ export default function HomeScreen() {
   }
 
   const hasImage = selectedImageUri !== null;
+  // 카메라는 web에서 지원되지 않으므로 "Take a photo" 버튼은 web에서 숨긴다 (native 동작은 그대로 유지).
+  const isWeb = Platform.OS === 'web';
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -72,20 +74,24 @@ export default function HomeScreen() {
         <View style={styles.actions}>
           {!hasImage ? (
             <>
-              <Button
-                title="Take a photo"
-                onPress={handleTakePhoto}
-                variant="primary"
-                fullWidth
-                loading={loading && pendingSource === 'camera'}
-                disabled={loading}
-                accessibilityLabel="카메라로 사진 촬영"
-              />
-              <View style={styles.buttonGap} />
+              {!isWeb && (
+                <>
+                  <Button
+                    title="Take a photo"
+                    onPress={handleTakePhoto}
+                    variant="primary"
+                    fullWidth
+                    loading={loading && pendingSource === 'camera'}
+                    disabled={loading}
+                    accessibilityLabel="카메라로 사진 촬영"
+                  />
+                  <View style={styles.buttonGap} />
+                </>
+              )}
               <Button
                 title="Choose from library"
                 onPress={handleChooseFromLibrary}
-                variant="secondary"
+                variant={isWeb ? 'primary' : 'secondary'}
                 fullWidth
                 loading={loading && pendingSource === 'library'}
                 disabled={loading}

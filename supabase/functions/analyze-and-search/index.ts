@@ -18,10 +18,15 @@ const SIGNED_URL_TTL_SECONDS = 300; // GPT 호출 시간을 고려한 5분
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 
-export default {
-  fetch: withSupabase({ auth: ["publishable"] }, async (req, ctx) => {
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+};
+
+const handleRequest = withSupabase({ auth: ["publishable"] }, async (req, ctx) => {
     if (req.method !== "POST") {
-      return Response.json({ error: "Method not allowed" }, { status: 405 });
+      return Response.json({ error: "Method not allowed" }, { status: 405, headers: CORS_HEADERS });
     }
 
     let playlistId: string | null = null;
@@ -34,21 +39,21 @@ export default {
       if (!checkRateLimit(`ip:${clientIp}`, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS).allowed) {
         return Response.json(
           { success: false, error: "Too many requests. Please try again later." },
-          { status: 429 },
+          { status: 429, headers: CORS_HEADERS },
         );
       }
 
       // ── 1. Authorization 헤더에서 JWT 추출 및 검증 ───────────────────────
       const authHeader = req.headers.get("Authorization");
       if (!authHeader?.startsWith("Bearer ")) {
-        return Response.json({ error: "인증이 필요합니다." }, { status: 401 });
+        return Response.json({ error: "인증이 필요합니다." }, { status: 401, headers: CORS_HEADERS });
       }
       const token = authHeader.replace("Bearer ", "");
 
       const { data: { user }, error: authError } =
         await ctx.supabaseAdmin.auth.getUser(token);
       if (authError || !user) {
-        return Response.json({ error: "유효하지 않은 인증 토큰입니다." }, { status: 401 });
+        return Response.json({ error: "유효하지 않은 인증 토큰입니다." }, { status: 401, headers: CORS_HEADERS });
       }
 
       // 클라이언트가 보낸 user_id를 절대 신뢰하지 않음 — JWT에서만 추출
@@ -58,7 +63,7 @@ export default {
       if (!checkRateLimit(`user:${userId}`, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS).allowed) {
         return Response.json(
           { success: false, error: "Too many requests. Please try again later." },
-          { status: 429 },
+          { status: 429, headers: CORS_HEADERS },
         );
       }
 
@@ -67,7 +72,7 @@ export default {
       try {
         body = await req.json();
       } catch {
-        return Response.json({ error: "요청 형식이 올바르지 않습니다." }, { status: 400 });
+        return Response.json({ error: "요청 형식이 올바르지 않습니다." }, { status: 400, headers: CORS_HEADERS });
       }
 
       const imageStoragePath =
@@ -79,7 +84,7 @@ export default {
           : null;
 
       if (!imageStoragePath) {
-        return Response.json({ error: "image_storage_path가 필요합니다." }, { status: 400 });
+        return Response.json({ error: "image_storage_path가 필요합니다." }, { status: 400, headers: CORS_HEADERS });
       }
 
       // ── 3. playlist 행 삽입 (status = 'pending') ─────────────────────────
@@ -120,7 +125,7 @@ export default {
       await insertTracks(ctx.supabaseAdmin, playlistId, rankedTracks);
 
       // ── 11. status는 'searching' 유지 — Edge Function 2가 creating/created 처리
-      return Response.json({ playlist_id: playlistId }, { status: 200 });
+      return Response.json({ playlist_id: playlistId }, { status: 200, headers: CORS_HEADERS });
 
     } catch (err) {
       // 실패 시 playlist 상태를 failed로 업데이트
@@ -135,7 +140,18 @@ export default {
         ? err.message
         : "플레이리스트 생성 중 오류가 발생했습니다.";
 
-      return Response.json({ error: userMessage }, { status: 500 });
+      return Response.json({ error: userMessage }, { status: 500, headers: CORS_HEADERS });
     }
-  }),
+  });
+
+export default {
+  // withSupabase가 OPTIONS preflight(인증 헤더 없는 요청)를 콜백 진입 전에 막을 수 있어,
+  // CORS preflight는 withSupabase 바깥에서 먼저 가로채 응답한다.
+  // 기존 인증/Rate Limit/status 흐름(handleRequest 내부)은 전혀 건드리지 않는다.
+  fetch: (req: Request) => {
+    if (req.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
+    return handleRequest(req);
+  },
 };
