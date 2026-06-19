@@ -83,7 +83,7 @@ export async function uploadUserImage(localUri: string): Promise<string> {
   }
 
   const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
-  const storagePath = `users/${session.user.id}/${fileName}`;
+  const storagePath = `${session.user.id}/${fileName}`;
 
   const { error } = await supabase.storage
     .from(IMAGE_BUCKET)
