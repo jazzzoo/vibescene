@@ -112,8 +112,14 @@ export async function getPlaylistResult(playlistId: string): Promise<PlaylistRes
 export async function analyzeAndSearchPlaylist(
   imageStoragePath: string,
 ): Promise<{ playlistId: string }> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new SafeError('로그인이 필요합니다. 다시 로그인해 주세요.');
+  }
+
   const { data, error } = await supabase.functions.invoke('analyze-and-search', {
     body: { image_storage_path: imageStoragePath },
+    headers: { Authorization: `Bearer ${session.access_token}` },
   });
 
   if (error) {
