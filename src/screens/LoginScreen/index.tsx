@@ -15,7 +15,7 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<RootParamList, 'Login
 
 type ScreenState = 'idle' | 'loading' | 'error';
 
-const CANCEL_MESSAGE = 'Google 로그인이 취소되었습니다.';
+const CANCEL_MESSAGE = 'Google sign-in was canceled.';
 
 function GoogleIcon() {
   return <Text style={styles.googleIcon}>G</Text>;
@@ -44,20 +44,20 @@ export default function LoginScreen() {
       const message =
         err instanceof SafeError
           ? err.message
-          : '로그인 중 오류가 발생했습니다. 다시 시도해 주세요.';
+          : 'Something went wrong while signing in. Please try again.';
       setErrorMessage(message);
       setScreenState('error');
     }
   }
 
   if (screenState === 'loading') {
-    return <LoadingView message="Google 로그인 중..." />;
+    return <LoadingView message="Signing in with Google..." />;
   }
 
   if (screenState === 'error') {
     return (
       <ErrorView
-        title="로그인 실패"
+        title="Sign-in failed"
         message={errorMessage}
         onRetry={() => setScreenState('idle')}
       />
@@ -73,12 +73,12 @@ export default function LoginScreen() {
 
       <View style={styles.actions}>
         <Button
-          title="Google로 계속하기"
+          title="Continue with Google"
           onPress={handleGoogleLogin}
           variant="secondary"
           fullWidth
           icon={<GoogleIcon />}
-          accessibilityLabel="Google 계정으로 로그인"
+          accessibilityLabel="Sign in with Google"
         />
       </View>
 

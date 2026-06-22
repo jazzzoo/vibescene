@@ -34,7 +34,7 @@ export default function HistoryScreen() {
       const message =
         err instanceof SafeError
           ? err.message
-          : '히스토리를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+          : "We couldn't load your history. Please try again.";
       setErrorMessage(message);
     } finally {
       setLoading(false);
@@ -61,7 +61,7 @@ export default function HistoryScreen() {
 
   const ListHeader = (
     <View style={styles.header}>
-      <Text style={styles.headerTitle}>기록</Text>
+      <Text style={styles.headerTitle}>History</Text>
     </View>
   );
 
@@ -75,10 +75,10 @@ export default function HistoryScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       {loading ? (
-        <LoadingView message="기록 불러오는 중..." />
+        <LoadingView message="Loading your history..." />
       ) : errorMessage ? (
         <ErrorView
-          title="불러오기 실패"
+          title="Something went wrong"
           message={errorMessage}
           onRetry={load}
         />

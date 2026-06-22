@@ -24,17 +24,17 @@ export async function uploadImageToStorage(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('로그인이 필요합니다.');
+  if (!user) throw new Error('Please sign in.');
 
   // 파일 크기 검증
   if (imageAsset.fileSize && imageAsset.fileSize > MAX_FILE_SIZE_BYTES) {
-    throw new Error('파일 크기는 10MB 이하여야 합니다.');
+    throw new Error('File size must be 10MB or less.');
   }
 
   // MIME Type 검증
   const mimeType = (imageAsset.mimeType ?? 'image/jpeg').toLowerCase();
   if (!ALLOWED_MIME_TYPES.includes(mimeType)) {
-    throw new Error('지원하지 않는 이미지 형식입니다. (JPEG, PNG, WebP만 가능)');
+    throw new Error('Unsupported image format. (JPEG, PNG, or WebP only)');
   }
 
   // Storage 경로: {user_id}/{timestamp}-{random}.{ext}
@@ -44,7 +44,7 @@ export async function uploadImageToStorage(
 
   // 로컬 URI → Blob 변환 후 업로드
   const fetchResponse = await fetch(imageAsset.uri);
-  if (!fetchResponse.ok) throw new Error('이미지를 읽는 데 실패했습니다.');
+  if (!fetchResponse.ok) throw new Error("We couldn't read your image.");
   const blob = await fetchResponse.blob();
 
   const { error } = await supabase.storage
@@ -54,7 +54,7 @@ export async function uploadImageToStorage(
       upsert: false,
     });
 
-  if (error) throw new Error('이미지 업로드에 실패했습니다.');
+  if (error) throw new Error("We couldn't upload your image.");
 
   return { storagePath, localUri: imageAsset.uri };
 }
@@ -66,20 +66,20 @@ export async function uploadImageToStorage(
  */
 export async function uploadUserImage(localUri: string): Promise<string> {
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new SafeError('로그인이 필요합니다.');
+  if (!session) throw new SafeError('Please sign in.');
 
   const fetchResponse = await fetch(localUri).catch(() => null);
   if (!fetchResponse || !fetchResponse.ok) {
-    throw new SafeError('이미지를 읽는 데 실패했습니다. 다시 시도해 주세요.');
+    throw new SafeError("We couldn't read your image. Please try again.");
   }
 
   const blob = await fetchResponse.blob().catch(() => null);
   if (!blob) {
-    throw new SafeError('이미지를 처리하는 데 실패했습니다. 다시 시도해 주세요.');
+    throw new SafeError("We couldn't process your image. Please try again.");
   }
 
   if (blob.size > MAX_FILE_SIZE_BYTES) {
-    throw new SafeError('파일 크기는 10MB 이하여야 합니다.');
+    throw new SafeError('File size must be 10MB or less.');
   }
 
   const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
@@ -92,7 +92,7 @@ export async function uploadUserImage(localUri: string): Promise<string> {
       upsert: false,
     });
 
-  if (error) throw new SafeError('이미지 업로드에 실패했습니다. 다시 시도해 주세요.');
+  if (error) throw new SafeError("We couldn't upload your image. Please try again.");
 
   return storagePath;
 }

@@ -13,8 +13,8 @@ interface TabItem {
 }
 
 const TABS: TabItem[] = [
-  { route: 'Home', label: '홈', icon: '⊙' },
-  { route: 'History', label: '기록', icon: '◷' },
+  { route: 'Home', label: 'Home', icon: '⊙' },
+  { route: 'History', label: 'History', icon: '◷' },
 ];
 
 export default function BottomNavigation() {

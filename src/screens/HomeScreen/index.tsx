@@ -14,6 +14,9 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<RootParamList, 'Home'>
 
 type PendingSource = 'camera' | 'library' | null;
 
+// 첫 화면이 너무 비어 보이지 않도록 보여주는 작은 무드 미리보기 — 실제 분석 결과 아님
+const HOME_PREVIEW_MOODS = ['nostalgic', 'golden hour', 'dreamy'];
+
 export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { pickFromLibrary, takePhoto, loading, error, clearError } = useImagePicker();
@@ -54,8 +57,15 @@ export default function HomeScreen() {
             <>
               <Text style={styles.tagline}>Turn your photos into playlists.</Text>
               <Text style={styles.description}>
-                Upload a photo and let AI create a playlist that matches the mood.
+                One photo. One mood. A playlist that fits.
               </Text>
+              <View style={styles.previewTags}>
+                {HOME_PREVIEW_MOODS.map((mood) => (
+                  <View key={mood} style={styles.previewTag}>
+                    <Text style={styles.previewTagText}>{mood}</Text>
+                  </View>
+                ))}
+              </View>
             </>
           )}
         </View>
@@ -66,7 +76,7 @@ export default function HomeScreen() {
               source={{ uri: selectedImageUri }}
               style={styles.preview}
               resizeMode="cover"
-              accessibilityLabel="선택된 사진 미리보기"
+              accessibilityLabel="Selected photo preview"
             />
           </View>
         )}
@@ -83,7 +93,7 @@ export default function HomeScreen() {
                     fullWidth
                     loading={loading && pendingSource === 'camera'}
                     disabled={loading}
-                    accessibilityLabel="카메라로 사진 촬영"
+                    accessibilityLabel="Take a photo with camera"
                   />
                   <View style={styles.buttonGap} />
                 </>
@@ -95,7 +105,7 @@ export default function HomeScreen() {
                 fullWidth
                 loading={loading && pendingSource === 'library'}
                 disabled={loading}
-                accessibilityLabel="사진첩에서 이미지 선택"
+                accessibilityLabel="Choose an image from library"
               />
             </>
           ) : (
@@ -105,7 +115,7 @@ export default function HomeScreen() {
                 onPress={handleContinue}
                 variant="primary"
                 fullWidth
-                accessibilityLabel="다음 단계로 계속"
+                accessibilityLabel="Continue to next step"
               />
               <View style={styles.buttonGap} />
               <Button
@@ -115,7 +125,7 @@ export default function HomeScreen() {
                 fullWidth
                 loading={loading && pendingSource === 'library'}
                 disabled={loading}
-                accessibilityLabel="다른 사진 선택"
+                accessibilityLabel="Choose a different photo"
               />
             </>
           )}
@@ -169,6 +179,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 22,
+  },
+  previewTags: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: SPACING.BASE * 0.75,
+    marginTop: SPACING.TRACK_GAP,
+  },
+  previewTag: {
+    backgroundColor: COLORS.MOOD_TAG,
+    borderRadius: SPACING.BASE * 1.5,
+    paddingHorizontal: SPACING.BASE * 1.25,
+    paddingVertical: SPACING.BASE * 0.5,
+  },
+  previewTagText: {
+    color: COLORS.TEXT_PRIMARY,
+    fontSize: 11,
+    fontWeight: '500',
   },
   previewWrapper: {
     width: '100%',

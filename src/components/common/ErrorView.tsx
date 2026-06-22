@@ -17,10 +17,10 @@ export default function ErrorView({ title, message, onRetry }: ErrorViewProps) {
       {onRetry ? (
         <View style={styles.retryWrapper}>
           <Button
-            title="다시 시도"
+            title="Try again"
             onPress={onRetry}
             variant="secondary"
-            accessibilityLabel="오류 발생. 다시 시도하기"
+            accessibilityLabel="An error occurred. Try again."
           />
         </View>
       ) : null}

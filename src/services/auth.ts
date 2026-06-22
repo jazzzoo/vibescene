@@ -28,12 +28,12 @@ export async function signInAnonymouslyIfNeeded(): Promise<Session | null> {
     if (existing.session) return existing.session;
 
     const { data, error } = await supabase.auth.signInAnonymously();
-    if (error) throw new SafeError('로그인에 실패했습니다. 다시 시도해 주세요.');
+    if (error) throw new SafeError('Sign-in failed. Please try again.');
 
     return data.session;
   } catch (err) {
     if (err instanceof SafeError) throw err;
-    throw new SafeError('로그인에 실패했습니다. 다시 시도해 주세요.');
+    throw new SafeError('Sign-in failed. Please try again.');
   }
 }
 
@@ -48,14 +48,14 @@ export async function signInAnonymouslyIfNeeded(): Promise<Session | null> {
  */
 export async function signInWithGoogle(): Promise<void> {
   if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
-    throw new SafeError('이 플랫폼에서는 Google 로그인을 지원하지 않습니다.');
+    throw new SafeError("Google sign-in isn't supported on this platform.");
   }
 
   const clientId = Platform.OS === 'ios'
     ? process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID
     : process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID;
   if (!clientId) {
-    throw new SafeError('Google 로그인이 설정되지 않았습니다.');
+    throw new SafeError("Google sign-in isn't configured.");
   }
 
   const redirectUri = AuthSession.makeRedirectUri({ scheme: 'vibescene' });
@@ -74,16 +74,16 @@ export async function signInWithGoogle(): Promise<void> {
   const result = await request.promptAsync(GOOGLE_DISCOVERY);
 
   if (result.type === 'cancel' || result.type === 'dismiss') {
-    throw new SafeError('Google 로그인이 취소되었습니다.');
+    throw new SafeError('Google sign-in was canceled.');
   }
   if (result.type !== 'success') {
-    throw new SafeError('Google 로그인에 실패했습니다. 다시 시도해 주세요.');
+    throw new SafeError('Google sign-in failed. Please try again.');
   }
 
   const code = result.params.code;
   const codeVerifier = request.codeVerifier;
   if (!code || !codeVerifier) {
-    throw new SafeError('Google 로그인 응답이 올바르지 않습니다.');
+    throw new SafeError('Google sign-in response was invalid.');
   }
 
   const { data, error } = await supabase.functions.invoke('exchange-google-code', {
@@ -97,12 +97,12 @@ export async function signInWithGoogle(): Promise<void> {
 
   if (error) {
     const serverMessage = (data as { error?: string } | null)?.error;
-    throw new SafeError(serverMessage ?? 'Google 로그인 처리 중 오류가 발생했습니다.');
+    throw new SafeError(serverMessage ?? 'Something went wrong during Google sign-in.');
   }
 
   const success = (data as { success?: boolean } | null)?.success;
   if (!success) {
-    throw new SafeError('Google 로그인 처리 중 오류가 발생했습니다.');
+    throw new SafeError('Something went wrong during Google sign-in.');
   }
 }
 
@@ -111,7 +111,7 @@ export async function signInWithGoogle(): Promise<void> {
  */
 export async function signOut(): Promise<void> {
   const { error } = await supabase.auth.signOut();
-  if (error) throw new SafeError('로그아웃에 실패했습니다. 다시 시도해 주세요.');
+  if (error) throw new SafeError('Sign-out failed. Please try again.');
 
   await signInAnonymouslyIfNeeded();
 }

@@ -23,7 +23,7 @@ export default function useImagePicker(): UseImagePickerReturn {
     try {
       const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (permission.status !== ImagePicker.PermissionStatus.GRANTED) {
-        setError('사진첩 접근 권한이 필요합니다. 설정에서 권한을 허용해 주세요.');
+        setError('We need access to your photo library. Please allow it in Settings.');
         return null;
       }
 
@@ -37,7 +37,7 @@ export default function useImagePicker(): UseImagePickerReturn {
 
       return result.assets[0].uri;
     } catch {
-      setError('사진을 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      setError('Something went wrong while loading your photo. Please try again.');
       return null;
     } finally {
       setLoading(false);
@@ -50,7 +50,7 @@ export default function useImagePicker(): UseImagePickerReturn {
     try {
       const permission = await ImagePicker.requestCameraPermissionsAsync();
       if (permission.status !== ImagePicker.PermissionStatus.GRANTED) {
-        setError('카메라 접근 권한이 필요합니다. 설정에서 권한을 허용해 주세요.');
+        setError('We need access to your camera. Please allow it in Settings.');
         return null;
       }
 
@@ -64,7 +64,7 @@ export default function useImagePicker(): UseImagePickerReturn {
 
       return result.assets[0].uri;
     } catch {
-      setError('카메라를 실행하는 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      setError('Something went wrong while opening the camera. Please try again.');
       return null;
     } finally {
       setLoading(false);

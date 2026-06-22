@@ -23,7 +23,8 @@ import type { PlaylistResult } from '../../types/playlist';
 type ResultScreenNavigationProp = NativeStackNavigationProp<RootParamList, 'Result'>;
 type ResultScreenRouteProp = RouteProp<RootParamList, 'Result'>;
 
-const HERO_HEIGHT = 380;
+// 첫 화면에서 트랙이 4~5개 보이도록 hero 높이를 모바일 프레임(maxWidth 430) 기준으로 축소
+const HERO_HEIGHT = 220;
 
 export default function ResultScreen() {
   const navigation = useNavigation<ResultScreenNavigationProp>();
@@ -48,7 +49,7 @@ export default function ResultScreen() {
       const message =
         err instanceof SafeError
           ? err.message
-          : '결과를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+          : "We couldn't load your results. Please try again.";
       setErrorMessage(message);
     } finally {
       setLoading(false);
@@ -77,12 +78,12 @@ export default function ResultScreen() {
             }
           : prev,
       );
-      setActionHint('YouTube 플레이리스트가 생성되었습니다!');
+      setActionHint('Your YouTube playlist is ready!');
     } catch (err) {
       const message =
         err instanceof SafeError
           ? err.message
-          : 'YouTube 플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.';
+          : "We couldn't create your YouTube playlist. Please try again.";
       setActionHint(message);
     } finally {
       setYoutubeLoading(false);
@@ -94,14 +95,14 @@ export default function ResultScreen() {
   }, [playlistId]);
 
   if (loading) {
-    return <LoadingView message="결과 불러오는 중..." />;
+    return <LoadingView message="Loading your results..." />;
   }
 
   if (errorMessage || !result) {
     return (
       <ErrorView
-        title="불러오기 실패"
-        message={errorMessage ?? '결과를 불러오는 데 실패했습니다.'}
+        title="Something went wrong"
+        message={errorMessage ?? "We couldn't load your results."}
         onRetry={load}
       />
     );
@@ -127,17 +128,17 @@ export default function ResultScreen() {
               source={{ uri: result.imageUri }}
               style={StyleSheet.absoluteFill}
               resizeMode="cover"
-              accessibilityLabel="플레이리스트 생성에 사용된 사진"
+              accessibilityLabel="Photo used to create this playlist"
             />
           ) : (
             <View style={[StyleSheet.absoluteFill, styles.heroFallback]} />
           )}
           <GradientOverlay />
           <View style={styles.heroContent}>
-            <PlaylistConcept text={result.playlistConcept} />
             {result.analysis.moodKeywords && result.analysis.moodKeywords.length > 0 && (
               <MoodTags tags={result.analysis.moodKeywords} />
             )}
+            <PlaylistConcept text={result.playlistConcept} />
           </View>
         </View>
 
@@ -196,6 +197,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.CARD_PADDING,
   },
   bottomPadding: {
-    height: SPACING.SECTION_GAP,
+    // 마지막 액션 버튼과 BottomNavigation 사이 여백을 넉넉하게 확보
+    height: SPACING.SECTION_GAP * 1.5,
   },
 });

@@ -8,7 +8,12 @@ interface PlaylistConceptProps {
 
 export default function PlaylistConcept({ text }: PlaylistConceptProps) {
   return (
-    <Text style={styles.text} accessibilityRole="header">
+    <Text
+      style={styles.text}
+      accessibilityRole="header"
+      numberOfLines={4}
+      ellipsizeMode="tail"
+    >
       {text}
     </Text>
   );
@@ -17,9 +22,9 @@ export default function PlaylistConcept({ text }: PlaylistConceptProps) {
 const styles = StyleSheet.create({
   text: {
     color: COLORS.TEXT_PRIMARY,
-    fontSize: 24,
+    fontSize: 19,
     fontWeight: '700',
-    lineHeight: 32,
-    marginBottom: SPACING.TRACK_GAP,
+    lineHeight: 25,
+    marginBottom: SPACING.BASE,
   },
 });

@@ -45,7 +45,7 @@ export default function ShareCardModal({ visible, onClose, result }: ShareCardMo
           style={StyleSheet.absoluteFill}
           onPress={onClose}
           activeOpacity={1}
-          accessibilityLabel="모달 닫기"
+          accessibilityLabel="Close modal"
         />
 
         {/* 바텀 시트 패널 */}
@@ -67,7 +67,7 @@ export default function ShareCardModal({ visible, onClose, result }: ShareCardMo
           <View style={styles.actions}>
             <View style={styles.actionItem}>
               <Button
-                title="닫기"
+                title="Close"
                 onPress={onClose}
                 variant="secondary"
                 fullWidth
@@ -75,7 +75,7 @@ export default function ShareCardModal({ visible, onClose, result }: ShareCardMo
             </View>
             <View style={styles.actionItem}>
               <Button
-                title="이미지 저장"
+                title="Save image"
                 onPress={handleSaveImage}
                 variant="primary"
                 fullWidth

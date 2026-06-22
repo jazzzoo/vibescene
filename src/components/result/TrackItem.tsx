@@ -5,9 +5,10 @@ import type { Track } from '../../types/playlist';
 
 interface TrackItemProps {
   track: Track;
+  isLast?: boolean;
 }
 
-export default function TrackItem({ track }: TrackItemProps) {
+export default function TrackItem({ track, isLast = false }: TrackItemProps) {
   const canOpenOnYoutube = Boolean(track.youtubeVideoId);
 
   function handlePress() {
@@ -17,12 +18,12 @@ export default function TrackItem({ track }: TrackItemProps) {
 
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, !isLast && styles.divider]}
       onPress={handlePress}
       disabled={!canOpenOnYoutube}
       activeOpacity={0.7}
       accessibilityRole="button"
-      accessibilityLabel={`${track.rank}번 ${track.title}, ${track.artist}. YouTube에서 열기`}
+      accessibilityLabel={`${track.rank}. ${track.title} by ${track.artist}. Open on YouTube`}
     >
       <View style={styles.rank}>
         <Text style={styles.rankText}>{track.rank}</Text>
@@ -33,16 +34,20 @@ export default function TrackItem({ track }: TrackItemProps) {
           source={{ uri: track.thumbnailUrl }}
           style={styles.thumbnail}
           resizeMode="cover"
-          accessibilityLabel={`${track.title} 썸네일`}
+          accessibilityLabel={`${track.title} thumbnail`}
         />
       ) : (
         <View style={[styles.thumbnail, styles.thumbnailFallback]} />
       )}
 
       <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={1}>{track.title}</Text>
+        <Text style={styles.title} numberOfLines={2}>{track.title}</Text>
         <Text style={styles.artist} numberOfLines={1}>{track.artist}</Text>
       </View>
+
+      {canOpenOnYoutube && (
+        <Text style={styles.chevron} accessibilityElementsHidden>›</Text>
+      )}
     </TouchableOpacity>
   );
 }
@@ -53,6 +58,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.BASE,
     gap: SPACING.TRACK_GAP,
+  },
+  divider: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: COLORS.TEXT_SECONDARY,
   },
   rank: {
     width: 24,
@@ -83,5 +92,10 @@ const styles = StyleSheet.create({
   artist: {
     color: COLORS.TEXT_SECONDARY,
     fontSize: 13,
+  },
+  chevron: {
+    color: COLORS.TEXT_SECONDARY,
+    fontSize: 18,
+    fontWeight: '600',
   },
 });

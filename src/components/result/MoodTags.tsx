@@ -13,8 +13,9 @@ export default function MoodTags({ tags }: MoodTagsProps) {
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={styles.scroll}
       contentContainerStyle={styles.container}
-      accessibilityLabel="분위기 태그"
+      accessibilityLabel="Mood tags"
     >
       {tags.map((tag) => (
         <View key={tag} style={styles.tag}>
@@ -26,19 +27,22 @@ export default function MoodTags({ tags }: MoodTagsProps) {
 }
 
 const styles = StyleSheet.create({
+  scroll: {
+    marginBottom: SPACING.BASE,
+  },
   container: {
     flexDirection: 'row',
-    gap: SPACING.BASE,
+    gap: SPACING.BASE * 0.75,
   },
   tag: {
     backgroundColor: COLORS.MOOD_TAG,
-    borderRadius: SPACING.BASE * 2,
-    paddingHorizontal: SPACING.BASE * 1.5,
+    borderRadius: SPACING.BASE * 1.5,
+    paddingHorizontal: SPACING.BASE * 1.25,
     paddingVertical: SPACING.BASE * 0.5,
   },
   tagText: {
     color: COLORS.TEXT_PRIMARY,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
   },
 });

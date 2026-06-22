@@ -22,7 +22,7 @@ export default function RootNavigator() {
       supabase.auth.signInAnonymously().then(({ data, error }) => {
         if (error) {
           // API 에러 원문을 그대로 노출하지 않고 일반화된 메시지만 표시
-          setError('로그인에 실패했습니다. 다시 시도해 주세요.');
+          setError('Sign-in failed. Please try again.');
         } else {
           setSession(data.session);
         }

@@ -15,8 +15,8 @@ export const CARD_WIDTH =
 type StatusBadge = { text: string; isFailed: boolean } | null;
 
 function getStatusBadge(status: PlaylistStatus): StatusBadge {
-  if (status === 'failed') return { text: '실패', isFailed: true };
-  if (status !== 'created') return { text: '처리 중', isFailed: false };
+  if (status === 'failed') return { text: 'Failed', isFailed: true };
+  if (status !== 'created') return { text: 'Processing', isFailed: false };
   return null;
 }
 
@@ -34,7 +34,7 @@ export default function HistoryCard({ item, onPress }: HistoryCardProps) {
       onPress={onPress}
       activeOpacity={0.75}
       accessibilityRole="button"
-      accessibilityLabel={`${item.playlistConcept || '플레이리스트'} 열기`}
+      accessibilityLabel={`Open ${item.playlistConcept || 'playlist'}`}
     >
       {/* 이미지 영역 */}
       <View style={styles.imageContainer}>

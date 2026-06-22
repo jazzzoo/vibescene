@@ -13,28 +13,30 @@ interface ActionButtonsProps {
 const SAVE_TO_YOUTUBE_ENABLED = false;
 
 export default function ActionButtons({ onSaveToYouTube, youtubeLoading, onShare }: ActionButtonsProps) {
+  // 비활성 상태인 동안엔 실제로 동작하는 Share를 primary로, Coming soon 버튼은 secondary로 눌러서
+  // 지금 누를 수 있는 핵심 행동(CTA)이 항상 더 눈에 띄도록 한다.
   return (
     <View style={styles.container}>
       <Button
-        title={SAVE_TO_YOUTUBE_ENABLED ? 'YouTube에 저장' : 'YouTube에 저장 (Coming soon)'}
+        title={SAVE_TO_YOUTUBE_ENABLED ? 'Save to YouTube' : 'Save to YouTube (Coming soon)'}
         onPress={onSaveToYouTube}
-        variant="primary"
+        variant={SAVE_TO_YOUTUBE_ENABLED ? 'primary' : 'secondary'}
         fullWidth
         loading={youtubeLoading}
         disabled={!SAVE_TO_YOUTUBE_ENABLED}
         accessibilityLabel={
           SAVE_TO_YOUTUBE_ENABLED
-            ? 'YouTube 플레이리스트로 저장'
-            : 'YouTube 플레이리스트 저장, 출시 예정'
+            ? 'Save as YouTube playlist'
+            : 'Save as YouTube playlist, coming soon'
         }
       />
       <View style={styles.gap} />
       <Button
-        title="공유"
+        title="Share"
         onPress={onShare}
-        variant="secondary"
+        variant={SAVE_TO_YOUTUBE_ENABLED ? 'secondary' : 'primary'}
         fullWidth
-        accessibilityLabel="플레이리스트 공유"
+        accessibilityLabel="Share playlist"
       />
     </View>
   );

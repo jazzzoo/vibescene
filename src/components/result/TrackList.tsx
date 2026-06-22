@@ -14,8 +14,8 @@ export default function TrackList({ tracks }: TrackListProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Tracks</Text>
-      {tracks.map((track) => (
-        <TrackItem key={track.rank} track={track} />
+      {tracks.map((track, index) => (
+        <TrackItem key={track.rank} track={track} isLast={index === tracks.length - 1} />
       ))}
     </View>
   );
@@ -24,7 +24,8 @@ export default function TrackList({ tracks }: TrackListProps) {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: SPACING.CARD_PADDING,
-    paddingTop: SPACING.SECTION_GAP,
+    // hero 영역이 줄어든 만큼, 첫 화면에 트랙이 더 보이도록 상단 여백을 좁게 유지
+    paddingTop: SPACING.TRACK_GAP,
   },
   sectionTitle: {
     color: COLORS.TEXT_SECONDARY,

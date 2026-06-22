@@ -59,17 +59,17 @@ export async function getPlaylistResult(playlistId: string): Promise<PlaylistRes
   ]);
 
   if (playlistRes.error || !playlistRes.data) {
-    throw new SafeError('플레이리스트를 불러오는 데 실패했습니다.');
+    throw new SafeError("We couldn't load your playlist.");
   }
   if (tracksRes.error || !tracksRes.data) {
-    throw new SafeError('트랙 목록을 불러오는 데 실패했습니다.');
+    throw new SafeError("We couldn't load the tracks.");
   }
 
   const row = playlistRes.data as unknown as PlaylistRow;
   const trackRows = tracksRes.data as unknown as TrackRow[];
 
   const analysis = row.analysis as Analysis | null;
-  if (!analysis) throw new SafeError('분석 데이터를 불러오는 데 실패했습니다.');
+  if (!analysis) throw new SafeError("We couldn't load the analysis data.");
 
   // private bucket이므로 signed URL 발급 (실패 시 null — UI는 fallback 처리)
   const imageUri = await createSignedImageUrl(row.image_storage_path);
@@ -114,7 +114,7 @@ export async function analyzeAndSearchPlaylist(
 ): Promise<{ playlistId: string }> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) {
-    throw new SafeError('로그인이 필요합니다. 다시 로그인해 주세요.');
+    throw new SafeError('Please sign in again.');
   }
 
   const { data, error } = await supabase.functions.invoke('analyze-and-search', {
@@ -125,13 +125,13 @@ export async function analyzeAndSearchPlaylist(
   if (error) {
     const serverError = hasStringField(data, 'error') ? data.error : null;
     throw new SafeError(
-      serverError ?? '플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.',
+      serverError ?? "We couldn't create your playlist. Please try again.",
     );
   }
 
   const playlistId = hasStringField(data, 'playlist_id') ? data.playlist_id : null;
   if (!playlistId) {
-    throw new SafeError('플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.');
+    throw new SafeError("We couldn't create your playlist. Please try again.");
   }
 
   return { playlistId };
@@ -156,7 +156,7 @@ export async function createYouTubePlaylist(
   if (error) {
     const serverError = hasStringField(data, 'error') ? data.error : null;
     throw new SafeError(
-      serverError ?? 'YouTube 플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.',
+      serverError ?? "We couldn't create your YouTube playlist. Please try again.",
     );
   }
 
@@ -168,7 +168,7 @@ export async function createYouTubePlaylist(
     : null;
 
   if (!youtubePlaylistId || !youtubePlaylistUrl) {
-    throw new SafeError('YouTube 플레이리스트 생성에 실패했습니다. 다시 시도해 주세요.');
+    throw new SafeError("We couldn't create your YouTube playlist. Please try again.");
   }
 
   return { youtubePlaylistId, youtubePlaylistUrl };
@@ -194,7 +194,7 @@ export async function getPlaylistHistory(): Promise<PlaylistHistoryItem[]> {
     .order('created_at', { ascending: false });
 
   if (error) {
-    throw new SafeError('히스토리를 불러오는 데 실패했습니다. 다시 시도해 주세요.');
+    throw new SafeError("We couldn't load your history. Please try again.");
   }
 
   const rows = (data ?? []) as unknown as HistoryRow[];
@@ -226,11 +226,11 @@ export async function generatePlaylist(imageStoragePath: string): Promise<string
   if (error) {
     // functions.invoke는 4xx/5xx일 때 error를 세팅하고, data에 body가 담김
     const serverMessage = (data as { error?: string } | null)?.error;
-    throw new Error(serverMessage ?? '플레이리스트 생성에 실패했습니다.');
+    throw new Error(serverMessage ?? "We couldn't create your playlist.");
   }
 
   const playlistId = (data as { playlist_id?: string } | null)?.playlist_id;
-  if (!playlistId) throw new Error('플레이리스트 생성에 실패했습니다.');
+  if (!playlistId) throw new Error("We couldn't create your playlist.");
 
   return playlistId;
 }

@@ -14,9 +14,9 @@ type LoadingScreenRouteProp = RouteProp<RootParamList, 'Loading'>;
 type Step = 'uploading' | 'analyzing' | 'finalizing';
 
 const STEP_MESSAGES: Record<Step, string> = {
-  uploading: '분위기 감상 중...',
-  analyzing: '어울리는 음악 찾는 중...',
-  finalizing: '앨범 순서 고민 중...',
+  uploading: 'Reading the mood...',
+  analyzing: 'Finding the right songs...',
+  finalizing: 'Building your playlist...',
 };
 
 export default function LoadingScreen() {
@@ -65,7 +65,7 @@ export default function LoadingScreen() {
       const message =
         err instanceof SafeError
           ? err.message
-          : '플레이리스트 생성 중 오류가 발생했습니다. 다시 시도해 주세요.';
+          : "We couldn't create your playlist. Please try again.";
       setErrorMessage(message);
     }
   }, [localImageUri, navigation]);
@@ -79,7 +79,7 @@ export default function LoadingScreen() {
   if (errorMessage !== null) {
     return (
       <ErrorView
-        title="생성 실패"
+        title="Something went wrong"
         message={errorMessage}
         onRetry={runGeneration}
       />

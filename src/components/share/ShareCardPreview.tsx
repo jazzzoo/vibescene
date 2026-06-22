@@ -35,7 +35,7 @@ export default function ShareCardPreview({ ratio, result }: ShareCardPreviewProp
           source={{ uri: result.imageUri }}
           style={StyleSheet.absoluteFill}
           resizeMode="cover"
-          accessibilityLabel="공유 카드 배경 이미지"
+          accessibilityLabel="Share card background image"
         />
       ) : (
         <View style={[StyleSheet.absoluteFill, styles.imageFallback]} />
