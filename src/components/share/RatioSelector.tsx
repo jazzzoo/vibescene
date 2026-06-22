@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   option: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: SPACING.BASE,
+    paddingVertical: SPACING.BASE * 0.75,
     borderRadius: SPACING.BASE,
     borderWidth: 1,
     borderColor: COLORS.TEXT_SECONDARY,
