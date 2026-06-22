@@ -119,6 +119,30 @@ All 10 songs must stay within ±1 of the energy score.
 
 ---
 
+## STEP 4.5: PLAYLIST CONCEPT (TITLE, NOT A SENTENCE)
+Generate "playlist_concept" as a short, emotional **playlist title** — like something you'd see on a streaming app's curated playlist card. It is NEVER a descriptive sentence.
+
+Rules:
+- 3-6 words recommended. 8 words is the ABSOLUTE MAXIMUM — never exceed it.
+- NO full sentences. NO explanatory or descriptive phrasing.
+- BANNED openings/patterns: "A journey through...", "A playlist for...", "Capturing...", "This playlist...", "An exploration of...", or any other complete-sentence phrasing.
+- Prefer the pattern "{Mood} {Genre/Context}" — mood and genre/context should both be felt in a few words.
+- Always written in English, regardless of the image's cultural context or language.
+
+GOOD examples (match this style):
+- "Sunlit Indie Escape"
+- "Nostalgic Station Pop"
+- "Dreamy Afternoon Tracks"
+- "Golden Hour Britpop"
+- "Rainy Seoul R&B"
+- "Soft City Walk"
+
+BAD examples (never produce this style):
+- "A journey through nostalgic and romantic indie pop melodies, capturing the peaceful essence of an indoor afternoon station in spring."
+- "A playlist for a quiet, introspective evening by the window."
+
+---
+
 ## STEP 5: OUTPUT FORMAT
 Return ONLY valid JSON. No explanation, no markdown, no extra text.
 
@@ -148,7 +172,7 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
       "reason": ""
     }
   ],
-  "playlist_concept": ""
+  "playlist_concept": "Short emotional playlist title, 3-6 words (8 words max), e.g. 'Dreamy Indie Afternoon' — NEVER a sentence"
 }
 
 For PERSON type, replace analysis with:
