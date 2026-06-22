@@ -17,12 +17,20 @@ import type { PlaylistHistoryItem } from '../../types/playlist';
 type HistoryNavigationProp = NativeStackNavigationProp<RootParamList, 'History'>;
 
 const NUM_COLS = 3;
+const OUTER_PADDING = SPACING.CARD_PADDING;
+const COL_GAP = SPACING.BASE;
+// WebAppFrame의 430px 프레임 폭을 합리적인 기본값으로 사용 — onLayout 측정 전 첫 프레임에서도
+// (Dimensions.get('window')처럼 브라우저 전체 폭에 의존하지 않고) 자연스러운 카드 크기를 보장
+const FALLBACK_LIST_WIDTH = 430;
 
 export default function HistoryScreen() {
   const navigation = useNavigation<HistoryNavigationProp>();
   const [items, setItems] = useState<PlaylistHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // FlatList가 실제로 렌더링된 폭 — WebAppFrame으로 좁아진 웹 화면에서도 정확한 카드 크기 계산용
+  const [listWidth, setListWidth] = useState(FALLBACK_LIST_WIDTH);
+  const cardWidth = (listWidth - OUTER_PADDING * 2 - COL_GAP * (NUM_COLS - 1)) / NUM_COLS;
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -54,9 +62,9 @@ export default function HistoryScreen() {
 
   const renderItem: ListRenderItem<PlaylistHistoryItem> = useCallback(
     ({ item }) => (
-      <HistoryCard item={item} onPress={() => handleCardPress(item.id)} />
+      <HistoryCard item={item} onPress={() => handleCardPress(item.id)} width={cardWidth} />
     ),
-    [handleCardPress],
+    [handleCardPress, cardWidth],
   );
 
   const ListHeader = (
@@ -96,6 +104,7 @@ export default function HistoryScreen() {
           ]}
           columnWrapperStyle={styles.columnWrapper}
           showsVerticalScrollIndicator={false}
+          onLayout={(e) => setListWidth(e.nativeEvent.layout.width)}
         />
       )}
       <BottomNavigation />
