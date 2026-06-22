@@ -5,9 +5,12 @@ import type { PlaylistHistoryItem, PlaylistStatus } from '../../types/playlist';
 
 type StatusBadge = { text: string; isFailed: boolean } | null;
 
+// MVP에서는 YouTube 저장(Edge Function 2)이 비활성화되어 있어 status가 'searching' 이후로
+// 올라가지 않는다. 트랙 저장까지 끝난 'searching' 이후 단계는 사용자 입장에서 이미 완료된
+// 상태이므로, 트랙이 아직 없는 'pending'/'analyzing'일 때만 Processing 배지를 보여준다.
 function getStatusBadge(status: PlaylistStatus): StatusBadge {
   if (status === 'failed') return { text: 'Failed', isFailed: true };
-  if (status !== 'created') return { text: 'Processing', isFailed: false };
+  if (status === 'pending' || status === 'analyzing') return { text: 'Processing', isFailed: false };
   return null;
 }
 
