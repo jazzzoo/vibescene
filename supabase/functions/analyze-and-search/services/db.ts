@@ -1,9 +1,30 @@
-import { SafeError } from "../errors.ts";
+import { DbOperationError } from "../errors.ts";
 import type { GptResponse } from "./gpt.ts";
 import type { YoutubeTrack } from "./youtube.ts";
 
 // deno-lint-ignore no-explicit-any
 type SupabaseAdmin = any;
+
+// auth.users에는 존재하지만 profiles에는 row가 없는 경우(예: Anonymous Sign-In) 대비.
+// playlists.user_id → profiles(id) FK 제약을 만족시키기 위해 최소 row를 보장한다.
+// 이미 존재하면 ON CONFLICT DO NOTHING으로 아무 영향 없이 통과한다 (email 등 기존 값 보존).
+export async function ensureProfileExists(
+  supabase: SupabaseAdmin,
+  userId: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("profiles")
+    .upsert({ id: userId }, { onConflict: "id", ignoreDuplicates: true });
+
+  if (error) {
+    throw new DbOperationError(
+      "ensureProfileExists",
+      "DB_OPERATION_FAILED",
+      error,
+      "사용자 프로필 확인 중 오류가 발생했습니다.",
+    );
+  }
+}
 
 export async function insertPendingPlaylist(
   supabase: SupabaseAdmin,
@@ -20,7 +41,23 @@ export async function insertPendingPlaylist(
     .select("id")
     .single();
 
-  if (error) throw new SafeError("플레이리스트 생성 중 오류가 발생했습니다.");
+  if (error) {
+    throw new DbOperationError(
+      "insertPendingPlaylist",
+      "DB_OPERATION_FAILED",
+      error,
+      "플레이리스트 생성 중 오류가 발생했습니다.",
+    );
+  }
+  // .single()이 에러 없이도 row를 못 돌려주는 경우(예: select 권한 문제) 대비
+  if (!data || !(data as { id?: string }).id) {
+    throw new DbOperationError(
+      "insertPendingPlaylist",
+      "DB_OPERATION_FAILED",
+      { message: "insert succeeded but no row was returned" },
+      "플레이리스트 생성 중 오류가 발생했습니다.",
+    );
+  }
   return (data as { id: string }).id;
 }
 
@@ -34,7 +71,14 @@ export async function updatePlaylistStatus(
     .update({ status })
     .eq("id", playlistId);
 
-  if (error) throw new SafeError("플레이리스트 상태 업데이트 중 오류가 발생했습니다.");
+  if (error) {
+    throw new DbOperationError(
+      "updatePlaylistStatus",
+      "DB_OPERATION_FAILED",
+      error,
+      "플레이리스트 상태 업데이트 중 오류가 발생했습니다.",
+    );
+  }
 }
 
 // GPT snake_case → DB 컬럼/JSONB 매핑 후 저장
@@ -82,7 +126,14 @@ export async function updatePlaylistAnalysis(
     })
     .eq("id", playlistId);
 
-  if (error) throw new SafeError("분석 결과 저장 중 오류가 발생했습니다.");
+  if (error) {
+    throw new DbOperationError(
+      "updatePlaylistAnalysis",
+      "DB_OPERATION_FAILED",
+      error,
+      "분석 결과 저장 중 오류가 발생했습니다.",
+    );
+  }
 }
 
 export async function insertTracks(
@@ -102,7 +153,14 @@ export async function insertTracks(
   }));
 
   const { error } = await supabase.from("tracks").insert(rows);
-  if (error) throw new SafeError("트랙 저장 중 오류가 발생했습니다.");
+  if (error) {
+    throw new DbOperationError(
+      "insertTracks",
+      "DB_SAVE_FAILED",
+      error,
+      "트랙 저장 중 오류가 발생했습니다.",
+    );
+  }
 }
 
 export async function updatePlaylistFailed(
