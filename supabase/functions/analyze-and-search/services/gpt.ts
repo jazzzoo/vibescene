@@ -119,25 +119,36 @@ All 10 songs must stay within ±1 of the energy score.
 
 ---
 
-## STEP 4.5: PLAYLIST CONCEPT (TITLE, NOT A SENTENCE)
-Generate "playlist_concept" as a short, emotional **playlist title** — like something you'd see on a streaming app's curated playlist card. It is NEVER a descriptive sentence.
+## STEP 4.5: PLAYLIST CONCEPT (TITLE, NOT A SENTENCE, NOT A WORD-MASH)
+Generate "playlist_concept" as a natural, evocative **playlist title** — like a movie poster title, a Spotify playlist name, or a mixtape title someone would actually use. It is NEVER a descriptive sentence, and NEVER three keywords mechanically stapled together.
 
 Rules:
-- 3-6 words recommended. 8 words is the ABSOLUTE MAXIMUM — never exceed it.
+- 2-5 words recommended. 6 words is the ABSOLUTE MAXIMUM — never exceed it.
 - NO full sentences. NO explanatory or descriptive phrasing.
-- BANNED openings/patterns: "A journey through...", "A playlist for...", "Capturing...", "This playlist...", "An exploration of...", or any other complete-sentence phrasing.
-- Prefer the pattern "{Mood} {Genre/Context}" — mood and genre/context should both be felt in a few words.
-- Always written in English, regardless of the image's cultural context or language.
+- BANNED openings/patterns: "A journey through...", "A playlist for...", "Capturing...", "This playlist...", "An exploration of...".
+- BANNED structure: do NOT mechanically stack "{Mood adjective} + {Place/Object noun} + {Genre}" (e.g. "Nostalgic Station Indie", "Peaceful Spring Pop", "Romantic Train Indie"). These read like three tags glued together, not a real title — avoid this even if it technically fits the word-count rule.
+- Instead, let a place, object, light, time of day, or feeling combine into a phrase someone would actually title a playlist with. Genre is OPTIONAL — only include it if it sounds natural, not as a default third word.
+- Read it back to yourself: if it sounds like a list of three tags, rewrite it.
+- Always written in English, regardless of the image's cultural context or language, in natural title case.
 
 GOOD examples (match this style):
-- "Sunlit Indie Escape"
-- "Nostalgic Station Pop"
-- "Dreamy Afternoon Tracks"
-- "Golden Hour Britpop"
-- "Rainy Seoul R&B"
-- "Soft City Walk"
+- "Train Window Indie"
+- "Platform Daydreams"
+- "Romantic Rails"
+- "Sunlit Station Sounds"
+- "Indie on the Platform"
+- "Golden Hour Mixtape"
+- "Soft City Radio"
+- "Rainy Seoul Afterglow"
+- "Midnight Walk Songs"
+- "Café Window Jazz"
 
-BAD examples (never produce this style):
+BAD examples — mechanical mood+place+genre stacking (never produce this style):
+- "Nostalgic Station Indie"
+- "Peaceful Spring Pop"
+- "Romantic Train Indie"
+
+BAD examples — full sentences (never produce this style):
 - "A journey through nostalgic and romantic indie pop melodies, capturing the peaceful essence of an indoor afternoon station in spring."
 - "A playlist for a quiet, introspective evening by the window."
 
@@ -172,7 +183,7 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
       "reason": ""
     }
   ],
-  "playlist_concept": "Short emotional playlist title, 3-6 words (8 words max), e.g. 'Dreamy Indie Afternoon' — NEVER a sentence"
+  "playlist_concept": "Natural evocative playlist title, 2-5 words (6 words max), e.g. 'Platform Daydreams' — NEVER mood+place+genre word-stacking, NEVER a sentence"
 }
 
 For PERSON type, replace analysis with:
