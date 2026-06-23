@@ -180,6 +180,17 @@ Deno.serve(async (req) => {
     setStage("youtube_search_completed");
 
     if (foundTracks.length < MIN_TRACKS) {
+      // GPT hallucination(존재하지 않는 곡)인지 YouTube 검색 쿼리 문제인지 진단하기 위한 로그.
+      // title/artist만 남기고 API key, signed URL 등 민감 정보는 절대 포함하지 않음.
+      const candidateTitles = gptResult.playlist.map((track) => ({ title: track.title, artist: track.artist }));
+      const foundTitles = foundTracks.map((track) => ({ title: track.title, artist: track.artist }));
+      console.error("[analyze-and-search] insufficient_youtube_matches", {
+        totalCandidates: candidateTitles.length,
+        foundCount: foundTitles.length,
+        missingCount: candidateTitles.length - foundTitles.length,
+        candidateTitles,
+        foundTitles,
+      });
       throw new SafeError("적합한 음악을 충분히 찾지 못했습니다. 다시 시도해 주세요.");
     }
 
