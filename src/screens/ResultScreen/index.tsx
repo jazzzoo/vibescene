@@ -147,6 +147,7 @@ export default function ResultScreen() {
 
         {/* 액션 버튼 */}
         <ActionButtons
+          tracks={result.tracks}
           onSaveToYouTube={handleSaveToYouTube}
           youtubeLoading={youtubeLoading}
           onShare={() => setShareModalVisible(true)}

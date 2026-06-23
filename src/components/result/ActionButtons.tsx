@@ -1,8 +1,10 @@
-import { StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, View } from 'react-native';
 import { SPACING } from '../../constants/spacing';
 import Button from '../common/Button';
+import type { Track } from '../../types/playlist';
 
 interface ActionButtonsProps {
+  tracks: Track[];
   onSaveToYouTube: () => void;
   youtubeLoading?: boolean;
   onShare: () => void;
@@ -12,29 +14,56 @@ interface ActionButtonsProps {
 // 다시 켤 때는 이 상수만 true로 바꾸면 된다 — onSaveToYouTube 등 호출부 로직은 그대로 보존되어 있다.
 const SAVE_TO_YOUTUBE_ENABLED = false;
 
-export default function ActionButtons({ onSaveToYouTube, youtubeLoading, onShare }: ActionButtonsProps) {
-  // 비활성 상태인 동안엔 실제로 동작하는 Share를 primary로, Coming soon 버튼은 secondary로 눌러서
-  // 지금 누를 수 있는 핵심 행동(CTA)이 항상 더 눈에 띄도록 한다.
+// 로그인 없이도 YouTube에서 여러 곡이 이어지는 임시 재생 목록을 열기 위한 URL을 만든다.
+function buildPlayOnYoutubeUrl(tracks: Track[]): string | null {
+  const videoIds = [...new Set(tracks.map((track) => track.youtubeVideoId).filter((id): id is string => Boolean(id)))];
+
+  if (videoIds.length === 0) return null;
+  if (videoIds.length === 1) return `https://www.youtube.com/watch?v=${videoIds[0]}`;
+  return `https://www.youtube.com/watch_videos?video_ids=${videoIds.join(',')}`;
+}
+
+export default function ActionButtons({ tracks, onSaveToYouTube, youtubeLoading, onShare }: ActionButtonsProps) {
+  const playOnYoutubeUrl = buildPlayOnYoutubeUrl(tracks);
+
+  function handlePlayOnYoutube() {
+    if (!playOnYoutubeUrl) return;
+    Linking.openURL(playOnYoutubeUrl).catch(() => {});
+  }
+
   return (
     <View style={styles.container}>
-      <Button
-        title={SAVE_TO_YOUTUBE_ENABLED ? 'Save to YouTube' : 'Save to YouTube (Coming soon)'}
-        onPress={onSaveToYouTube}
-        variant={SAVE_TO_YOUTUBE_ENABLED ? 'primary' : 'secondary'}
-        fullWidth
-        loading={youtubeLoading}
-        disabled={!SAVE_TO_YOUTUBE_ENABLED}
-        accessibilityLabel={
-          SAVE_TO_YOUTUBE_ENABLED
-            ? 'Save as YouTube playlist'
-            : 'Save as YouTube playlist, coming soon'
-        }
-      />
-      <View style={styles.gap} />
+      {playOnYoutubeUrl && (
+        <>
+          <Button
+            title="Play on YouTube"
+            onPress={handlePlayOnYoutube}
+            variant="primary"
+            fullWidth
+            accessibilityLabel="Play full playlist on YouTube"
+          />
+          <View style={styles.gap} />
+        </>
+      )}
+
+      {SAVE_TO_YOUTUBE_ENABLED && (
+        <>
+          <Button
+            title="Save to YouTube"
+            onPress={onSaveToYouTube}
+            variant="secondary"
+            fullWidth
+            loading={youtubeLoading}
+            accessibilityLabel="Save as YouTube playlist"
+          />
+          <View style={styles.gap} />
+        </>
+      )}
+
       <Button
         title="Share"
         onPress={onShare}
-        variant={SAVE_TO_YOUTUBE_ENABLED ? 'secondary' : 'primary'}
+        variant="secondary"
         fullWidth
         accessibilityLabel="Share playlist"
       />
