@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 import { SafeError } from './errors';
-import { createSignedImageUrl } from './storage';
+import { createSignedImageUrl, getThumbnailStoragePath } from './storage';
 import type { Analysis, MusicProfile, PlaylistHistoryItem, PlaylistResult, PlaylistStatus, Track } from '../types/playlist';
 
 // Supabase 쿼리 결과 로컬 타입 (generated types 없이 안전하게 캐스팅)
@@ -200,15 +200,30 @@ export async function getPlaylistHistory(): Promise<PlaylistHistoryItem[]> {
   const rows = (data ?? []) as unknown as HistoryRow[];
 
   const items = await Promise.all(
-    rows.map(async (row): Promise<PlaylistHistoryItem> => ({
-      id: row.id,
-      imageUri: row.image_storage_path
-        ? await createSignedImageUrl(row.image_storage_path)
-        : null,
-      playlistConcept: row.playlist_concept ?? '',
-      status: row.status as PlaylistStatus,
-      createdAt: row.created_at,
-    })),
+    rows.map(async (row): Promise<PlaylistHistoryItem> => {
+      let imageUri: string | null = null;
+      let fallbackImageUri: string | null = null;
+
+      if (row.image_storage_path) {
+        // thumbnail을 우선 사용하고, 생성에 실패하면(예: 기존 데이터에 thumbnail이 없는 경우)
+        // main image signed URL로 fallback한다.
+        const [thumbnailUri, mainUri] = await Promise.all([
+          createSignedImageUrl(getThumbnailStoragePath(row.image_storage_path)),
+          createSignedImageUrl(row.image_storage_path),
+        ]);
+        imageUri = thumbnailUri ?? mainUri;
+        fallbackImageUri = mainUri;
+      }
+
+      return {
+        id: row.id,
+        imageUri,
+        fallbackImageUri,
+        playlistConcept: row.playlist_concept ?? '',
+        status: row.status as PlaylistStatus,
+        createdAt: row.created_at,
+      };
+    }),
   );
 
   return items;

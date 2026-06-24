@@ -63,7 +63,8 @@ export type PlaylistStatus =
 
 export type PlaylistHistoryItem = {
   id: string;
-  imageUri: string | null;   // signed URL (실패 시 null)
+  imageUri: string | null;          // 우선 표시용 signed URL — thumbnail 우선, 없으면 main (실패 시 null)
+  fallbackImageUri: string | null;  // imageUri 로딩 실패 시 사용할 main image signed URL
   playlistConcept: string;
   status: PlaylistStatus;
   createdAt: string;

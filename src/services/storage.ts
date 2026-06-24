@@ -1,6 +1,7 @@
 import type { ImagePickerAsset } from 'expo-image-picker';
 import { supabase } from '../lib/supabaseClient';
 import { SafeError } from './errors';
+import { createMainImage, createThumbnailImage } from '../utils/imageOptimization';
 
 const IMAGE_BUCKET = 'user-images';
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
@@ -60,25 +61,44 @@ export async function uploadImageToStorage(
 }
 
 /**
+ * main image storage path에서 thumbnail storage path를 deterministic하게 만든다.
+ * 예: userId/123-abc.jpg → userId/123-abc_thumb.jpg
+ * DB 컬럼 없이도 main path만으로 thumbnail 위치를 항상 다시 계산할 수 있다.
+ */
+export function getThumbnailStoragePath(mainPath: string): string {
+  const lastDotIndex = mainPath.lastIndexOf('.');
+  if (lastDotIndex === -1) return `${mainPath}_thumb`;
+  return `${mainPath.slice(0, lastDotIndex)}_thumb${mainPath.slice(lastDotIndex)}`;
+}
+
+async function uriToBlob(uri: string): Promise<Blob | null> {
+  const response = await fetch(uri).catch(() => null);
+  if (!response || !response.ok) return null;
+  return response.blob().catch(() => null);
+}
+
+/**
  * local URI → Supabase Storage `user-images` 업로드.
  * user_id는 JWT 세션에서 추출하며, 클라이언트 입력을 신뢰하지 않는다.
- * 반환값: storage path (Edge Function에 전달용)
+ * 업로드 전 main(<=1600px, q0.85)과 thumbnail(<=480px, q0.75) 버전을 만들어 각각 저장한다.
+ * - main 최적화 실패 시 원본 이미지를 그대로 업로드한다 (앱이 죽지 않도록 fallback).
+ * - thumbnail 생성/업로드 실패는 main 업로드에 영향을 주지 않고 조용히 건너뛴다
+ *   (HistoryScreen은 thumbnail이 없으면 main image로 fallback한다).
+ * 반환값: main image storage path (Edge Function에 전달용, 기존 계약 유지)
  */
 export async function uploadUserImage(localUri: string): Promise<string> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new SafeError('Please sign in.');
 
-  const fetchResponse = await fetch(localUri).catch(() => null);
-  if (!fetchResponse || !fetchResponse.ok) {
+  const mainImage = await createMainImage(localUri);
+  const mainUri = mainImage?.uri ?? localUri;
+
+  const mainBlob = await uriToBlob(mainUri);
+  if (!mainBlob) {
     throw new SafeError("We couldn't read your image. Please try again.");
   }
 
-  const blob = await fetchResponse.blob().catch(() => null);
-  if (!blob) {
-    throw new SafeError("We couldn't process your image. Please try again.");
-  }
-
-  if (blob.size > MAX_FILE_SIZE_BYTES) {
+  if (mainBlob.size > MAX_FILE_SIZE_BYTES) {
     throw new SafeError('File size must be 10MB or less.');
   }
 
@@ -87,12 +107,27 @@ export async function uploadUserImage(localUri: string): Promise<string> {
 
   const { error } = await supabase.storage
     .from(IMAGE_BUCKET)
-    .upload(storagePath, blob, {
+    .upload(storagePath, mainBlob, {
       contentType: 'image/jpeg',
       upsert: false,
     });
 
   if (error) throw new SafeError("We couldn't upload your image. Please try again.");
+
+  // thumbnail은 best-effort: main 업로드 결과(storagePath)와 무관하게 실패해도 무시한다.
+  const thumbnailImage = await createThumbnailImage(mainUri);
+  if (thumbnailImage) {
+    const thumbnailBlob = await uriToBlob(thumbnailImage.uri);
+    if (thumbnailBlob) {
+      await supabase.storage
+        .from(IMAGE_BUCKET)
+        .upload(getThumbnailStoragePath(storagePath), thumbnailBlob, {
+          contentType: 'image/jpeg',
+          upsert: false,
+        })
+        .catch(() => null);
+    }
+  }
 
   return storagePath;
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
@@ -24,6 +25,19 @@ interface HistoryCardProps {
 export default function HistoryCard({ item, onPress, width }: HistoryCardProps) {
   const badge = getStatusBadge(item.status);
 
+  // thumbnail 로딩 실패 시(생성 실패로 신호 URL이 비었거나, signed URL은 받았지만 실제
+  // 객체가 없어 이미지 로드가 실패하는 경우 모두) main image로 교체한다.
+  const [imageSrc, setImageSrc] = useState(item.imageUri);
+  useEffect(() => {
+    setImageSrc(item.imageUri);
+  }, [item.imageUri]);
+
+  function handleImageError() {
+    if (item.fallbackImageUri && imageSrc !== item.fallbackImageUri) {
+      setImageSrc(item.fallbackImageUri);
+    }
+  }
+
   return (
     <TouchableOpacity
       style={[styles.container, { width }]}
@@ -34,11 +48,12 @@ export default function HistoryCard({ item, onPress, width }: HistoryCardProps) 
     >
       {/* 이미지 영역 — gallery tile의 주인공 */}
       <View style={[styles.imageContainer, { width, height: width }]}>
-        {item.imageUri ? (
+        {imageSrc ? (
           <Image
-            source={{ uri: item.imageUri }}
+            source={{ uri: imageSrc }}
             style={StyleSheet.absoluteFill}
             resizeMode="cover"
+            onError={handleImageError}
           />
         ) : (
           <View style={[StyleSheet.absoluteFill, styles.imageFallback]} />
