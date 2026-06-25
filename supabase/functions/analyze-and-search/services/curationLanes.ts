@@ -354,3 +354,10 @@ export const CURATION_LANES: CurationLane[] = [
     ],
   },
 ];
+
+const LANE_NAME_BY_ID = new Map(CURATION_LANES.map((lane) => [lane.id, lane.name]));
+
+// GPT가 선택한 primary_lane_id로 lane name을 조회 — DB에 사람이 읽을 수 있는 이름도 함께 저장하기 위함.
+export function getCurationLaneName(laneId: string): string | null {
+  return LANE_NAME_BY_ID.get(laneId) ?? null;
+}

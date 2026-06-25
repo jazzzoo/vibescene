@@ -168,7 +168,8 @@ Deno.serve(async (req) => {
     const gptResult = await analyzeImage(signedUrlData.signedUrl);
     setStage("openai_analysis_completed");
 
-    // ── 8. 분석 결과 저장 + status → 'searching' ─────────────────────────
+    // ── 8. 분석 결과 저장(primary_lane_id 포함) + status → 'searching' ──────
+    // YouTube 검색(9번) 이전에 저장하므로, 이후 단계에서 실패해도 어떤 lane이 실패했는지 추적 가능
     await updatePlaylistAnalysis(supabaseAdmin, playlistId, gptResult);
 
     // ── 9. YouTube 트랙 검색 ──────────────────────────────────────────────

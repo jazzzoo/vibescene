@@ -1,4 +1,5 @@
 import { DbOperationError } from "../errors.ts";
+import { getCurationLaneName } from "./curationLanes.ts";
 import type { GptResponse } from "./gpt.ts";
 import type { YoutubeTrack } from "./youtube.ts";
 
@@ -84,6 +85,8 @@ export async function updatePlaylistStatus(
 // GPT snake_case → DB 컬럼/JSONB 매핑 후 저장
 // - primary_genre, secondary_genre, energy_score: 개별 컬럼
 // - tempo, valence, confidence: analysis JSONB 안에 포함
+// - primary_lane_id/name: YouTube 검색(failure 가능 지점) 이전에 저장되므로
+//   이후 status가 failed로 끝나도 lane usage tracking을 위해 값이 남는다.
 export async function updatePlaylistAnalysis(
   supabase: SupabaseAdmin,
   playlistId: string,
@@ -123,6 +126,8 @@ export async function updatePlaylistAnalysis(
       primary_genre: gpt.music_profile.primary_genre,
       secondary_genre: gpt.music_profile.secondary_genre,
       energy_score: gpt.music_profile.energy_score,
+      primary_lane_id: gpt.primary_lane_id,
+      primary_lane_name: getCurationLaneName(gpt.primary_lane_id),
     })
     .eq("id", playlistId);
 

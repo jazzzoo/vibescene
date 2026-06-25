@@ -8,7 +8,7 @@ function buildCurationLanesPrompt(lanes: CurationLane[]): string {
   return lanes
     .map((lane, index) => {
       const titleExamples = lane.titleExamples.map((title) => `"${title}"`).join(", ");
-      return `### ${index + 1}. ${lane.name}
+      return `### ${index + 1}. ${lane.name} (lane_id: ${lane.id})
 - Allowed genres: ${lane.allowedGenres.join(", ")}
 - Forbidden genres: ${lane.forbiddenGenres.join(", ")}
 - Good for (scene/mood signals): ${lane.sceneSignals.join(", ")}
@@ -123,7 +123,7 @@ Different genre worlds do not mix well. A nu-jazz/jazz-hop track and a J-rock tr
 - The playlist must feel like one coherent music world, not a "various genres" sampler.
 - Do not add variety by randomly mixing genres across lanes.
 - Diversity should happen inside the selected lane (different artists, different shades of the same world), never across unrelated lanes.
-- The selected lane is internal reasoning only — never output the lane id/name itself in the JSON response.
+- After selecting the lane, output its exact lane_id (shown in parentheses next to each lane name above) as "primary_lane_id" in STEP 6's JSON response. Copy it exactly as written — never invent a new id, never modify it, never leave it empty.
 
 **Lane catalogue:**
 
@@ -226,7 +226,8 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
       "reason": ""
     }
   ],
-  "playlist_concept": "Natural evocative playlist title, 2-5 words (6 words max), e.g. 'Platform Daydreams' — NEVER mood+place+genre word-stacking, NEVER a sentence"
+  "playlist_concept": "Natural evocative playlist title, 2-5 words (6 words max), e.g. 'Platform Daydreams' — NEVER mood+place+genre word-stacking, NEVER a sentence",
+  "primary_lane_id": "the exact lane_id you selected in STEP 4 — must match one of the lane_id values in the catalogue exactly"
 }
 
 For PERSON type, replace analysis with:
@@ -273,7 +274,11 @@ export type GptResponse = {
   };
   playlist: GptPlaylistItem[];
   playlist_concept: string;
+  primary_lane_id: string;
 };
+
+// CURATION_LANES에 정의된 lane id만 허용 — GPT가 존재하지 않는 lane id를 만들어내는 것을 방지
+const VALID_LANE_IDS = new Set(CURATION_LANES.map((lane) => lane.id));
 
 export async function analyzeImage(signedImageUrl: string): Promise<GptResponse> {
   const apiKey = Deno.env.get("OPENAI_API_KEY");
@@ -330,6 +335,7 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
   const content = body.choices?.[0]?.message?.content;
   if (!content) throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
 
+  let parsed: GptResponse;
   try {
     // GPT가 마크다운 코드블록으로 감쌀 경우 제거
     const cleaned = content
@@ -337,8 +343,17 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
       .replace(/^```\s*/im, "")
       .replace(/```\s*$/im, "")
       .trim();
-    return JSON.parse(cleaned) as GptResponse;
+    parsed = JSON.parse(cleaned) as GptResponse;
   } catch {
     throw new SafeError("이미지 분석 결과를 처리하지 못했습니다.");
   }
+
+  // primary_lane_id가 없거나 CURATION_LANES에 없는 값이면 lane usage tracking이 깨지므로
+  // fallback default 없이 SafeError로 명확히 실패시킨다 (요구사항: GPT가 반드시 유효한 id를 내도록 강제).
+  if (typeof parsed.primary_lane_id !== "string" || !VALID_LANE_IDS.has(parsed.primary_lane_id)) {
+    console.error("[gpt] invalid_primary_lane_id", { primaryLaneId: parsed.primary_lane_id });
+    throw new SafeError("이미지 분석 결과를 처리하지 못했습니다.");
+  }
+
+  return parsed;
 }
