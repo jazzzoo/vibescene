@@ -6,6 +6,8 @@ import type { YoutubeTrack } from "./youtube.ts";
 // deno-lint-ignore no-explicit-any
 type SupabaseAdmin = any;
 
+export type TrackSource = "catalog" | "youtube_fallback";
+
 // auth.users에는 존재하지만 profiles에는 row가 없는 경우(예: Anonymous Sign-In) 대비.
 // playlists.user_id → profiles(id) FK 제약을 만족시키기 위해 최소 row를 보장한다.
 // 이미 존재하면 ON CONFLICT DO NOTHING으로 아무 영향 없이 통과한다 (email 등 기존 값 보존).
@@ -91,6 +93,7 @@ export async function updatePlaylistAnalysis(
   supabase: SupabaseAdmin,
   playlistId: string,
   gpt: GptResponse,
+  trackSource: TrackSource,
 ): Promise<void> {
   const src = gpt.analysis as Record<string, unknown>;
 
@@ -128,6 +131,7 @@ export async function updatePlaylistAnalysis(
       energy_score: gpt.music_profile.energy_score,
       primary_lane_id: gpt.primary_lane_id,
       primary_lane_name: getCurationLaneName(gpt.primary_lane_id),
+      track_source: trackSource,
     })
     .eq("id", playlistId);
 

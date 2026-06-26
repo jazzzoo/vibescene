@@ -1,19 +1,22 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "@supabase/supabase-js";
 import { DbOperationError, SafeError } from "./errors.ts";
-import { analyzeImage } from "./services/gpt.ts";
+import { analyzeImage, type GptPlaylistItem } from "./services/gpt.ts";
 import { searchYouTubeTracks } from "./services/youtube.ts";
 import {
   ensureProfileExists,
   insertPendingPlaylist,
   insertTracks,
+  type TrackSource,
   updatePlaylistAnalysis,
   updatePlaylistFailed,
   updatePlaylistStatus,
 } from "./services/db.ts";
 import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
+import { selectCatalogTracks } from "../_shared/musicCatalog.ts";
 
 const MIN_TRACKS = 5;
+const MIN_CATALOG_TRACKS = 5;
 const IMAGE_BUCKET = "user-images";
 const SIGNED_URL_TTL_SECONDS = 300; // GPT 호출 시간을 고려한 5분
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -168,22 +171,41 @@ Deno.serve(async (req) => {
     const gptResult = await analyzeImage(signedUrlData.signedUrl);
     setStage("openai_analysis_completed");
 
-    // ── 8. 분석 결과 저장(primary_lane_id 포함) + status → 'searching' ──────
-    // YouTube 검색(9번) 이전에 저장하므로, 이후 단계에서 실패해도 어떤 lane이 실패했는지 추적 가능
-    await updatePlaylistAnalysis(supabaseAdmin, playlistId, gptResult);
+    // ── 7-1. seed catalog에서 lane 트랙 선택 — GPT는 lane만 고르고, backend가 곡을 고른다.
+    // catalog에 해당 lane 트랙이 5개 미만이면(또는 lane이 catalog에 없으면) GPT 추천으로 fallback.
+    const catalogTracks = selectCatalogTracks({
+      laneId: gptResult.primary_lane_id,
+      seed: playlistId,
+      count: 10,
+    });
+
+    const trackSource: TrackSource = catalogTracks.length >= MIN_CATALOG_TRACKS ? "catalog" : "youtube_fallback";
+
+    const tracksForYoutubeSearch: GptPlaylistItem[] = trackSource === "catalog"
+      ? catalogTracks.map((track, idx) => ({
+        rank: idx + 1,
+        title: track.title,
+        artist: track.artist,
+        reason: `Catalog pick for the ${gptResult.primary_lane_id} lane`,
+      }))
+      : gptResult.playlist;
+
+    // ── 8. 분석 결과 저장(primary_lane_id, track_source 포함) + status → 'searching' ──────
+    // YouTube 검색(9번) 이전에 저장하므로, 이후 단계에서 실패해도 어떤 lane/source가 실패했는지 추적 가능
+    await updatePlaylistAnalysis(supabaseAdmin, playlistId, gptResult, trackSource);
 
     // ── 9. YouTube 트랙 검색 ──────────────────────────────────────────────
     const youtubeApiKey = Deno.env.get("YOUTUBE_API_KEY");
     if (!youtubeApiKey) throw new SafeError("음악 검색 서비스가 설정되지 않았습니다.");
 
     setStage("youtube_search_started");
-    const foundTracks = await searchYouTubeTracks(gptResult.playlist, youtubeApiKey);
+    const foundTracks = await searchYouTubeTracks(tracksForYoutubeSearch, youtubeApiKey);
     setStage("youtube_search_completed");
 
     if (foundTracks.length < MIN_TRACKS) {
       // GPT hallucination(존재하지 않는 곡)인지 YouTube 검색 쿼리 문제인지 진단하기 위한 로그.
       // title/artist만 남기고 API key, signed URL 등 민감 정보는 절대 포함하지 않음.
-      const candidateTitles = gptResult.playlist.map((track) => ({ title: track.title, artist: track.artist }));
+      const candidateTitles = tracksForYoutubeSearch.map((track) => ({ title: track.title, artist: track.artist }));
       const foundTitles = foundTracks.map((track) => ({ title: track.title, artist: track.artist }));
       console.error("[analyze-and-search] insufficient_youtube_matches", {
         totalCandidates: candidateTitles.length,
