@@ -7,6 +7,9 @@ export type CatalogSeedTrack = {
   laneId: string;
   title: string;
   artist: string;
+  // 미리 검증된 YouTube videoId를 위한 future field. 현재 runtime(analyze-and-search)은
+  // 이 값을 사용하지 않고 searchYouTubeTracks로 매번 검색한다. 아직 catalog에 채워지지 않았다.
+  youtubeVideoId?: string;
   energy: TrackEnergy;
   moodTags: string[];
   sceneTags: string[];
@@ -5558,6 +5561,7 @@ const MIN_LANE_TRACK_COUNT = 5;
 // fatal한 catalog 구조 문제(필수 필드 누락, 잘못된 energy 값) 외에는 throw하지 않는다.
 // lane track count 부족이나 duplicate title+artist는 console.warn으로만 알린다.
 // 같은 곡이 서로 다른 curation lane에 걸쳐 등장하는 것은 허용되므로, duplicate 검사는 lane 내부로 한정한다.
+// youtubeVideoId는 현재 MVP에서 optional future field일 뿐이므로 이 검증에서는 다루지 않는다.
 export function validateCatalog(): void {
   const laneCounts = new Map<string, number>();
   const seenTitleArtistByLane = new Map<string, Set<string>>();
