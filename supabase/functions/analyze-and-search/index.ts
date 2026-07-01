@@ -2,7 +2,7 @@ import "@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "@supabase/supabase-js";
 import { DbOperationError, SafeError } from "./errors.ts";
 import { analyzeImage, type GptPlaylistItem } from "./services/gpt.ts";
-import { searchYouTubeTracks } from "./services/youtube.ts";
+import { searchYouTubeTracks, type YoutubeTrack } from "./services/youtube.ts";
 import {
   ensureProfileExists,
   insertPendingPlaylist,
@@ -13,7 +13,28 @@ import {
   updatePlaylistStatus,
 } from "./services/db.ts";
 import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
-import { selectCatalogTracks } from "../_shared/musicCatalog.ts";
+import {
+  type CatalogSeedTrack,
+  selectCatalogTracks,
+  selectVerifiedCatalogTracks,
+} from "../_shared/musicCatalog.ts";
+
+// verified(youtubeVideoId 보유) catalog track을 YoutubeTrack DB insert 형식으로 변환.
+// hasYoutubeVideoId로 필터링된 track만 들어오므로 youtubeVideoId는 항상 non-empty string이다.
+function toVerifiedTrackRows(tracks: CatalogSeedTrack[], laneId: string): YoutubeTrack[] {
+  return tracks.map((track, idx) => {
+    const videoId = track.youtubeVideoId as string;
+    return {
+      rank: idx + 1,
+      title: track.title,
+      artist: track.artist,
+      reason: `Catalog pick for the ${laneId} lane`,
+      youtube_video_id: videoId,
+      youtube_video_url: `https://www.youtube.com/watch?v=${videoId}`,
+      thumbnail_url: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    };
+  });
+}
 
 const MIN_TRACKS = 5;
 const MIN_CATALOG_TRACKS = 5;
@@ -171,7 +192,31 @@ Deno.serve(async (req) => {
     const gptResult = await analyzeImage(signedUrlData.signedUrl);
     setStage("openai_analysis_completed");
 
-    // ── 7-1. seed catalog에서 lane 트랙 선택 — GPT는 lane만 고르고, backend가 곡을 고른다.
+    // ── 7-1. verified(youtubeVideoId 보유) catalog track 우선 확인 ──────────────
+    // 해당 lane에 수동으로 채워진 youtubeVideoId가 충분하면 YouTube search API를
+    // 호출하지 않고 바로 DB에 저장한다. 부족하면 7-2의 기존 흐름(YouTube search fallback)으로 진행한다.
+    const verifiedCatalogTracks = selectVerifiedCatalogTracks({
+      laneId: gptResult.primary_lane_id,
+      seed: playlistId,
+      count: 10,
+    });
+    setStage("catalog_verified_check_completed");
+
+    if (verifiedCatalogTracks.length >= MIN_CATALOG_TRACKS) {
+      await updatePlaylistAnalysis(supabaseAdmin, playlistId, gptResult, "catalog");
+
+      const rankedTracks = toVerifiedTrackRows(verifiedCatalogTracks, gptResult.primary_lane_id);
+
+      setStage("db_save_started");
+      await insertTracks(supabaseAdmin, playlistId, rankedTracks);
+      setStage("db_save_completed");
+
+      // status는 'searching' 유지 — Edge Function 2(create-youtube-playlist)가 creating/created 처리.
+      // verified path도 Edge Function 1의 책임 범위(searching까지)를 그대로 따른다.
+      return Response.json({ playlist_id: playlistId }, { status: 200, headers: CORS_HEADERS });
+    }
+
+    // ── 7-2. seed catalog에서 lane 트랙 선택 — GPT는 lane만 고르고, backend가 곡을 고른다.
     // catalog에 해당 lane 트랙이 5개 미만이면(또는 lane이 catalog에 없으면) GPT 추천으로 fallback.
     const catalogTracks = selectCatalogTracks({
       laneId: gptResult.primary_lane_id,
