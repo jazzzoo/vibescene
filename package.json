@@ -33,7 +33,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "debug:youtube-playlists": "node scripts/generate-youtube-debug.mjs",
+    "debug:youtube-metadata": "node scripts/verify-youtube-video-metadata.mjs"
   },
   "private": true
 }
