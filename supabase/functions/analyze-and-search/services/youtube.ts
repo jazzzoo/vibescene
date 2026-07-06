@@ -23,7 +23,9 @@ const PREFERRED_MAX_DURATION_SECONDS = 8 * 60;
 
 const VIEW_COUNT_BONUS_THRESHOLD = 10_000;
 
-// 폰 촬영/비공식 직캠 느낌이 강한 키워드 — "live" 자체는 막지 않되 이런 신호는 reject에 가깝게 처리
+// 폰 촬영/비공식 직캠 느낌이 강한 키워드 — "live" 자체는 막지 않되 이런 신호는 reject에 가깝게 처리.
+// 단일 영문 단어("phone" 등)는 matchesKeyword()에서 단어 경계로만 매칭되므로
+// "saxophone"/"headphone"처럼 단어 일부로 포함된 경우는 오매칭되지 않는다.
 const HARD_REJECT_KEYWORDS = ["fancam", "fan cam", "직캠", "phone"];
 
 // 원곡이 아닌 2차 콘텐츠(커버, 리액션, 튜토리얼, 노래방 등) — 강한 감점
@@ -76,6 +78,42 @@ type YoutubeVideoDetails = {
   liveBroadcastContent: string;
 };
 
+// 후보가 채택 가능한지(score) / 왜 reject됐는지(reason)를 함께 표현 — 진단 로그용
+type CandidateEvaluation =
+  | { accepted: true; score: number }
+  | { accepted: false; reason: string };
+
+// 진단 로그 한 줄에 들어갈 후보 1개 정보 — videoId는 남기지 않는다.
+type CandidateDiagnostic = {
+  videoTitle: string;
+  channelTitle: string;
+  durationSeconds: number | null;
+  score: number | null;
+  rejectReason: string | null;
+};
+
+// 영문 단일 단어 키워드는 단어 경계(\b)로 매칭해 "phone"이 "saxophone"/"headphone"의
+// 일부로 오매칭되는 걸 막는다. 공백 포함 구절이나 한글 키워드는 그대로 부분 문자열로 검사한다
+// (이미 충분히 구체적인 phrase라 substring으로도 오매칭 위험이 낮음).
+function matchesKeyword(haystack: string, keyword: string): boolean {
+  const isSingleAsciiWord = /^[a-z]+$/.test(keyword);
+  if (!isSingleAsciiWord) return haystack.includes(keyword);
+  return new RegExp(`\\b${keyword}\\b`).test(haystack);
+}
+
+// title/artist 비교용 정규화 — accent 제거 + 문장부호(아포스트로피, 물음표 등) 제거.
+// "You Hate Jazz?"와 "You Hate Jazz" / "Beyoncé"와 "Beyonce" 같은 표기 차이로
+// title match 보너스를 못 받는 경우를 줄인다. (이 정규화는 score 가산용이며, reject 여부에는 쓰지 않음)
+function normalizeForMatch(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "") // NFKD로 분리된 combining diacritical mark(accent) 제거
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 // ISO 8601 duration("PT3M27S" 등)을 초 단위로 변환. 형식이 맞지 않으면 null(파싱 실패) 반환
 function parseIso8601DurationSeconds(duration: string): number | null {
   const match = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(duration);
@@ -95,7 +133,11 @@ async function searchOnce(query: string, apiKey: string): Promise<YoutubeSearchC
     `${YOUTUBE_SEARCH_URL}?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=${SEARCH_MAX_RESULTS}&key=${apiKey}`;
 
   const response = await fetch(url);
-  if (!response.ok) return [];
+  if (!response.ok) {
+    // API key/quota 문제인지 구분하기 위한 최소 정보(상태 코드)만 남김. 응답 본문은 남기지 않음.
+    console.error("[youtube] search_list_failed", { status: response.status });
+    return [];
+  }
 
   const data = await response.json();
   const items: unknown[] = Array.isArray(data?.items) ? data.items : [];
@@ -140,7 +182,10 @@ async function fetchVideoDetails(
     `${YOUTUBE_VIDEOS_URL}?part=snippet,contentDetails,statistics&id=${videoIds.join(",")}&key=${apiKey}`;
 
   const response = await fetch(url);
-  if (!response.ok) return result;
+  if (!response.ok) {
+    console.error("[youtube] videos_list_failed", { status: response.status });
+    return result;
+  }
 
   const data = await response.json();
   const items: unknown[] = Array.isArray(data?.items) ? data.items : [];
@@ -169,39 +214,53 @@ async function fetchVideoDetails(
   return result;
 }
 
-// 후보 1개에 점수를 매긴다. null이면 reject(채택 불가)
-function scoreCandidate(
+// 후보 1개를 평가한다. accepted:false면 reject(채택 불가) — reason은 진단 로그용.
+function evaluateCandidate(
   detail: YoutubeVideoDetails,
   trackTitle: string,
   trackArtist: string,
-): number | null {
+): CandidateEvaluation {
   // 진행 중/예정 라이브 방송은 정상 음원이 아니므로 채택하지 않음 (공식 라이브 "영상"은 duration이 있으면 통과)
-  if (detail.liveBroadcastContent !== "none") return null;
-  if (detail.durationSeconds === null) return null;
-  if (detail.durationSeconds < MIN_DURATION_SECONDS) return null;
-  if (detail.durationSeconds > MAX_DURATION_SECONDS) return null;
+  if (detail.liveBroadcastContent !== "none") {
+    return { accepted: false, reason: `live_broadcast_${detail.liveBroadcastContent}` };
+  }
+  if (detail.durationSeconds === null) {
+    return { accepted: false, reason: "duration_unknown" };
+  }
+  if (detail.durationSeconds < MIN_DURATION_SECONDS) {
+    return { accepted: false, reason: `too_short_${detail.durationSeconds}s` };
+  }
+  if (detail.durationSeconds > MAX_DURATION_SECONDS) {
+    return { accepted: false, reason: `too_long_${detail.durationSeconds}s` };
+  }
 
   const lowerTitle = detail.title.toLowerCase();
   const lowerChannel = detail.channelTitle.toLowerCase();
-  const lowerTrackTitle = trackTitle.toLowerCase();
-  const lowerArtist = trackArtist.toLowerCase();
 
-  if (HARD_REJECT_KEYWORDS.some((kw) => lowerTitle.includes(kw) || lowerChannel.includes(kw))) {
-    return null;
+  const hardRejectKeyword = HARD_REJECT_KEYWORDS.find(
+    (kw) => matchesKeyword(lowerTitle, kw) || matchesKeyword(lowerChannel, kw),
+  );
+  if (hardRejectKeyword) {
+    return { accepted: false, reason: `hard_reject_keyword_${hardRejectKeyword}` };
   }
+
+  const normalizedTitle = normalizeForMatch(detail.title);
+  const normalizedChannel = normalizeForMatch(detail.channelTitle);
+  const normalizedTrackTitle = normalizeForMatch(trackTitle);
+  const normalizedArtist = normalizeForMatch(trackArtist);
 
   let score = 0;
 
-  if (BAD_KEYWORDS.some((kw) => lowerTitle.includes(kw) || lowerChannel.includes(kw))) {
+  if (BAD_KEYWORDS.some((kw) => matchesKeyword(lowerTitle, kw) || matchesKeyword(lowerChannel, kw))) {
     score -= 5;
   }
 
-  if (lowerTrackTitle && lowerTitle.includes(lowerTrackTitle)) score += 4;
-  if (lowerArtist && lowerTitle.includes(lowerArtist)) score += 3;
-  if (lowerArtist && lowerChannel.includes(lowerArtist)) score += 2;
+  if (normalizedTrackTitle && normalizedTitle.includes(normalizedTrackTitle)) score += 4;
+  if (normalizedArtist && normalizedTitle.includes(normalizedArtist)) score += 3;
+  if (normalizedArtist && normalizedChannel.includes(normalizedArtist)) score += 2;
 
-  if (OFFICIAL_CHANNEL_KEYWORDS.some((kw) => lowerChannel.includes(kw))) score += 3;
-  if (OFFICIAL_TITLE_KEYWORDS.some((kw) => lowerTitle.includes(kw))) score += 3;
+  if (OFFICIAL_CHANNEL_KEYWORDS.some((kw) => matchesKeyword(lowerChannel, kw))) score += 3;
+  if (OFFICIAL_TITLE_KEYWORDS.some((kw) => matchesKeyword(lowerTitle, kw))) score += 3;
 
   if (
     detail.durationSeconds >= PREFERRED_MIN_DURATION_SECONDS &&
@@ -212,7 +271,7 @@ function scoreCandidate(
 
   if (detail.viewCount >= VIEW_COUNT_BONUS_THRESHOLD) score += 1;
 
-  return score;
+  return { accepted: true, score };
 }
 
 // fallback query들을 순서대로 시도하며 후보를 모은다. 첫 성공에서 멈추지 않고
@@ -250,29 +309,79 @@ async function searchTrackWithFallback(
   apiKey: string,
 ): Promise<YoutubeSearchHit | null> {
   const candidates = await collectSearchCandidates(title, artist, apiKey);
-  if (candidates.length === 0) return null;
+  if (candidates.length === 0) {
+    // search.list 자체가 후보를 하나도 못 가져온 경우 — 위의 search_list_failed 로그와 함께 보면
+    // API 실패인지, 정말 검색 결과가 없는지 구분할 수 있다.
+    console.error("[youtube] no_acceptable_candidate", {
+      track: { title, artist },
+      candidateCount: 0,
+      candidates: [],
+    });
+    return null;
+  }
 
   let details: Map<string, YoutubeVideoDetails>;
   try {
     details = await fetchVideoDetails(candidates.map((c) => c.videoId), apiKey);
   } catch {
+    console.error("[youtube] no_acceptable_candidate", {
+      track: { title, artist },
+      candidateCount: candidates.length,
+      candidates: [],
+    });
     return null;
   }
 
   let best: { candidate: YoutubeSearchCandidate; score: number } | null = null;
+  const diagnostics: CandidateDiagnostic[] = [];
 
   for (const candidate of candidates) {
     const detail = details.get(candidate.videoId);
-    if (!detail) continue;
+    if (!detail) {
+      diagnostics.push({
+        videoTitle: candidate.title,
+        channelTitle: candidate.channelTitle,
+        durationSeconds: null,
+        score: null,
+        rejectReason: "video_details_missing",
+      });
+      continue;
+    }
 
-    const score = scoreCandidate(detail, title, artist);
-    if (score === null) continue;
-    if (!best || score > best.score) {
-      best = { candidate, score };
+    const evaluation = evaluateCandidate(detail, title, artist);
+    if (!evaluation.accepted) {
+      diagnostics.push({
+        videoTitle: detail.title,
+        channelTitle: detail.channelTitle,
+        durationSeconds: detail.durationSeconds,
+        score: null,
+        rejectReason: evaluation.reason,
+      });
+      continue;
+    }
+
+    diagnostics.push({
+      videoTitle: detail.title,
+      channelTitle: detail.channelTitle,
+      durationSeconds: detail.durationSeconds,
+      score: evaluation.score,
+      rejectReason: null,
+    });
+
+    if (!best || evaluation.score > best.score) {
+      best = { candidate, score: evaluation.score };
     }
   }
 
-  if (!best) return null;
+  if (!best) {
+    // 좋은 후보가 하나도 채택되지 못한 경우에만 후보별 reject 원인을 남긴다 (성공 케이스는 로그하지 않음).
+    console.error("[youtube] no_acceptable_candidate", {
+      track: { title, artist },
+      candidateCount: candidates.length,
+      candidates: diagnostics,
+    });
+    return null;
+  }
 
   return { videoId: best.candidate.videoId, thumbnailUrl: best.candidate.thumbnailUrl };
 }

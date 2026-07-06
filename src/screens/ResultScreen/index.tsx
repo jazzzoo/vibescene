@@ -143,11 +143,12 @@ export default function ResultScreen() {
         </View>
 
         {/* 트랙 목록 */}
-        <TrackList tracks={result.tracks} />
+        <TrackList tracks={result.tracks} playlistId={playlistId} />
 
         {/* 액션 버튼 */}
         <ActionButtons
           tracks={result.tracks}
+          playlistId={playlistId}
           onSaveToYouTube={handleSaveToYouTube}
           youtubeLoading={youtubeLoading}
           onShare={() => setShareModalVisible(true)}

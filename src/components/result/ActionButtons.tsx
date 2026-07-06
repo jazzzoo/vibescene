@@ -1,10 +1,12 @@
 import { Linking, StyleSheet, View } from 'react-native';
 import { SPACING } from '../../constants/spacing';
+import { logEvent } from '../../services/analytics';
 import Button from '../common/Button';
 import type { Track } from '../../types/playlist';
 
 interface ActionButtonsProps {
   tracks: Track[];
+  playlistId?: string;
   onSaveToYouTube: () => void;
   youtubeLoading?: boolean;
   onShare: () => void;
@@ -23,11 +25,15 @@ function buildPlayOnYoutubeUrl(tracks: Track[]): string | null {
   return `https://www.youtube.com/watch_videos?video_ids=${videoIds.join(',')}`;
 }
 
-export default function ActionButtons({ tracks, onSaveToYouTube, youtubeLoading, onShare }: ActionButtonsProps) {
+export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, youtubeLoading, onShare }: ActionButtonsProps) {
   const playOnYoutubeUrl = buildPlayOnYoutubeUrl(tracks);
 
   function handlePlayOnYoutube() {
     if (!playOnYoutubeUrl) return;
+    void logEvent('playlist_link_opened', {
+      playlist_id: playlistId,
+      track_count: tracks.length,
+    });
     Linking.openURL(playOnYoutubeUrl).catch(() => {});
   }
 

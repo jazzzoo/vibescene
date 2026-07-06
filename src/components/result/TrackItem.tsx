@@ -1,18 +1,27 @@
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
+import { logEvent } from '../../services/analytics';
 import type { Track } from '../../types/playlist';
 
 interface TrackItemProps {
   track: Track;
   isLast?: boolean;
+  playlistId?: string;
 }
 
-export default function TrackItem({ track, isLast = false }: TrackItemProps) {
+export default function TrackItem({ track, isLast = false, playlistId }: TrackItemProps) {
   const canOpenOnYoutube = Boolean(track.youtubeVideoId);
 
   function handlePress() {
     if (!track.youtubeVideoId) return;
+    void logEvent('track_link_opened', {
+      playlist_id: playlistId,
+      video_id: track.youtubeVideoId,
+      rank: track.rank,
+      title: track.title,
+      artist: track.artist,
+    });
     Linking.openURL(`https://www.youtube.com/watch?v=${track.youtubeVideoId}`).catch(() => {});
   }
 

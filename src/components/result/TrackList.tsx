@@ -6,16 +6,22 @@ import TrackItem from './TrackItem';
 
 interface TrackListProps {
   tracks: Track[];
+  playlistId?: string;
 }
 
-export default function TrackList({ tracks }: TrackListProps) {
+export default function TrackList({ tracks, playlistId }: TrackListProps) {
   if (tracks.length === 0) return null;
 
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Tracks</Text>
       {tracks.map((track, index) => (
-        <TrackItem key={track.rank} track={track} isLast={index === tracks.length - 1} />
+        <TrackItem
+          key={track.rank}
+          track={track}
+          isLast={index === tracks.length - 1}
+          playlistId={playlistId}
+        />
       ))}
     </View>
   );

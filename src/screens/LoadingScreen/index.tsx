@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ErrorView from '../../components/common/ErrorView';
 import LoadingView from '../../components/common/LoadingView';
 import { RootParamList } from '../../navigation/MainNavigator';
+import { logEvent } from '../../services/analytics';
 import { SafeError } from '../../services/errors';
 import { analyzeAndSearchPlaylist } from '../../services/playlist';
 import { uploadUserImage } from '../../services/storage';
@@ -46,12 +47,14 @@ export default function LoadingScreen() {
     try {
       // 1단계: Storage 업로드
       const storagePath = await uploadUserImage(localImageUri);
+      void logEvent('image_uploaded');
 
       if (!isMounted.current) return;
 
       // 2단계: Edge Function 1 호출 (이미지 분석 + YouTube 검색)
       setStep('analyzing');
       const { playlistId } = await analyzeAndSearchPlaylist(storagePath);
+      void logEvent('analysis_completed', { playlist_id: playlistId });
 
       if (!isMounted.current) return;
 

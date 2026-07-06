@@ -3,6 +3,7 @@ import { Session } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { supabase } from '../lib/supabaseClient';
+import { logEvent } from '../services/analytics';
 import MainNavigator from './MainNavigator';
 
 export default function RootNavigator() {
@@ -16,6 +17,7 @@ export default function RootNavigator() {
       if (session) {
         setSession(session);
         setLoading(false);
+        void logEvent('app_opened');
         return;
       }
 
@@ -25,6 +27,7 @@ export default function RootNavigator() {
           setError('Sign-in failed. Please try again.');
         } else {
           setSession(data.session);
+          void logEvent('app_opened');
         }
         setLoading(false);
       });
