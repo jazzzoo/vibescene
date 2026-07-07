@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ActionButtons from '../../components/result/ActionButtons';
-import ShareCardModal from '../../components/share/ShareCardModal';
 import GradientOverlay from '../../components/result/GradientOverlay';
 import PlaylistConcept from '../../components/result/PlaylistConcept';
 import PlaylistSubtitle from '../../components/result/PlaylistSubtitle';
@@ -37,7 +36,6 @@ export default function ResultScreen() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [actionHint, setActionHint] = useState<string | null>(null);
   const [youtubeLoading, setYoutubeLoading] = useState(false);
-  const [shareModalVisible, setShareModalVisible] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -110,12 +108,6 @@ export default function ResultScreen() {
   }
 
   return (
-    <>
-    <ShareCardModal
-      visible={shareModalVisible}
-      onClose={() => setShareModalVisible(false)}
-      result={result}
-    />
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView
         style={styles.scrollView}
@@ -163,7 +155,6 @@ export default function ResultScreen() {
 
       <BottomNavigation />
     </SafeAreaView>
-    </>
   );
 }
 
