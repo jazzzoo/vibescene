@@ -67,11 +67,11 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
       )}
 
       <Button
-        title="Share"
+        title="Save image"
         onPress={onShare}
         variant="secondary"
         fullWidth
-        accessibilityLabel="Share playlist"
+        accessibilityLabel="Save playlist image"
       />
     </View>
   );
