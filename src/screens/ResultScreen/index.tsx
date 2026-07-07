@@ -150,7 +150,6 @@ export default function ResultScreen() {
           playlistId={playlistId}
           onSaveToYouTube={handleSaveToYouTube}
           youtubeLoading={youtubeLoading}
-          onShare={() => setShareModalVisible(true)}
         />
 
         {actionHint !== null && (

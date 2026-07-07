@@ -229,6 +229,39 @@ export async function getPlaylistHistory(): Promise<PlaylistHistoryItem[]> {
   return items;
 }
 
+export type CreateShareLinkResult = {
+  shareId: string;
+  sharePath: string;
+  shareUrl: string | null;
+};
+
+/**
+ * create-share-link Edge Function을 호출해 플레이리스트 공개 공유 링크를 생성한다.
+ * 이미 공유된 플레이리스트이면 기존 shareId를 그대로 반환 (idempotent).
+ * supabase.functions.invoke가 현재 세션 토큰을 Authorization 헤더에 자동 포함한다.
+ */
+export async function createShareLink(playlistId: string): Promise<CreateShareLinkResult> {
+  const { data, error } = await supabase.functions.invoke('create-share-link', {
+    body: { playlistId },
+  });
+
+  if (error) {
+    throw new SafeError("Couldn't create a share link. Please try again.");
+  }
+
+  const result = data as { success: boolean; shareId?: string; sharePath?: string; shareUrl?: string | null } | null;
+
+  if (!result?.success || !result.shareId) {
+    throw new SafeError("Couldn't create a share link. Please try again.");
+  }
+
+  return {
+    shareId: result.shareId,
+    sharePath: result.sharePath ?? `/p/${result.shareId}`,
+    shareUrl: result.shareUrl ?? null,
+  };
+}
+
 /**
  * 공유 링크의 shareId로 get-shared-playlist Edge Function을 호출한다.
  * 인증 불필요 — 공개 엔드포인트. anon key만 전송됨.

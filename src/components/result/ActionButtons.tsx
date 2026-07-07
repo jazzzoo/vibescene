@@ -1,6 +1,10 @@
-import { Linking, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Linking, Platform, StyleSheet, Text, View } from 'react-native';
+import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
 import { logEvent } from '../../services/analytics';
+import { SafeError } from '../../services/errors';
+import { createShareLink } from '../../services/playlist';
 import Button from '../common/Button';
 import type { Track } from '../../types/playlist';
 
@@ -9,7 +13,6 @@ interface ActionButtonsProps {
   playlistId?: string;
   onSaveToYouTube: () => void;
   youtubeLoading?: boolean;
-  onShare: () => void;
 }
 
 // MVP 단계에서는 Google OAuth / YouTube 계정 저장 흐름을 숨긴다.
@@ -25,7 +28,20 @@ function buildPlayOnYoutubeUrl(tracks: Track[]): string | null {
   return `https://www.youtube.com/watch_videos?video_ids=${videoIds.join(',')}`;
 }
 
-export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, youtubeLoading, onShare }: ActionButtonsProps) {
+// sharePath(/p/:shareId)로 최종 공유 URL을 만든다.
+// 백엔드가 shareUrl을 반환하면 우선 사용, 없으면 현재 origin + sharePath로 빌드.
+function buildFinalShareUrl(shareId: string, sharePath: string, shareUrl: string | null): string {
+  if (shareUrl) return shareUrl;
+  if (typeof window !== 'undefined') {
+    return window.location.origin + sharePath;
+  }
+  return sharePath;
+}
+
+export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, youtubeLoading }: ActionButtonsProps) {
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
+
   const playOnYoutubeUrl = buildPlayOnYoutubeUrl(tracks);
 
   function handlePlayOnYoutube() {
@@ -35,6 +51,52 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
       track_count: tracks.length,
     });
     Linking.openURL(playOnYoutubeUrl).catch(() => {});
+  }
+
+  async function handleSharePlaylist() {
+    if (!playlistId || shareLoading) return;
+    setShareLoading(true);
+    setShareMessage(null);
+
+    try {
+      const { shareId, sharePath, shareUrl: rawShareUrl } = await createShareLink(playlistId);
+      const finalUrl = buildFinalShareUrl(shareId, sharePath, rawShareUrl);
+
+      // Web Share API — 가능하면 OS 네이티브 공유 시트 사용
+      if (Platform.OS === 'web') {
+        const nav = navigator as Navigator & { share?: (data: ShareData) => Promise<void> };
+        if (nav.share) {
+          try {
+            await nav.share({
+              title: 'VibeScene playlist',
+              text: 'I made this playlist from a photo on VibeScene.',
+              url: finalUrl,
+            });
+            // 공유 성공 — OS 공유 시트가 피드백을 제공하므로 별도 메시지 불필요
+            return;
+          } catch (err) {
+            // 사용자가 공유 시트를 취소한 경우 — 에러가 아님
+            if (err instanceof Error && err.name === 'AbortError') return;
+            // 그 외 공유 실패 → clipboard fallback으로 이동
+          }
+        }
+      }
+
+      // Clipboard fallback
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(finalUrl);
+        setShareMessage('Playlist link copied.');
+        return;
+      }
+
+      setShareMessage("Couldn't share the playlist. Please try again.");
+    } catch (err) {
+      const message =
+        err instanceof SafeError ? err.message : "Couldn't share the playlist. Please try again.";
+      setShareMessage(message);
+    } finally {
+      setShareLoading(false);
+    }
   }
 
   return (
@@ -68,11 +130,19 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
 
       <Button
         title="Share playlist"
-        onPress={onShare}
+        onPress={handleSharePlaylist}
         variant="secondary"
         fullWidth
+        loading={shareLoading}
+        disabled={shareLoading || !playlistId}
         accessibilityLabel="Share playlist"
       />
+
+      {shareMessage !== null && (
+        <Text style={styles.shareMessage} accessibilityLiveRegion="polite">
+          {shareMessage}
+        </Text>
+      )}
     </View>
   );
 }
@@ -84,5 +154,11 @@ const styles = StyleSheet.create({
   },
   gap: {
     height: SPACING.BASE,
+  },
+  shareMessage: {
+    color: COLORS.TEXT_SECONDARY,
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: SPACING.BASE,
   },
 });
