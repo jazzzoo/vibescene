@@ -75,7 +75,7 @@ export default function ShareCardModal({ visible, onClose, result }: ShareCardMo
         // 1순위 (iOS web): 앵커 다운로드는 Safari에서 신뢰할 수 없고, Web Share API는 공유 시트를 먼저
         // 띄워 저장이 아닌 공유처럼 느껴지므로 지양한다. 새 탭으로 열어 길게 눌러 저장하도록 안내한다.
         window.open(objectUrl, '_blank');
-        setSaveMessage('Image opened — long-press to save to Photos.');
+        setSaveMessage('Image opened — long-press to save.');
         return;
       }
 
@@ -188,7 +188,7 @@ export default function ShareCardModal({ visible, onClose, result }: ShareCardMo
             </View>
             <View style={styles.actionItem}>
               <Button
-                title="Save image"
+                title="Share image"
                 onPress={handleSaveImage}
                 variant="primary"
                 fullWidth
