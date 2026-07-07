@@ -197,6 +197,44 @@ BAD examples — full sentences (never produce this style):
 
 ---
 
+## STEP 5.6: PLAYLIST SUBTITLE (CURATION COPY, NOT AN EXPLANATION)
+
+Generate "playlist_subtitle" as one short English line that reads like editorial playlist curation copy — the kind of line you'd see under an album title or a Spotify playlist description.
+
+Rules:
+- One short English line.
+- 7-16 words recommended.
+- Natural sentence case.
+- No final period unless it feels absolutely natural.
+- Must sound premium, emotional, and playlist-like.
+- Should connect the image mood with the selected lane's sonic world.
+- Can mention a genre or sonic world only if it sounds natural.
+- It should feel like a line under an album title, Spotify playlist description, or editorial music curation copy.
+- It is NOT an explanation of the AI decision.
+- Do NOT mention AI, analysis, image detection, mood tags, or lane selection.
+- Do NOT write "This playlist was selected because..."
+- Do NOT write "The AI chose..."
+- Do NOT write "Matched for..."
+- Avoid mechanical mood + place + genre stacking.
+- Avoid generic wording.
+
+Good examples:
+- "Warm city-pop for bright afternoons and soft city memories"
+- "Slow indie for rain-lit rooms and quiet evening thoughts"
+- "Neon R&B for midnight windows and low city lights"
+- "Fuzzy dream-pop for foggy streets and half-remembered feelings"
+- "Dusty soul for old-film light and slow romantic moments"
+- "Fast guitars for highway light and restless summer energy"
+
+Bad examples:
+- "This playlist was selected because the image looks romantic"
+- "The AI chose this lane based on your photo"
+- "Matched for romantic joyful peaceful city pop"
+- "A playlist for nostalgic and peaceful spring moments"
+- "Romantic City Pop Mood"
+
+---
+
 ## STEP 6: OUTPUT FORMAT
 Return ONLY valid JSON. No explanation, no markdown, no extra text.
 
@@ -227,6 +265,7 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
     }
   ],
   "playlist_concept": "Natural evocative playlist title, 2-5 words (6 words max), e.g. 'Platform Daydreams' — NEVER mood+place+genre word-stacking, NEVER a sentence",
+  "playlist_subtitle": "Short premium playlist subtitle, 7-16 words, e.g. 'Warm city-pop for bright afternoons and soft city memories' — NEVER an AI explanation, NEVER a mood-tag list",
   "primary_lane_id": "the exact lane_id you selected in STEP 4 — must match one of the lane_id values in the catalogue exactly"
 }
 
@@ -274,6 +313,7 @@ export type GptResponse = {
   };
   playlist: GptPlaylistItem[];
   playlist_concept: string;
+  playlist_subtitle: string;
   primary_lane_id: string;
 };
 
@@ -347,6 +387,11 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
   } catch {
     throw new SafeError("이미지 분석 결과를 처리하지 못했습니다.");
   }
+
+  // playlist_subtitle은 부가 정보이므로 누락/형식 오류로 전체 분석을 실패시키지 않고 빈 문자열로 정규화
+  parsed.playlist_subtitle = typeof parsed.playlist_subtitle === "string"
+    ? parsed.playlist_subtitle.trim()
+    : "";
 
   // primary_lane_id가 없거나 CURATION_LANES에 없는 값이면 lane usage tracking이 깨지므로
   // fallback default 없이 SafeError로 명확히 실패시킨다 (요구사항: GPT가 반드시 유효한 id를 내도록 강제).

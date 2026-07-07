@@ -11,7 +11,7 @@ export default function PlaylistConcept({ text }: PlaylistConceptProps) {
     <Text
       style={styles.text}
       accessibilityRole="header"
-      numberOfLines={4}
+      numberOfLines={2}
       ellipsizeMode="tail"
     >
       {text}
@@ -22,9 +22,13 @@ export default function PlaylistConcept({ text }: PlaylistConceptProps) {
 const styles = StyleSheet.create({
   text: {
     color: COLORS.TEXT_PRIMARY,
-    fontSize: 19,
-    fontWeight: '700',
-    lineHeight: 25,
-    marginBottom: SPACING.BASE,
+    fontSize: 30,
+    fontWeight: '800',
+    lineHeight: 34,
+    marginBottom: SPACING.BASE * 0.75,
+    // 이미지 위에 얹히는 텍스트라 밝은 배경에서도 가독성을 확보하기 위한 그림자
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
   },
 });

@@ -6,8 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ActionButtons from '../../components/result/ActionButtons';
 import ShareCardModal from '../../components/share/ShareCardModal';
 import GradientOverlay from '../../components/result/GradientOverlay';
-import MoodTags from '../../components/result/MoodTags';
 import PlaylistConcept from '../../components/result/PlaylistConcept';
+import PlaylistSubtitle from '../../components/result/PlaylistSubtitle';
 import TrackList from '../../components/result/TrackList';
 import BottomNavigation from '../../components/common/BottomNavigation';
 import ErrorView from '../../components/common/ErrorView';
@@ -23,8 +23,9 @@ import type { PlaylistResult } from '../../types/playlist';
 type ResultScreenNavigationProp = NativeStackNavigationProp<RootParamList, 'Result'>;
 type ResultScreenRouteProp = RouteProp<RootParamList, 'Result'>;
 
-// 첫 화면에서 트랙이 4~5개 보이도록 hero 높이를 모바일 프레임(maxWidth 430) 기준으로 축소
-const HERO_HEIGHT = 220;
+// 앨범/플레이리스트 상세 화면처럼 몰입감 있는 hero를 위해 높이를 확보하되,
+// 트랙 리스트가 첫 화면에서 너무 아래로 밀리지 않도록 모바일 프레임(maxWidth 430) 기준으로 절제된 값 사용
+const HERO_HEIGHT = 340;
 
 export default function ResultScreen() {
   const navigation = useNavigation<ResultScreenNavigationProp>();
@@ -121,7 +122,7 @@ export default function ResultScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* 히어로 영역: 이미지 + 오버레이 + 컨셉 + 무드 태그 */}
+        {/* 히어로 영역: 이미지 + 하단 블랙 그라디언트 + 타이틀/서브타이틀 */}
         <View style={styles.hero}>
           {result.imageUri ? (
             <Image
@@ -135,10 +136,8 @@ export default function ResultScreen() {
           )}
           <GradientOverlay />
           <View style={styles.heroContent}>
-            {result.analysis.moodKeywords && result.analysis.moodKeywords.length > 0 && (
-              <MoodTags tags={result.analysis.moodKeywords} />
-            )}
             <PlaylistConcept text={result.playlistConcept} />
+            <PlaylistSubtitle text={result.analysis.playlistSubtitle} />
           </View>
         </View>
 

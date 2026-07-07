@@ -98,11 +98,13 @@ export async function updatePlaylistAnalysis(
   const src = gpt.analysis as Record<string, unknown>;
 
   // analysis JSONB: imageType + 이미지 분석 결과 + tempo/valence/confidence
+  // playlistSubtitle은 컬럼 추가(마이그레이션) 없이 기존 JSONB 안에 함께 저장한다.
   const analysis: Record<string, unknown> = {
     imageType: gpt.image_type,
     confidence: gpt.confidence,
     tempo: gpt.music_profile.tempo,
     valence: gpt.music_profile.valence,
+    playlistSubtitle: gpt.playlist_subtitle,
   };
 
   if (gpt.image_type === "SCENE" || gpt.image_type === "MIXED") {

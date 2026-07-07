@@ -22,6 +22,8 @@ export type Analysis = {
   confidence: number;
   tempo: string;
   valence: string;
+  // 앨범/플레이리스트 스타일 부제 — 구버전 데이터에는 없을 수 있어 optional
+  playlistSubtitle?: string;
   // SCENE/MIXED 분석 필드
   location?: string;
   timeOfDay?: string;
