@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
@@ -25,7 +26,12 @@ interface ShareCardPreviewProps {
   containerWidth: number;
 }
 
-export default function ShareCardPreview({ ratio, result, containerWidth }: ShareCardPreviewProps) {
+// 이미지 저장(html-to-image)이 미리보기 DOM 노드를 캡처할 수 있도록 ref를 그대로 전달한다.
+// web에서 RN View는 실제 DOM 노드로 forward되므로, 이 ref는 ShareCardModal에서 캡처 대상으로 사용된다.
+const ShareCardPreview = forwardRef<View, ShareCardPreviewProps>(function ShareCardPreview(
+  { ratio, result, containerWidth },
+  ref,
+) {
   const aspect = ASPECT_RATIO[ratio];
   const widthForHeightCap = MAX_PREVIEW_HEIGHT * aspect;
   const width = Math.min(containerWidth, widthForHeightCap);
@@ -33,7 +39,7 @@ export default function ShareCardPreview({ ratio, result, containerWidth }: Shar
   const tracks = result.tracks.slice(0, MAX_TRACKS);
 
   return (
-    <View style={[styles.card, { width, height }]}>
+    <View ref={ref} style={[styles.card, { width, height }]}>
       {/* 배경 이미지 */}
       {result.imageUri ? (
         <Image
@@ -78,7 +84,9 @@ export default function ShareCardPreview({ ratio, result, containerWidth }: Shar
       </View>
     </View>
   );
-}
+});
+
+export default ShareCardPreview;
 
 const styles = StyleSheet.create({
   card: {

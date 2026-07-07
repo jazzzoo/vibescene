@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { toBlob } from 'html-to-image';
+import { useEffect, useRef, useState } from 'react';
 import { Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../common/Button';
@@ -8,6 +9,9 @@ import type { PlaylistResult } from '../../types/playlist';
 import RatioSelector from './RatioSelector';
 import ShareCardPreview from './ShareCardPreview';
 import type { CardRatio } from './ShareCardPreview';
+
+const SAVE_FILENAME = 'vibescene-playlist.png';
+const GENERIC_SAVE_ERROR = "Couldn't save the image. Please try again.";
 
 // RN Web에서 Modal은 WebAppFrame 트리 밖, document.body에 렌더링되어
 // 앱의 430px 프레임 제한을 그대로 물려받지 못한다 — 여기서 동일한 값으로 다시 제한한다.
@@ -23,18 +27,88 @@ interface ShareCardModalProps {
 export default function ShareCardModal({ visible, onClose, result }: ShareCardModalProps) {
   const [ratio, setRatio] = useState<CardRatio>('story');
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   // 패널 안에서 실제로 가용한 너비를 측정해 ShareCardPreview에 전달 (window 폭에 의존하지 않음)
   const [previewContainerWidth, setPreviewContainerWidth] = useState(0);
   const insets = useSafeAreaInsets();
+  const cardRef = useRef<View>(null);
 
   // 모달이 닫히면 다음에 열었을 때 안내 메시지가 남아있지 않도록 초기화
   useEffect(() => {
     if (!visible) setSaveMessage(null);
   }, [visible]);
 
-  function handleSaveImage() {
-    // 실제 이미지 캡처/저장은 추후 구현 예정 — 지금은 안내 메시지만 표시
-    setSaveMessage('Image saving will be connected later.');
+  async function handleSaveImage() {
+    if (saving) return;
+    setSaveMessage(null);
+
+    // 캡처는 web(DOM) 전용 — native는 아직 미지원이라 조용히 안내만 표시
+    if (!isWeb) {
+      setSaveMessage('Saving images is currently available on the web app.');
+      return;
+    }
+
+    // web에서 RN View의 ref는 실제 DOM 노드를 가리킨다 (react-native-web) — 카드 프리뷰만 캡처 대상으로 사용
+    const node = cardRef.current as unknown as HTMLElement | null;
+    if (!node) {
+      setSaveMessage(GENERIC_SAVE_ERROR);
+      return;
+    }
+
+    setSaving(true);
+    let objectUrl: string | null = null;
+    try {
+      // 카드 자체는 반투명 배경(overlay 위 이미지)이라, 캡처 시 backgroundColor로 불투명 블랙을 강제한다.
+      const blob = await toBlob(node, {
+        backgroundColor: '#000000',
+        pixelRatio: 2,
+      });
+      if (!blob) throw new Error('empty_blob');
+
+      const file = new File([blob], SAVE_FILENAME, { type: 'image/png' });
+      const nav = navigator as Navigator & {
+        canShare?: (data?: ShareData) => boolean;
+        share?: (data: ShareData) => Promise<void>;
+      };
+
+      // 1순위: Web Share API로 파일 공유 — iOS/Android 모두 "사진에 저장"으로 이어지는 가장 자연스러운 경로
+      if (nav.share && nav.canShare?.({ files: [file] })) {
+        await nav.share({ files: [file] });
+        setSaveMessage('Image ready to save.');
+        return;
+      }
+
+      objectUrl = URL.createObjectURL(blob);
+      const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
+
+      if (!isIOS) {
+        // 2순위: 일반 브라우저는 앵커 다운로드가 안정적으로 동작
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = SAVE_FILENAME;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setSaveMessage('Image saved!');
+      } else {
+        // 3순위: iOS Safari는 앵커 다운로드를 신뢰할 수 없어 새 탭으로 열어 길게 눌러 저장하도록 안내
+        window.open(objectUrl, '_blank');
+        setSaveMessage('Image opened in a new tab — long-press it to save.');
+      }
+    } catch (err) {
+      // 사용자가 공유 시트를 취소한 경우는 실패가 아니므로 에러 메시지를 띄우지 않음
+      const isUserCancel = err instanceof Error && err.name === 'AbortError';
+      if (!isUserCancel) {
+        console.error('[ShareCardModal] save_image_failed', err);
+        setSaveMessage(GENERIC_SAVE_ERROR);
+      }
+    } finally {
+      if (objectUrl) {
+        const urlToRevoke = objectUrl;
+        setTimeout(() => URL.revokeObjectURL(urlToRevoke), 30000);
+      }
+      setSaving(false);
+    }
   }
 
   return (
@@ -76,6 +150,7 @@ export default function ShareCardModal({ visible, onClose, result }: ShareCardMo
           >
             {previewContainerWidth > 0 && (
               <ShareCardPreview
+                ref={cardRef}
                 ratio={ratio}
                 result={result}
                 containerWidth={previewContainerWidth}
@@ -99,6 +174,8 @@ export default function ShareCardModal({ visible, onClose, result }: ShareCardMo
                 onPress={handleSaveImage}
                 variant="primary"
                 fullWidth
+                loading={saving}
+                disabled={saving}
               />
             </View>
           </View>
