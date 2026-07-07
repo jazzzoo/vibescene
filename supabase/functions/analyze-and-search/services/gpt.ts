@@ -125,6 +125,12 @@ Different genre worlds do not mix well. A nu-jazz/jazz-hop track and a J-rock tr
 - Diversity should happen inside the selected lane (different artists, different shades of the same world), never across unrelated lanes.
 - After selecting the lane, output its exact lane_id (shown in parentheses next to each lane name above) as "primary_lane_id" in STEP 6's JSON response. Copy it exactly as written — never invent a new id, never modify it, never leave it empty.
 
+**Energy/mood mismatch guard (do not let location override mood):**
+- Do not choose a high-energy rock lane just because the photo is in Japan or contains a landmark like Tokyo Tower. Location and cultural context can flavor the choice, but mood, energy, time of day, and overall scene feeling from STEP 2/STEP 3 must dominate the decision.
+- A sunny, romantic, peaceful, leisurely park/couple/travel image should usually lean toward softer or warmer lanes — for example city-pop, retro glow, cozy mellow, or romance-pop style lanes — not a driving rock lane.
+- High-energy lanes like J-Rock Highway Rush require actual strong signals in the image: motion, driving, speed, street rush, intense youthful energy, concert/live-band cues, guitar-driven visual cues, or night city adrenaline. A landmark alone is never a rock signal.
+- If the image feels peaceful, romantic, sunny, and leisurely, avoid aggressive or high-energy rock lanes even if the setting is Japanese or near a famous landmark.
+
 **Lane catalogue:**
 
 ${CURATION_LANES_PROMPT}
@@ -170,8 +176,13 @@ Rules:
 - NO full sentences. NO explanatory or descriptive phrasing.
 - BANNED openings/patterns: "A journey through...", "A playlist for...", "Capturing...", "This playlist...", "An exploration of...".
 - BANNED structure: do NOT mechanically stack "{Mood adjective} + {Place/Object noun} + {Genre}" (e.g. "Nostalgic Station Indie", "Peaceful Spring Pop", "Romantic Train Indie"). These read like three tags glued together, not a real title — avoid this even if it technically fits the word-count rule.
-- Instead, let a place, object, light, time of day, or feeling combine into a phrase someone would actually title a playlist with. Genre is OPTIONAL — only include it if it sounds natural, not as a default third word.
-- Read it back to yourself: if it sounds like a list of three tags, rewrite it.
+- BANNED structure: do NOT stack "{Landmark/Place} + {Genre} + Vibes" (e.g. "Tower Park Rock Vibes", "Tokyo Park Rock Vibes", "City Pop Vibes"). Never end a title with the word "Vibes".
+- BANNED structure: do NOT stack "{Mood/Place} + {Genre}" as a two-word tag pair (e.g. "Romantic Park Pop", "Sunny Park Rock").
+- Avoid generic title words like "Vibes", "Mood", "Playlist", "Mix" unless the complete title genuinely sounds like a natural, premium playlist name with that word in it — these words are almost always a sign the title is tag-glued, not written.
+- Do not force the selected lane's genre into the title. Genre is OPTIONAL — only include it if it sounds natural, not as a default word slotted in to prove the lane was chosen.
+- Do not use a landmark name literally (e.g. "Tower", "Tokyo Tower") unless the resulting phrase reads like something a person would genuinely title a playlist — not just the landmark name plus a mood/genre word appended.
+- Instead, let a place, object, light, time of day, or feeling combine into a phrase someone would actually title a playlist with. The title should feel like a real album, mixtape, or curated playlist title — not a label describing the image.
+- Read it back to yourself: if it sounds like tags glued together, rewrite it.
 - Always written in English, regardless of the image's cultural context or language, in natural title case.
 
 GOOD examples (match this style):
@@ -185,11 +196,23 @@ GOOD examples (match this style):
 - "Rainy Seoul Afterglow"
 - "Midnight Walk Songs"
 - "Café Window Jazz"
+- "Sunlit City Groove"
+- "Tower in the Sun"
+- "Golden Park Radio"
+- "Afternoon Afterglow"
+- "Soft City Sunday"
+- "Parkside Daydreams"
+- "Tokyo Sun Rewind"
 
 BAD examples — mechanical mood+place+genre stacking (never produce this style):
 - "Nostalgic Station Indie"
 - "Peaceful Spring Pop"
 - "Romantic Train Indie"
+- "Tower Park Rock Vibes"
+- "Tokyo Park Rock Vibes"
+- "City Pop Vibes"
+- "Romantic Park Pop"
+- "Sunny Park Rock"
 
 BAD examples — full sentences (never produce this style):
 - "A journey through nostalgic and romantic indie pop melodies, capturing the peaceful essence of an indoor afternoon station in spring."
@@ -320,6 +343,9 @@ export type GptResponse = {
 // CURATION_LANES에 정의된 lane id만 허용 — GPT가 존재하지 않는 lane id를 만들어내는 것을 방지
 const VALID_LANE_IDS = new Set(CURATION_LANES.map((lane) => lane.id));
 
+// playlist_subtitle이 없거나 너무 짧을 때 사용하는 기본 문구 — AI/분석/lane 언급 없이 프리미엄한 톤 유지
+const FALLBACK_PLAYLIST_SUBTITLE = "Breezy songs for quiet moments and cinematic city light";
+
 export async function analyzeImage(signedImageUrl: string): Promise<GptResponse> {
   const apiKey = Deno.env.get("OPENAI_API_KEY");
   if (!apiKey) throw new SafeError("이미지 분석 서비스가 설정되지 않았습니다.");
@@ -388,10 +414,10 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
     throw new SafeError("이미지 분석 결과를 처리하지 못했습니다.");
   }
 
-  // playlist_subtitle은 부가 정보이므로 누락/형식 오류로 전체 분석을 실패시키지 않고 빈 문자열로 정규화
-  parsed.playlist_subtitle = typeof parsed.playlist_subtitle === "string"
-    ? parsed.playlist_subtitle.trim()
-    : "";
+  // playlist_subtitle이 누락되었거나(구버전 응답 등) 형식이 이상해도 전체 분석을 실패시키지 않고
+  // 프리미엄한 기본 문구로 대체 — 빈 문자열로 두면 ResultScreen에서 조용히 사라져 버리므로 항상 값이 있도록 보장한다.
+  const rawSubtitle = typeof parsed.playlist_subtitle === "string" ? parsed.playlist_subtitle.trim() : "";
+  parsed.playlist_subtitle = rawSubtitle.length >= 10 ? rawSubtitle : FALLBACK_PLAYLIST_SUBTITLE;
 
   // primary_lane_id가 없거나 CURATION_LANES에 없는 값이면 lane usage tracking이 깨지므로
   // fallback default 없이 SafeError로 명확히 실패시킨다 (요구사항: GPT가 반드시 유효한 id를 내도록 강제).

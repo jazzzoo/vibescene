@@ -14,9 +14,6 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<RootParamList, 'Home'>
 
 type PendingSource = 'camera' | 'library' | null;
 
-// 첫 화면이 너무 비어 보이지 않도록 보여주는 작은 무드 미리보기 — 실제 분석 결과 아님
-const HOME_PREVIEW_MOODS = ['nostalgic', 'golden hour', 'dreamy'];
-
 export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { pickFromLibrary, takePhoto, loading, error, clearError } = useImagePicker();
@@ -59,13 +56,6 @@ export default function HomeScreen() {
               <Text style={styles.description}>
                 One photo. One mood. A playlist that fits.
               </Text>
-              <View style={styles.previewTags}>
-                {HOME_PREVIEW_MOODS.map((mood) => (
-                  <View key={mood} style={styles.previewTag}>
-                    <Text style={styles.previewTagText}>{mood}</Text>
-                  </View>
-                ))}
-              </View>
             </>
           )}
         </View>
@@ -179,24 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 22,
-  },
-  previewTags: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    gap: SPACING.BASE * 0.75,
-    marginTop: SPACING.TRACK_GAP,
-  },
-  previewTag: {
-    backgroundColor: COLORS.MOOD_TAG,
-    borderRadius: SPACING.BASE * 1.5,
-    paddingHorizontal: SPACING.BASE * 1.25,
-    paddingVertical: SPACING.BASE * 0.5,
-  },
-  previewTagText: {
-    color: COLORS.TEXT_PRIMARY,
-    fontSize: 11,
-    fontWeight: '500',
+    marginBottom: SPACING.BASE * 0.5,
   },
   previewWrapper: {
     width: '100%',
