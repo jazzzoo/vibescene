@@ -63,6 +63,19 @@ export type PlaylistStatus =
   | 'created'
   | 'failed';
 
+// 공유 링크(/p/:shareId)로 수신자가 보는 플레이리스트 데이터.
+// get-shared-playlist Edge Function 응답을 매핑한다.
+// user_id, image_storage_path 등 내부 필드는 포함하지 않는다.
+export type SharedPlaylistResult = {
+  id: string;
+  imageUrl: string | null;
+  analysis: Analysis;
+  playlistConcept: string;
+  createdAt: string;
+  sharedAt: string | null;
+  tracks: Track[];
+};
+
 export type PlaylistHistoryItem = {
   id: string;
   imageUri: string | null;          // 우선 표시용 signed URL — thumbnail 우선, 없으면 main (실패 시 null)

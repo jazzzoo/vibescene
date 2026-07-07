@@ -6,6 +6,28 @@ import { supabase } from '../lib/supabaseClient';
 import { logEvent } from '../services/analytics';
 import MainNavigator from './MainNavigator';
 
+// /p/:shareId 브라우저 직접 진입을 지원하기 위한 React Navigation 딥링크 설정.
+// Vercel은 모든 경로를 index.html로 리다이렉트하므로, 클라이언트에서 경로를 파싱한다.
+// prefixes는 네이티브 딥링크용 — 웹에서는 path 패턴만 사용됨.
+const linking = {
+  prefixes: [
+    // Vercel 고정 alias (배포별 랜덤 URL 제외 — 매 배포마다 변경됨)
+    'https://vibescene.vercel.app',
+    'https://vibescene-dingai.vercel.app',
+    'https://vibescene-git-main-dingai.vercel.app',
+    // 미래 커스텀 도메인
+    'https://vibescene.com',
+    // 네이티브 딥링크 scheme
+    'vibescene://',
+  ],
+  config: {
+    screens: {
+      Home: '',
+      SharedResult: 'p/:shareId',
+    },
+  },
+};
+
 export default function RootNavigator() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,7 +79,7 @@ export default function RootNavigator() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <MainNavigator />
     </NavigationContainer>
   );

@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabaseClient';
 import { SafeError } from './errors';
 import { createSignedImageUrl, getThumbnailStoragePath } from './storage';
-import type { Analysis, MusicProfile, PlaylistHistoryItem, PlaylistResult, PlaylistStatus, Track } from '../types/playlist';
+import type { Analysis, MusicProfile, PlaylistHistoryItem, PlaylistResult, PlaylistStatus, SharedPlaylistResult, Track } from '../types/playlist';
 
 // Supabase 쿼리 결과 로컬 타입 (generated types 없이 안전하게 캐스팅)
 type PlaylistRow = {
@@ -227,6 +227,51 @@ export async function getPlaylistHistory(): Promise<PlaylistHistoryItem[]> {
   );
 
   return items;
+}
+
+/**
+ * 공유 링크의 shareId로 get-shared-playlist Edge Function을 호출한다.
+ * 인증 불필요 — 공개 엔드포인트. anon key만 전송됨.
+ */
+export async function getSharedPlaylist(shareId: string): Promise<SharedPlaylistResult> {
+  const { data, error } = await supabase.functions.invoke('get-shared-playlist', {
+    body: { shareId },
+  });
+
+  if (error) {
+    throw new SafeError('This shared playlist is unavailable.');
+  }
+
+  const row = (data as { success: boolean; playlist?: Record<string, unknown> } | null)?.playlist;
+  if (!row) {
+    throw new SafeError('This shared playlist is unavailable.');
+  }
+
+  const analysis = row.analysis as Analysis | null;
+  if (!analysis) {
+    throw new SafeError('This shared playlist is unavailable.');
+  }
+
+  const rawTracks = Array.isArray(row.tracks) ? row.tracks : [];
+  const tracks: Track[] = (rawTracks as Record<string, unknown>[]).map((t) => ({
+    rank: t.rank as number,
+    title: t.title as string,
+    artist: t.artist as string,
+    youtubeVideoId: t.youtubeVideoId as string,
+    youtubeVideoUrl: t.youtubeVideoUrl as string,
+    thumbnailUrl: t.thumbnailUrl as string,
+    reason: t.reason as string,
+  }));
+
+  return {
+    id: row.id as string,
+    imageUrl: (row.imageUrl as string | null) ?? null,
+    analysis,
+    playlistConcept: (row.playlistConcept as string) ?? '',
+    createdAt: row.createdAt as string,
+    sharedAt: (row.sharedAt as string | null) ?? null,
+    tracks,
+  };
 }
 
 /**
