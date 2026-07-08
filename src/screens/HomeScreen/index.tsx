@@ -126,6 +126,28 @@ export default function HomeScreen() {
             {error}
           </Text>
         )}
+
+        <Text style={styles.legalFooter}>
+          By uploading a photo, you agree to the{' '}
+          <Text
+            style={styles.legalLink}
+            onPress={() => navigation.navigate('Terms')}
+            accessibilityRole="link"
+            accessibilityLabel="Terms of Service"
+          >
+            Terms
+          </Text>{' '}
+          and acknowledge the{' '}
+          <Text
+            style={styles.legalLink}
+            onPress={() => navigation.navigate('PrivacyPolicy')}
+            accessibilityRole="link"
+            accessibilityLabel="Privacy Policy"
+          >
+            Privacy Policy
+          </Text>
+          .
+        </Text>
       </View>
 
       <BottomNavigation />
@@ -193,5 +215,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
     marginTop: SPACING.TRACK_GAP,
+  },
+  legalFooter: {
+    color: COLORS.TEXT_SECONDARY,
+    fontSize: 11,
+    textAlign: 'center',
+    lineHeight: 16,
+    marginTop: SPACING.TRACK_GAP,
+  },
+  legalLink: {
+    color: COLORS.ACCENT,
+    fontWeight: '600',
   },
 });

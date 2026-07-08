@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
 
-type TabRoute = 'Home' | 'History';
+type TabRoute = 'Home' | 'History' | 'Settings';
 
 interface TabItem {
   route: TabRoute;
@@ -15,6 +15,7 @@ interface TabItem {
 const TABS: TabItem[] = [
   { route: 'Home', label: 'Home', icon: '⊙' },
   { route: 'History', label: 'History', icon: '◷' },
+  { route: 'Settings', label: 'Settings', icon: '⚙' },
 ];
 
 export default function BottomNavigation() {

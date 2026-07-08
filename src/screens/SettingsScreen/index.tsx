@@ -1,3 +1,5 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -5,13 +7,16 @@ import appConfig from '../../../app.json';
 import BottomNavigation from '../../components/common/BottomNavigation';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
+import { RootParamList } from '../../navigation/MainNavigator';
 
-// TODO: Replace with the real VibeScene support X profile or DM URL.
-const SUPPORT_X_URL = 'https://x.com/YOUR_HANDLE';
+const SUPPORT_X_URL = 'https://x.com/jaejoolee_kr';
 
 const APP_VERSION = appConfig.expo.version;
 
+type SettingsNavigationProp = NativeStackNavigationProp<RootParamList, 'Settings'>;
+
 export default function SettingsScreen() {
+  const navigation = useNavigation<SettingsNavigationProp>();
   const [linkError, setLinkError] = useState<string | null>(null);
 
   function handleMessageOnX() {
@@ -45,14 +50,24 @@ export default function SettingsScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Legal</Text>
-          <View style={styles.row}>
-            <Text style={styles.rowLabelDisabled}>Privacy Policy</Text>
-            <Text style={styles.comingSoon}>Coming soon</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.rowLabelDisabled}>Terms of Service</Text>
-            <Text style={styles.comingSoon}>Coming soon</Text>
-          </View>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => navigation.navigate('PrivacyPolicy')}
+            accessibilityRole="button"
+            accessibilityLabel="Privacy Policy"
+            activeOpacity={0.7}
+          >
+            <Text style={styles.rowLabelAccent}>Privacy Policy</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => navigation.navigate('Terms')}
+            accessibilityRole="button"
+            accessibilityLabel="Terms of Service"
+            activeOpacity={0.7}
+          >
+            <Text style={styles.rowLabelAccent}>Terms of Service</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
@@ -112,15 +127,6 @@ const styles = StyleSheet.create({
     color: COLORS.ACCENT,
     fontSize: 15,
     fontWeight: '600',
-  },
-  rowLabelDisabled: {
-    color: COLORS.TEXT_SECONDARY,
-    fontSize: 15,
-    fontWeight: '500',
-  },
-  comingSoon: {
-    color: COLORS.MOOD_TAG,
-    fontSize: 12,
   },
   errorText: {
     color: COLORS.ACCENT,

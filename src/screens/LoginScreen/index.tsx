@@ -85,6 +85,10 @@ export default function LoginScreen() {
       <Text style={styles.disclaimer}>
         By continuing, you agree to connect your Google account to save playlists to YouTube.
       </Text>
+      <Text style={[styles.disclaimer, styles.disclaimerSpacing]}>
+        By using YouTube features, you also agree to YouTube's Terms of Service and Google's
+        Privacy Policy.
+      </Text>
     </View>
   );
 }
@@ -125,5 +129,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     lineHeight: 18,
+  },
+  disclaimerSpacing: {
+    marginTop: SPACING.BASE,
   },
 });

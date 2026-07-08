@@ -138,6 +138,10 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
         accessibilityLabel="Share playlist"
       />
 
+      <Text style={styles.shareDisclosure}>
+        Anyone with this link can view this playlist and photo.
+      </Text>
+
       {shareMessage !== null && (
         <Text style={styles.shareMessage} accessibilityLiveRegion="polite">
           {shareMessage}
@@ -154,6 +158,12 @@ const styles = StyleSheet.create({
   },
   gap: {
     height: SPACING.BASE,
+  },
+  shareDisclosure: {
+    color: COLORS.TEXT_SECONDARY,
+    fontSize: 11,
+    textAlign: 'center',
+    marginTop: SPACING.BASE * 0.75,
   },
   shareMessage: {
     color: COLORS.TEXT_SECONDARY,

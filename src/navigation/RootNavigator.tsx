@@ -24,6 +24,8 @@ const linking = {
     screens: {
       Home: '',
       SharedResult: 'p/:shareId',
+      PrivacyPolicy: 'privacy',
+      Terms: 'terms',
     },
   },
 };
