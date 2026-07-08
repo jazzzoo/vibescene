@@ -4,11 +4,13 @@ import HomeScreen from '../screens/HomeScreen';
 import LoadingScreen from '../screens/LoadingScreen';
 import LoginScreen from '../screens/LoginScreen';
 import ResultScreen from '../screens/ResultScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 import SharedResultScreen from '../screens/SharedResultScreen';
 
 export type RootParamList = {
   Home: undefined;
   History: undefined;
+  Settings: undefined;
   Loading: { localImageUri: string };
   Result: { playlistId: string };
   Login: undefined;
@@ -22,6 +24,7 @@ export default function MainNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="History" component={HistoryScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Loading" component={LoadingScreen} />
       <Stack.Screen name="Result" component={ResultScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
