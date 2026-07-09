@@ -37,16 +37,16 @@ export default function RootNavigator() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      // 세션이 이미 있으면 익명 로그인을 다시 호출하지 않음
-      if (session) {
-        setSession(session);
-        setLoading(false);
-        void logEvent('app_opened');
-        return;
-      }
-
-      supabase.auth.signInAnonymously().then(({ data, error }) => {
+    async function initAuth() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        // 세션이 이미 있으면 익명 로그인을 다시 호출하지 않음
+        if (session) {
+          setSession(session);
+          void logEvent('app_opened');
+          return;
+        }
+        const { data, error } = await supabase.auth.signInAnonymously();
         if (error) {
           // API 에러 원문을 그대로 노출하지 않고 일반화된 메시지만 표시
           setError('Sign-in failed. Please try again.');
@@ -54,9 +54,16 @@ export default function RootNavigator() {
           setSession(data.session);
           void logEvent('app_opened');
         }
+      } catch {
+        // localStorage 차단(KakaoTalk 등 제한된 WebView)이나 네트워크 오류로
+        // getSession/signInAnonymously가 reject되면 loading이 영원히 true로 남는 버그 방지
+        setError('Sign-in failed. Please try again.');
+      } finally {
         setLoading(false);
-      });
-    });
+      }
+    }
+
+    void initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);

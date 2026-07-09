@@ -21,6 +21,11 @@ class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryStat
     return { hasError: true };
   }
 
+  componentDidCatch(error: Error, info: { componentStack: string }) {
+    // 어떤 컴포넌트에서 어떤 에러가 발생했는지 진단하기 위한 로그
+    console.error('[ErrorBoundary]', error.message, info.componentStack);
+  }
+
   render() {
     if (this.state.hasError) {
       return (
