@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: SPACING.CARD_PADDING,
+    paddingTop: SPACING.SECTION_GAP * 0.5,
     paddingBottom: SPACING.SECTION_GAP,
   },
   listContentEmpty: {

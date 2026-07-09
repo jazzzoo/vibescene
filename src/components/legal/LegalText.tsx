@@ -1,10 +1,27 @@
 import { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
 
 interface TextChildrenProps {
   children: ReactNode;
+}
+
+interface LinkProps {
+  href: string;
+  children: ReactNode;
+}
+
+export function Link({ href, children }: LinkProps) {
+  return (
+    <Text
+      style={styles.link}
+      onPress={() => Linking.openURL(href).catch(() => {})}
+      accessibilityRole="link"
+    >
+      {children}
+    </Text>
+  );
 }
 
 export function SectionTitle({ children }: TextChildrenProps) {
@@ -65,5 +82,10 @@ const styles = StyleSheet.create({
     color: COLORS.TEXT_SECONDARY,
     fontSize: 14,
     lineHeight: 21,
+  },
+  link: {
+    color: COLORS.ACCENT,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });

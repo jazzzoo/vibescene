@@ -1,5 +1,5 @@
 import LegalLayout from '../../components/legal/LegalLayout';
-import { Bullet, Paragraph, SectionTitle } from '../../components/legal/LegalText';
+import { Bullet, Link, Paragraph, SectionTitle } from '../../components/legal/LegalText';
 
 const SUPPORT_X_URL = 'https://x.com/jaejoolee_kr';
 
@@ -44,7 +44,11 @@ export default function TermsScreen() {
       </Bullet>
       <Bullet>You are responsible for deciding what you share.</Bullet>
       <Bullet>Do not share sensitive or private images.</Bullet>
-      <Bullet>Send us a DM on X at {SUPPORT_X_URL} for deletion requests.</Bullet>
+      <Bullet>
+        {'Send us a DM on X at '}
+        <Link href={SUPPORT_X_URL}>@jaejoolee_kr</Link>
+        {' for deletion requests.'}
+      </Bullet>
 
       <SectionTitle>6. YouTube and Third-Party Services</SectionTitle>
       <Bullet>
@@ -129,7 +133,10 @@ export default function TermsScreen() {
       </Paragraph>
 
       <SectionTitle>17. Contact</SectionTitle>
-      <Paragraph>Send us a DM on X: {SUPPORT_X_URL}</Paragraph>
+      <Paragraph>
+        {'Send us a DM on X: '}
+        <Link href={SUPPORT_X_URL}>@jaejoolee_kr</Link>
+      </Paragraph>
     </LegalLayout>
   );
 }

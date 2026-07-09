@@ -1,5 +1,5 @@
 import LegalLayout from '../../components/legal/LegalLayout';
-import { Bullet, Paragraph, SectionTitle, SubHeading } from '../../components/legal/LegalText';
+import { Bullet, Link, Paragraph, SectionTitle, SubHeading } from '../../components/legal/LegalText';
 
 const SUPPORT_X_URL = 'https://x.com/jaejoolee_kr';
 
@@ -10,7 +10,8 @@ export default function PrivacyPolicyScreen() {
       <Paragraph>VibeScene is operated by the VibeScene team, based in South Korea.</Paragraph>
       <Paragraph>
         If you have questions about this Privacy Policy or want to exercise your privacy
-        rights, send us a DM on X at {SUPPORT_X_URL}.
+        rights, send us a DM on X at{' '}
+        <Link href={SUPPORT_X_URL}>@jaejoolee_kr</Link>.
       </Paragraph>
 
       <SectionTitle>2. Information We Collect</SectionTitle>
@@ -96,7 +97,7 @@ export default function PrivacyPolicyScreen() {
       </Paragraph>
       <Paragraph>
         Future deletion/unsharing controls may be added later. For now, send us a DM on X at{' '}
-        {SUPPORT_X_URL} for deletion requests.
+        <Link href={SUPPORT_X_URL}>@jaejoolee_kr</Link> for deletion requests.
       </Paragraph>
 
       <SectionTitle>6. AI and Automated Recommendations</SectionTitle>
@@ -168,7 +169,10 @@ export default function PrivacyPolicyScreen() {
         VibeScene does not sell or share personal information for cross-context behavioral
         advertising.
       </Paragraph>
-      <Paragraph>To exercise your rights, send us a DM on X at {SUPPORT_X_URL}.</Paragraph>
+      <Paragraph>
+        {'To exercise your rights, send us a DM on X at '}
+        <Link href={SUPPORT_X_URL}>@jaejoolee_kr</Link>.
+      </Paragraph>
 
       <SectionTitle>12. EEA and UK Privacy Rights</SectionTitle>
       <Paragraph>If you are located in the EEA or the UK, you may have rights to:</Paragraph>
@@ -205,7 +209,11 @@ export default function PrivacyPolicyScreen() {
       <Paragraph>No online service can guarantee perfect security.</Paragraph>
 
       <SectionTitle>16. Your Choices and Deletion Requests</SectionTitle>
-      <Bullet>Send us a DM on X at {SUPPORT_X_URL} to request deletion</Bullet>
+      <Bullet>
+        {'Send us a DM on X at '}
+        <Link href={SUPPORT_X_URL}>@jaejoolee_kr</Link>
+        {' to request deletion'}
+      </Bullet>
       <Bullet>Revoke Google access from your Google Account settings</Bullet>
       <Bullet>Delete your account/data where available</Bullet>
       <Bullet>Send us a DM on X for shared link deletion requests</Bullet>
@@ -217,7 +225,10 @@ export default function PrivacyPolicyScreen() {
       </Paragraph>
 
       <SectionTitle>18. Contact</SectionTitle>
-      <Paragraph>Send us a DM on X: {SUPPORT_X_URL}</Paragraph>
+      <Paragraph>
+        {'Send us a DM on X: '}
+        <Link href={SUPPORT_X_URL}>@jaejoolee_kr</Link>
+      </Paragraph>
     </LegalLayout>
   );
 }
