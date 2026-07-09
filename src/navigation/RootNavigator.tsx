@@ -1,7 +1,8 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { Session } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { COLORS } from '../constants/colors';
 import { supabase } from '../lib/supabaseClient';
 import { logEvent } from '../services/analytics';
 import MainNavigator from './MainNavigator';
@@ -66,16 +67,16 @@ export default function RootNavigator() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator />
+      <View style={styles.fullscreen}>
+        <ActivityIndicator color={COLORS.ACCENT} />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>{error}</Text>
+      <View style={styles.fullscreen}>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
     );
   }
@@ -86,3 +87,17 @@ export default function RootNavigator() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  fullscreen: {
+    flex: 1,
+    backgroundColor: COLORS.BACKGROUND,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: COLORS.TEXT_PRIMARY,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+});

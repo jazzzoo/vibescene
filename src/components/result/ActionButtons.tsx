@@ -69,7 +69,6 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
           try {
             await nav.share({
               title: 'VibeScene playlist',
-              text: 'I made this playlist from a photo on VibeScene.',
               url: finalUrl,
             });
             // 공유 성공 — OS 공유 시트가 피드백을 제공하므로 별도 메시지 불필요
