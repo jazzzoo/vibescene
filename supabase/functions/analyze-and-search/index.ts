@@ -13,6 +13,7 @@ import {
   updatePlaylistStatus,
 } from "./services/db.ts";
 import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
+import { sequencePlaylistArc } from "./services/sequencing.ts";
 import {
   type CatalogSeedTrack,
   selectCatalogTracks,
@@ -205,7 +206,18 @@ Deno.serve(async (req) => {
     if (verifiedCatalogTracks.length >= MIN_CATALOG_TRACKS) {
       await updatePlaylistAnalysis(supabaseAdmin, playlistId, gptResult, "catalog");
 
-      const rankedTracks = toVerifiedTrackRows(verifiedCatalogTracks, gptResult.primary_lane_id);
+      // 트랙 정체성은 그대로 두고 순서만 opener→mood lock→energy lift→emotional peak→cooldown→closer
+      // 아크로 재배치한다. 실패하면 원래 seededShuffle 순서로 안전하게 fallback.
+      let sequencedVerifiedTracks = verifiedCatalogTracks;
+      try {
+        sequencedVerifiedTracks = sequencePlaylistArc(verifiedCatalogTracks);
+      } catch (seqErr) {
+        console.error("[analyze-and-search] sequencing_failed_verified_catalog", {
+          errorMessage: seqErr instanceof Error ? seqErr.message : String(seqErr),
+        });
+      }
+
+      const rankedTracks = toVerifiedTrackRows(sequencedVerifiedTracks, gptResult.primary_lane_id);
 
       setStage("db_save_started");
       await insertTracks(supabaseAdmin, playlistId, rankedTracks);
@@ -226,8 +238,21 @@ Deno.serve(async (req) => {
 
     const trackSource: TrackSource = catalogTracks.length >= MIN_CATALOG_TRACKS ? "catalog" : "youtube_fallback";
 
+    // 트랙 정체성은 그대로 두고 순서만 opener→mood lock→energy lift→emotional peak→cooldown→closer
+    // 아크로 재배치한다. 실패하면 원래 seededShuffle 순서로 안전하게 fallback.
+    let sequencedCatalogTracks = catalogTracks;
+    if (trackSource === "catalog") {
+      try {
+        sequencedCatalogTracks = sequencePlaylistArc(catalogTracks);
+      } catch (seqErr) {
+        console.error("[analyze-and-search] sequencing_failed_catalog", {
+          errorMessage: seqErr instanceof Error ? seqErr.message : String(seqErr),
+        });
+      }
+    }
+
     const tracksForYoutubeSearch: GptPlaylistItem[] = trackSource === "catalog"
-      ? catalogTracks.map((track, idx) => ({
+      ? sequencedCatalogTracks.map((track, idx) => ({
         rank: idx + 1,
         title: track.title,
         artist: track.artist,
