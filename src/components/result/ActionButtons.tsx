@@ -50,6 +50,17 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
       playlist_id: playlistId,
       track_count: tracks.length,
     });
+
+    // 웹에서는 window.open으로 새 탭/창을 열어 카카오톡 인앱 WebView의
+    // 현재 문서가 YouTube로 교체되지 않도록 한다. 팝업이 차단되면 Linking으로 폴백.
+    if (Platform.OS === 'web') {
+      const newWindow = window.open(playOnYoutubeUrl, '_blank', 'noopener,noreferrer');
+      if (!newWindow) {
+        Linking.openURL(playOnYoutubeUrl).catch(() => {});
+      }
+      return;
+    }
+
     Linking.openURL(playOnYoutubeUrl).catch(() => {});
   }
 
@@ -67,8 +78,9 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
         const nav = navigator as Navigator & { share?: (data: ShareData) => Promise<void> };
         if (nav.share) {
           try {
+            // 카카오톡은 title/text가 포함되면 링크 카드와 별개로 텍스트 메시지를
+            // 추가로 생성할 수 있으므로 url만 전달한다.
             await nav.share({
-              title: 'VibeScene playlist',
               url: finalUrl,
             });
             // 공유 성공 — OS 공유 시트가 피드백을 제공하므로 별도 메시지 불필요

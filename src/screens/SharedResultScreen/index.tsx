@@ -1,7 +1,7 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
-import { Image, Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Image, Linking, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Button from '../../components/common/Button';
 import ErrorView from '../../components/common/ErrorView';
@@ -61,6 +61,38 @@ export default function SharedResultScreen() {
     void load();
   }, [shareId]);
 
+  // 카카오톡 인앱 WebView에서 YouTube로 갔다가 돌아왔을 때, 복원 과정에서
+  // 로딩 상태가 그대로 멈춰버리는 경우에 대비한 최소한의 복구 가드.
+  // 화면을 강제로 리로드하지 않고, 로딩이 멈춰 있을 때만 재조회한다.
+  const loadingRef = useRef(loading);
+  loadingRef.current = loading;
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+
+    function handleVisible(source: string) {
+      if (document.visibilityState !== 'visible') return;
+      console.log('[SharedResultScreen] resumed visibility', { source, stuckLoading: loadingRef.current });
+      if (loadingRef.current) {
+        void load();
+      }
+    }
+
+    function onVisibilityChange() {
+      handleVisible('visibilitychange');
+    }
+    function onPageShow() {
+      handleVisible('pageshow');
+    }
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('pageshow', onPageShow);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('pageshow', onPageShow);
+    };
+  }, [shareId]);
+
   if (loading) {
     return <LoadingView message="Loading playlist..." />;
   }
@@ -79,6 +111,17 @@ export default function SharedResultScreen() {
 
   function handlePlayOnYoutube() {
     if (!playOnYoutubeUrl) return;
+
+    // 웹에서는 window.open으로 새 탭/창을 열어 카카오톡 인앱 WebView의
+    // 현재 문서가 YouTube로 교체되지 않도록 한다. 팝업이 차단되면 Linking으로 폴백.
+    if (Platform.OS === 'web') {
+      const newWindow = window.open(playOnYoutubeUrl, '_blank', 'noopener,noreferrer');
+      if (!newWindow) {
+        Linking.openURL(playOnYoutubeUrl).catch(() => {});
+      }
+      return;
+    }
+
     Linking.openURL(playOnYoutubeUrl).catch(() => {});
   }
 
