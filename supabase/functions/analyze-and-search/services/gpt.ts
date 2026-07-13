@@ -55,10 +55,9 @@ Classify the image into one of three types:
 - Texture: humid, dry, breezy, still, sticky, crisp, heavy, airy, rough, smooth, dusty, foggy, misty, sharp, velvety, grainy
 
 **Cultural context (if identifiable):**
-- e.g. Japanese alley → City Pop territory
-- Korean street → K-indie territory
-- New York → indie pop / hip-hop territory
-- European city → British pop / French indie territory
+- Note the visible cultural/geographic setting if identifiable, but treat it as secondary flavor only — never a shortcut to a genre or lane.
+- Never choose a lane based on country, city, or language alone. A Japanese alley is not automatically City Pop; a Korean street is not automatically K-indie; a New York street is not automatically hip-hop; a European city is not automatically British/French pop.
+- Culture can influence the lane choice only when it's reinforced by the image's visible mood, energy, weather, time of day, openness, motion, social context, and aesthetic style (see STEP 3.5 and STEP 4).
 
 ---
 
@@ -108,6 +107,22 @@ primary_genre and secondary_genre in this profile MUST be chosen from the allowe
 
 ---
 
+## STEP 3.5: ADDITIONAL VISUAL SIGNALS (internal reasoning only — do not add these as new JSON fields)
+
+Before choosing the curation lane in STEP 4, silently note these signals from the image. They exist to sharpen the lane choice — they are NOT part of the STEP 6 output schema, so do not invent new JSON fields for them and do not output them directly.
+
+- Scene type: beach, street, cafe, room/bedroom, car interior, city/skyline, nature/landscape, party, concert, station/airport, etc.
+- Weather feeling: sunny, rainy, cloudy, foggy, snowy, humid, dry, stormy, clear.
+- Openness: wide open air, window view, enclosed room, tunnel, crowded space, empty landscape.
+- Energy/motion: still, relaxed, lively, fast, intense — and whether the scene implies static stillness, walking, driving, dancing, performing, or travel/departure.
+- Social context: alone, couple, friends, crowd, public space, private space.
+- Color/lighting and aesthetic era: warm, cool, neon, pastel, washed-out, high-contrast, film-like — and whether the overall aesthetic reads as retro, modern, cinematic, analog, glossy, or casual.
+- Dominant subject/object: people, ocean, skyline, road, bedroom, food, instruments, car, etc.
+
+Use these signals together with STEP 2's mood/season/context and STEP 3's energy profile to choose the lane in STEP 4 — visible scene/weather/openness/energy/motion/social/aesthetic signals should outweigh cultural or location guesses.
+
+---
+
 ## STEP 4: CURATION LANE SELECTION (mandatory before choosing tracks)
 
 Different genre worlds do not mix well. A nu-jazz/jazz-hop track and a J-rock track next to each other breaks the playlist's coherence even if both are "good music." Before picking any songs, choose exactly ONE primary curation lane from the catalogue below — it defines the single genre world the entire playlist must live in.
@@ -127,9 +142,34 @@ Different genre worlds do not mix well. A nu-jazz/jazz-hop track and a J-rock tr
 
 **Energy/mood mismatch guard (do not let location override mood):**
 - Do not choose a high-energy rock lane just because the photo is in Japan or contains a landmark like Tokyo Tower. Location and cultural context can flavor the choice, but mood, energy, time of day, and overall scene feeling from STEP 2/STEP 3 must dominate the decision.
-- A sunny, romantic, peaceful, leisurely park/couple/travel image should usually lean toward softer or warmer lanes — for example city-pop, retro glow, cozy mellow, or romance-pop style lanes — not a driving rock lane.
+- A sunny, romantic, peaceful, leisurely image should usually lean toward softer or warmer lanes, not a driving rock lane — but which soft/warm lane fits depends on the image's specific weather/openness feeling, not just "sunny and calm" in general (see the weather/openness guard below).
 - High-energy lanes like J-Rock Highway Rush require actual strong signals in the image: motion, driving, speed, street rush, intense youthful energy, concert/live-band cues, guitar-driven visual cues, or night city adrenaline. A landmark alone is never a rock signal.
 - If the image feels peaceful, romantic, sunny, and leisurely, avoid aggressive or high-energy rock lanes even if the setting is Japanese or near a famous landmark.
+
+**Weather/openness/scene-type guard (bright open-air vs. nostalgic city — do not default to City Pop):**
+- Choose the lane primarily from the image's visible mood, energy, weather feeling, seasonality, openness, and scene type. Cultural/location associations (the scene looking like Japan, containing a city skyline, a window, or daylight) are flavor only — never the primary reason for a lane choice.
+- For images with strong bright-sky, ocean/water/harbor, open-air, sunny daytime, or breezy vacation/travel energy, prefer an open-air/bright-pop lane such as Summer Beach Pop, Trendy Pop Chic, or Indie Road Movie over City Pop / Retro Drive, when the energy reads as active, breezy, or lively rather than nostalgic and glide-like.
+- Choose City Pop / Retro Drive only when the image's dominant feeling is retro urban nostalgia, sunset-glow city driving, stylish metropolitan calm, or a specifically city-pop-like atmosphere — not merely because the image contains Japan, a city, a window, or daylight.
+- Do not select a lane just because the image's location appears to be a particular country — e.g. City Pop / Retro Drive or J-Rock Highway Rush for Japan-looking scenes, K-R&B Night Drive or K-Indie Rainy Room for Korea-looking scenes, American Alternative Drive for US-looking scenes. Judge the lane from the scene's mood, energy, and STEP 3.5 signals, not the guessed country.
+- If the image feels bright, open, sunny, breezy, and lively, do not downshift into a nostalgic or calm lane (City Pop / Retro Drive, Cozy Cafe Mellow) unless the image itself genuinely feels nostalgic or calm rather than energetic and open.
+
+**Additional tie-breakers (indoor/outdoor, time of day, motion, social context, aesthetic):**
+- Indoor vs outdoor matters: a cafe interior, a bedroom, a night street, and an open ocean landscape should not collapse into the same lane just because they all feel "warm" or "calm" — use the STEP 3.5 scene type to keep them separate.
+- Time of day matters: daytime sunny energy, golden-hour nostalgia, neon night, rainy night, and late-night solitude are different lane territories, even when the general mood word (e.g. "calm" or "warm") looks similar.
+- Social context matters: a couple, a lone person, friends, a crowd, and an empty landscape should shift the lane choice — for example, romantic couple energy points toward Modern Romance Pop, while solitary night-walk energy points more toward K-R&B Night Drive or Lo-fi Bedroom Solitude.
+- Motion matters: driving, walking, dancing, performing, traveling, and resting point to different lanes — travel/departure/open-road/airport/train/highway framing should strongly consider Indie Road Movie (wistful, cinematic) or a driving lane like American Alternative Drive/J-Rock Highway Rush (energetic, guitar-driven) depending on the energy level.
+- Fashion-forward, glossy, modern, social-media-style images (mirror selfies, editorial-style portraits, stylish city fashion) should strongly consider Trendy Pop Chic rather than City Pop / Retro Drive — glossy/modern is not the same as retro/nostalgic.
+
+**Conflict resolver (quick reference for the most commonly confused lane pairs):**
+- Modern Jazz Groove vs Cozy Cafe Mellow: rhythmic/stylish night groove → Modern Jazz Groove; plain warm daytime cafe comfort → Cozy Cafe Mellow.
+- J-Rock Highway Rush vs American Alternative Drive vs Indie Road Movie: speed/adrenaline/guitar rush → J-Rock Highway Rush; casual sunny friends road trip → American Alternative Drive; solo wistful departure/travel → Indie Road Movie.
+- K-R&B Night Drive vs Hip-Hop Night Drive vs Dark Heavy Hip-Hop: smooth/sensual/lonely night mood → K-R&B Night Drive; confident rap/street cruise → Hip-Hop Night Drive; aggressive/tense/menacing → Dark Heavy Hip-Hop.
+- K-Indie Rainy Room vs Lo-fi Bedroom Solitude vs Dream Pop / Shoegaze Fog: rain + ordinary room + diary feeling → K-Indie Rainy Room; private desk/bedroom stillness → Lo-fi Bedroom Solitude; hazy fog/blur/dreamscape → Dream Pop / Shoegaze Fog.
+- City Pop / Retro Drive vs Summer Beach Pop vs Trendy Pop Chic vs Indie Road Movie: retro sunset city glow → City Pop / Retro Drive; bright open sky/water/vacation → Summer Beach Pop; modern glossy fashion/editorial → Trendy Pop Chic; travel/departure narrative → Indie Road Movie.
+- Neon Electronic Night vs Funk / Disco Night: cool synthetic neon/futuristic → Neon Electronic Night; warm colorful dancefloor/groove → Funk / Disco Night.
+- Highteen Pop Room vs Trendy Pop Chic: playful teen/school/friends energy → Highteen Pop Room; adult glossy fashion/editorial → Trendy Pop Chic.
+- Modern Romance Pop vs K-R&B Night Drive: couple/romantic warmth → Modern Romance Pop; solo nocturnal sensuality → K-R&B Night Drive.
+- Classic Soul / Old Film vs City Pop / Retro Drive: old-film analog/soulful nostalgia → Classic Soul / Old Film; 80s glossy synth/sunset city drive → City Pop / Retro Drive.
 
 **Lane catalogue:**
 

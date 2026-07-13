@@ -197,6 +197,14 @@ Deno.serve(async (req) => {
     const gptResult = await analyzeImage(signedUrlData.signedUrl);
     setStage("openai_analysis_completed");
 
+    // 진단용 lane 선택 로그 — 사용자에게 노출되지 않는 백엔드 로그 전용.
+    // image_type/energy_score/lane_id만 남기고, 이미지 내용/분석 원문(mood_keywords 등)은 남기지 않는다.
+    console.log("[analyze-and-search] lane_selected", {
+      imageType: gptResult.image_type,
+      energyScore: gptResult.music_profile.energy_score,
+      primaryLaneId: gptResult.primary_lane_id,
+    });
+
     // ── 7-1. verified(youtubeVideoId 보유) catalog track 우선 확인 ──────────────
     // 해당 lane에 수동으로 채워진 youtubeVideoId가 충분하면 YouTube search API를
     // 호출하지 않고 바로 DB에 저장한다. 부족하면 7-2의 기존 흐름(YouTube search fallback)으로 진행한다.
