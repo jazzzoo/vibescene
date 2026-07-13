@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Lane Selection Review Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --panel: #16161d;
+    --panel-2: #1d1d26;
+    --border: #2a2a35;
+    --text: #e8e8ec;
+    --text-dim: #9a9aa8;
+    --accent: #7dd3fc;
+    --warn: #fca5a5;
+    --good: #86efac;
+    --tag: #2a2a35;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    padding: 32px 20px 80px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 28px; margin-bottom: 4px; }
+  h2 { font-size: 20px; margin-top: 48px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  h3 { font-size: 16px; margin-top: 28px; color: var(--accent); }
+  .subtitle { color: var(--text-dim); margin-bottom: 24px; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 14px 0;
+  }
+  ul { padding-left: 20px; }
+  li { margin: 6px 0; }
+  code {
+    background: var(--tag);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  .lane-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .lane-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .lane-card.flag { border-left-color: var(--warn); }
+  .lane-card h4 {
+    margin: 0 0 4px;
+    font-size: 16px;
+  }
+  .lane-id {
+    color: var(--text-dim);
+    font-size: 12px;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    margin-bottom: 10px;
+  }
+  .field { margin: 8px 0; font-size: 13.5px; }
+  .field b { color: var(--text-dim); font-weight: 600; display: block; margin-bottom: 2px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .yes { color: var(--good); }
+  .no { color: var(--warn); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--panel-2);
+    position: sticky;
+    top: 0;
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--tag);
+    color: var(--text-dim);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-right: 6px;
+  }
+  .redflag { border-left: 4px solid var(--warn); }
+  footer { margin-top: 60px; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Lane Selection Review Report</h1>
+  <p class="subtitle">A human-readable review of how <code>analyze-and-search</code> picks a music curation lane for an uploaded photo — generated for visual inspection before deploy. This file is not imported by any app code and has no runtime effect.</p>
+
+  <h2>1. Overview</h2>
+  <div class="panel">
+    <ul>
+      <li>Lane selection happens entirely inside one GPT-4o Vision call (<code>analyzeImage()</code> in <code>gpt.ts</code>).</li>
+      <li>The prompt considers: scene type, time of day, weather feeling, season, openness, motion, social context, emotional tone, color/lighting, aesthetic era, and dominant subject — plus cultural context as secondary flavor.</li>
+      <li class="yes">Real user location and real weather are <b>NOT</b> used — only what's visible in the uploaded photo.</li>
+      <li class="yes">Cultural/location cues are explicitly <b>secondary flavor only</b> — a Japanese alley is not automatically City Pop, a Korean street is not automatically K-indie, a New York street is not automatically hip-hop.</li>
+      <li class="yes">The backend does <b>not</b> silently override GPT's lane. An invalid <code>primary_lane_id</code> fails the request — there is no fallback default, and specifically no fallback to City Pop.</li>
+    </ul>
+  </div>
+
+  <h2>2. Lane Selection Principles</h2>
+  <div class="panel">
+    <ol>
+      <li>Visible mood and energy beat location.</li>
+      <li>Weather and openness matter — bright open-sky/water images should not auto-downshift into a nostalgic/calm lane.</li>
+      <li>Indoor vs outdoor matters.</li>
+      <li>Time of day matters — daytime sun, golden-hour nostalgia, neon night, rainy night, and late-night solitude are different territories.</li>
+      <li>Social context matters — couple, lone person, friends, crowd all shift the lane.</li>
+      <li>Motion matters — driving, walking, dancing, performing, traveling, resting point to different lanes.</li>
+      <li>Aesthetic era matters — retro/analog is not the same as modern/glossy.</li>
+      <li>Cultural cues are secondary, never the deciding factor alone.</li>
+      <li>When two lanes conflict, a dedicated conflict-resolver block in the prompt breaks the tie.</li>
+    </ol>
+  </div>
+
+  <h2>3. Full 20-Lane Guide</h2>
+  <div class="lane-grid" id="lane-grid"></div>
+
+  <h2>Part 2 — Common Lane Conflicts</h2>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th style="width:36%">Conflict</th><th>Who wins &amp; why</th></tr></thead>
+    <tbody id="conflicts-body"></tbody>
+  </table>
+  </div>
+
+  <h2>Part 3 — Image Scenario Test Matrix</h2>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th>#</th><th>Image description</th><th>Strongest cues</th><th>Expected primary</th><th>Acceptable secondary</th><th>Should NOT win</th><th>Reason</th></tr></thead>
+    <tbody id="scenarios-body"></tbody>
+  </table>
+  </div>
+
+  <h2>Part 4 — Red Flags Before Deploy</h2>
+  <div id="redflags"></div>
+
+  <footer>
+    Generated as a static review document. Source of truth: <code>supabase/functions/analyze-and-search/services/gpt.ts</code> and <code>supabase/functions/analyze-and-search/services/curationLanes.ts</code>. No source files were changed to produce this report.
+  </footer>
+</div>
+
+<script>
+const lanes = [
+  {id:"modern-jazz-groove", name:"Modern Jazz Groove", meaning:"Rhythmic, adult, sax/Rhodes-piano jazz-hop groove for stylish interiors and city nights.", win:"Dim jazz bar with live sax; rain on a late-night cafe window; warm Rhodes-piano lounge glow; adult apartment at night; stylish rooftop/wine-bar after dark.", lose:"Bright idol pop; fast highway driving; delicate acoustic cafe; sunlit daytime cafe comfort; solitary night car/window with R&B sensuality; empty room with no social energy.", confused:"Cozy Cafe Mellow, K-R&B Night Drive", tie:"Rhythmic/night/stylish → this lane. Daytime plain cafe → Cozy Cafe Mellow. Sensual solo night car → K-R&B Night Drive.", energy:"Mellow but rhythmic, mid-tempo", space:"Indoor, night-leaning"},
+  {id:"j-rock-highway-rush", name:"J-Rock Highway Rush", meaning:"High-speed Japanese rock for real motion, driving, and adrenaline.", win:"Car/motorcycle in motion, tunnel lights, live band performance, wind-blown motion, anime-opening framing.", lose:"Quiet indoor room; slow jazz; mellow lounge; a calm Japanese street/landmark with no motion; peaceful sunny travel; retro city nostalgia.", confused:"American Alternative Drive, Indie Road Movie, City Pop", tie:"Motion+speed → this lane. Casual friends drive → American Alt Drive. Wistful solo travel → Indie Road Movie.", energy:"High, fast tempo", space:"Outdoor, daytime, in motion"},
+  {id:"k-rnb-night-drive", name:"K-R&B Night Drive", meaning:"Smooth, sensual, lonely Korean R&B for neon night streets and cars.", win:"Single figure on a neon-lit street; rain-streaked car window; lone silhouette against a glowing window; moody low-lit portrait.", lose:"Sunny road trip; folk rock; vintage film photo; aggressive street/rap energy; a couple; tense/menacing mood.", confused:"Hip-Hop Night Drive, Modern Romance Pop, Dark Heavy Hip-Hop", tie:"Smooth/sensual/lonely → this lane. Confident rap cruise → Hip-Hop Night Drive. Couple → Modern Romance Pop.", energy:"Smooth, moody mid-tempo", space:"Outdoor/car, night"},
+  {id:"k-indie-rainy-room", name:"K-Indie Rainy Room", meaning:"Soft Korean indie/bedroom pop for rainy windows and ordinary daily-life melancholy.", win:"Rain on a bedroom window; ordinary lived-in room; a half-finished tea cup; diary/notebook; everyday unstyled clutter.", lose:"Party/bright gathering; high-speed mood; funk/disco energy; hazy fog-blurred outdoor scene; private desk with no rain; warm public cafe.", confused:"Lo-fi Bedroom Solitude, Dream Pop / Shoegaze Fog, Cozy Cafe Mellow", tie:"Rain+ordinary room+diary feeling → this lane. Private desk stillness → Lo-fi Bedroom Solitude.", energy:"Soft, low tempo", space:"Indoor, rainy"},
+  {id:"city-pop-retro-glow", name:"City Pop / Retro Drive", meaning:"Glossy retro Japanese/Korean city pop for sunset drives and 80s urban nostalgia.", win:"Car windshield reflecting a sunset; retro film-grain grading; glossy 80s cityscape at dusk; golden-hour highway/waterfront drive.", lose:"Dark/somber; ambient post-rock; bright open-air ocean/beach; modern glossy fashion; travel/departure story; plain sunny Japan/Korea street with no glow; quiet warm cafe.", confused:"Summer Beach Pop, Trendy Pop Chic, Indie Road Movie, Classic Soul, Cozy Cafe Mellow", tie:"Retro sunset glow → this lane. Bright open sky/water → Summer Beach Pop. Modern glossy fashion → Trendy Pop Chic.", energy:"Upbeat, groovy retro funk", space:"Outdoor/drive, sunset-leaning", flag:true},
+  {id:"indie-road-movie", name:"Indie Road Movie", meaning:"Wistful indie rock/Britpop for travel, departures, and open roads.", win:"Train leaving a platform; empty airport gate; solitary traveler with a suitcase; open road into changing scenery.", lose:"Stylish urban night; K-R&B/jazz-hop mood; dance club; strong speed/adrenaline; friends casually enjoying a sunny drive; retro city nostalgia.", confused:"American Alternative Drive, J-Rock Highway Rush, City Pop", tie:"Wistful solo journey → this lane. Speed/adrenaline → J-Rock Highway Rush. Friends/casual sunny drive → American Alt Drive.", energy:"Mid-tempo, wistful but moving forward", space:"Outdoor, transit spaces"},
+  {id:"american-alternative-drive", name:"American Alternative Drive", meaning:"Sunny, casual American alt-rock/garage rock for road trips with friends.", win:"Friends packed into a car, windows down; sunlit casual highway; road-trip pit stop; group singing along.", lose:"Moody night street; smooth R&B/jazz; quiet rainy room; strong speed/anime adrenaline; solitary traveler; polished glossy fashion.", confused:"J-Rock Highway Rush, Indie Road Movie", tie:"Friends+sun+casual → this lane. Speed/adrenaline → J-Rock Highway Rush. Solo/departure → Indie Road Movie.", energy:"Energetic, sunny, casual", space:"Outdoor, sunny daytime"},
+  {id:"dream-pop-shoegaze-fog", name:"Dream Pop / Shoegaze Fog", meaning:"Hazy, reverb-soaked dream pop/shoegaze for foggy, blurred, melancholic scenes.", win:"Thick fog blurring a skyline; soft-focus washed-out light; distant lights glowing through mist; a figure dissolving into haze.", lose:"Bright high-energy scene; funk/disco mood; sharp punchy rock scene; ordinary rainy room with sharp detail; plain minimal bedroom; bright sunny clear scene.", confused:"K-Indie Rainy Room, Lo-fi Bedroom Solitude", tie:"Hazy/blurred/ethereal → this lane. Ordinary rainy room → K-Indie Rainy Room. Plain bedroom → Lo-fi Bedroom Solitude.", energy:"Slow to mid-tempo, hazy drift", space:"Outdoor/window-view, foggy"},
+  {id:"big-city-swagger-hiphop", name:"Big City Swagger Hip-Hop", meaning:"Confident, bass-heavy hip-hop for downtown dominance, skylines, and luxury cars.", win:"Black luxury car past a glowing skyline; confident figure against a downtown backdrop; rooftop skyline view; designer styling cues.", lose:"Quiet rainy room; soft acoustic pop; bright K-pop moment; smooth low-key cruise; tense/menacing/underground mood; synthetic futuristic neon.", confused:"Hip-Hop Night Drive, Dark Heavy Hip-Hop, Neon Electronic Night", tie:"Confident/luxury/dominance → this lane. Smooth cruise → Hip-Hop Night Drive. Aggressive/dark → Dark Heavy Hip-Hop.", energy:"Confident, bass-driven, mid-to-high", space:"Outdoor, night, city"},
+  {id:"neon-electronic-night", name:"Neon Electronic Night", meaning:"Cool synthetic neon and futuristic electronic pop for cyberpunk-style night scenes.", win:"Neon signage on wet pavement; late-night subway under cold fluorescent light; glowing screens/billboards; cool blue/purple/pink palette.", lose:"Acoustic/organic scene; vintage soul mood; quiet daytime scene; warm colorful dancefloor; confident rap cruise/sensual R&B; retro glossy sunset-warm scene.", confused:"Funk / Disco Night, Hip-Hop Night Drive, K-R&B Night Drive, City Pop", tie:"Cool synthetic neon → this lane. Warm colorful dancefloor → Funk/Disco Night. Rap/R&B cruise → Hip-Hop/K-R&B lanes.", energy:"Pulsing, synthetic, mid-tempo", space:"Outdoor/transit, night"},
+  {id:"lofi-bedroom-solitude", name:"Lo-fi Bedroom Solitude", meaning:"Minimal lo-fi/slowcore for private, solitary, introspective indoor stillness.", win:"Desk lamp glowing in a dark room; headphones on a desk; laptop lit only by screen glow; plain private room at night; empty quiet bedroom.", lose:"High-energy/social scene; driving rock/bright pop; outdoor party; warm public cafe with daylight; rain+diary feeling; youthful bedroom with posters/friends.", confused:"Cozy Cafe Mellow, K-Indie Rainy Room, Highteen Pop Room, Dream Pop", tie:"Alone/private/still → this lane. Public cafe/daylight → Cozy Cafe Mellow. Rain/diary → K-Indie Rainy Room.", energy:"Very low tempo, minimal", space:"Indoor, dim/night"},
+  {id:"highteen-pop-room", name:"Highteen Pop Room", meaning:"Playful teen-pop/bedroom pop for high-school bedrooms, selfies, and youthful friend energy.", win:"Teenage bedroom with posters/fairy lights; school hallway/locker; friends laughing together; playful unpolished selfie; DIY decor.", lose:"Moody adult night; dark/heavy hip-hop; formal/mature scene; polished editorial adult-fashion; one person alone in quiet stillness; romantic date scene.", confused:"Trendy Pop Chic, Lo-fi Bedroom Solitude, Modern Romance Pop", tie:"Teen/playful/friends/school → this lane. Adult fashion → Trendy Pop Chic. Alone/private → Lo-fi Bedroom Solitude.", energy:"Playful, bright, mid-to-high tempo", space:"Indoor, bedroom/school"},
+  {id:"modern-romance-pop", name:"Modern Romance Pop", meaning:"Glowing synth-pop for couples, date nights, and bittersweet young love.", win:"Two people together in a warm intimate moment; date-night glow; hands touching; a rainy street shared by a couple; phone-lit late-night conversation.", lose:"Chaotic party; aggressive hip-hop; bright daytime beach; one person alone; bright open-air vacation energy; a group of friends rather than a pair.", confused:"K-R&B Night Drive, Summer Beach Pop", tie:"Couple/romantic warmth → this lane. Solo sensual neon → K-R&B Night Drive. Beach/open vacation → Summer Beach Pop.", energy:"Mid-tempo, glowing/emotional", space:"Outdoor/car, night-leaning"},
+  {id:"summer-beach-pop", name:"Summer Beach Pop", meaning:"Bright surf-rock/sunny pop for beach days and open-air vacation energy.", win:"Ocean waves under a clear blue sky; pool/open-water in bright daylight; sunglasses/swimwear in direct sun; wide-open harbor/coastline.", lose:"Dark/moody scene; slowcore/noir-jazz; rainy indoor room; golden-hour retro city drive; indoor fashion/editorial shoot; travel/departure without beach energy.", confused:"City Pop, Trendy Pop Chic, Indie Road Movie", tie:"Open sky/water/sun/vacation → this lane. Retro urban glow → City Pop. Modern glossy fashion → Trendy Pop Chic.", energy:"Upbeat, sun-soaked, breezy", space:"Outdoor, sunny, summer, midday", flag:true},
+  {id:"trendy-pop-chic", name:"Trendy Pop Chic", meaning:"Glossy, confident modern pop/K-pop for fashion-forward, social-media-style moments.", win:"Mirror selfie in a styled outfit; editorial-style portrait; fashion-forward city-street look; polished high-contrast framing.", lose:"Quiet solitary room; ambient/ballad mood; rainy melancholic day; playful teenage bedroom/school; retro/nostalgic/sunset-glow scene; plain unstyled home moment.", confused:"City Pop, Highteen Pop Room", tie:"Adult polished fashion → this lane. Teen/playful/school → Highteen Pop Room. Retro nostalgia → City Pop.", energy:"Confident, sleek, mid-to-high tempo", space:"Mixed indoor/outdoor, city street", flag:true},
+  {id:"funk-disco-night", name:"Funk / Disco Night", meaning:"Warm, groovy disco/funk for colorful dancefloors and social party nights.", win:"Colorful warm-lit dancefloor with dancing; disco-ball/warm party lighting; friends dancing/celebrating together; retro-styled nightclub scene.", lose:"Quiet introspective scene; acoustic folk; slow rainy day; cool synthetic futuristic scene; stylish lounge without a dancefloor; dark tense aggressive scene.", confused:"Neon Electronic Night, Modern Jazz Groove", tie:"Warm dancefloor/social party → this lane. Cool futuristic neon → Neon Electronic Night. Stylish lounge w/o dancefloor → Modern Jazz Groove.", energy:"Groovy, danceable, uptempo", space:"Indoor, night, party"},
+  {id:"classic-soul-old-film", name:"Classic Soul / Old Film", meaning:"Warm classic soul/vintage ballads for old-film-toned, timeless nostalgic scenes.", win:"Faded grainy old photograph; warm sepia/film-grain toning; vintage family gathering/old street; analog film artifacts (light leaks, scratches).", lose:"Futuristic neon night; anime rock/synthwave; bright modern K-pop; 80s-glossy synth/sunset-drive energy; modern polished editorial; bright open-air sunny scene.", confused:"City Pop, Trendy Pop Chic", tie:"Old-film analog warmth → this lane. 80s city synth/drive → City Pop. Modern glossy editorial → Trendy Pop Chic.", energy:"Warm, soulful, mid-tempo", space:"Mixed, vintage aesthetic"},
+  {id:"cozy-cafe-mellow", name:"Cozy Cafe Mellow", meaning:"Warm, gentle soul-pop/soft R&B for sunlit public cafes and easygoing daytime comfort.", win:"Window-seat table with a coffee cup in soft daylight; bakery counter; warm morning sunlight across a cafe table; a book/laptop on a public table.", lose:"Dark night street; aggressive/heavy mood; neon nightclub; rhythmic stylish night-lounge groove; private bedroom/desk; rain+diary-like domestic mood.", confused:"Lo-fi Bedroom Solitude, Modern Jazz Groove, K-Indie Rainy Room", tie:"Public cafe/daylight/warm comfort → this lane. Rhythmic jazz/lounge → Modern Jazz Groove. Private alone room → Lo-fi Bedroom Solitude.", energy:"Gentle, warm, low-to-mid tempo", space:"Indoor, daylight/morning"},
+  {id:"hip-hop-night-drive", name:"Hip-Hop Night Drive", meaning:"Smooth, melodic hip-hop/R&B-rap for confident late-night city cruising.", win:"Car interior lit by passing streetlights; downtown city lights streaming past a window; confident relaxed nighttime cruise; neon blurred by motion.", lose:"Bright daytime scene; acoustic/folk energy; sunny beach; soft lonely sensual mood; tense/menacing/underground mood; luxury/skyline stillness rather than motion.", confused:"K-R&B Night Drive (hard pair — see Red Flags), Dark Heavy Hip-Hop, Big City Swagger", tie:"Smooth rap/cruise → this lane. Sensual soft R&B → K-R&B Night Drive. Aggressive menace → Dark Heavy Hip-Hop.", energy:"Smooth, melodic, mid-tempo", space:"Outdoor/car, night", flag:true},
+  {id:"dark-heavy-hiphop", name:"Dark Heavy Hip-Hop", meaning:"Aggressive, bass-heavy trap/drill for dark, tense, high-stakes night scenes.", win:"Shadowy underlit street/alley; black room lit only by a phone screen; aggressive/confrontational pose; underground/graffiti-heavy texture.", lose:"Bright and cheerful scene; soft acoustic/cafe pop; sunny beach day; smooth relaxed mood; confident luxury without menace; synthetic futuristic neon.", confused:"Hip-Hop Night Drive, Big City Swagger, Neon Electronic Night", tie:"Menace/aggression → this lane. Smooth cruise → Hip-Hop Night Drive. Confident luxury → Big City Swagger.", energy:"Heavy, tense, aggressive", space:"Indoor/outdoor dark, night"},
+];
+
+const conflicts = [
+  ["City Pop / Retro Drive vs Summer Beach Pop", "Retro urban nostalgia + sunset drive → City Pop. Bright open-air sunny/water/vacation → Summer Beach Pop. This was the original bug (bright ocean/harbor photos were defaulting to City Pop) — now fixed."],
+  ["City Pop / Retro Drive vs Trendy Pop Chic", "Retro/nostalgic → City Pop. Modern glossy/fashion-forward → Trendy Pop Chic. Aesthetic era decides."],
+  ["City Pop / Retro Drive vs Indie Road Movie", "Retro city mood → City Pop. Travel/departure story → Indie Road Movie."],
+  ["Cozy Cafe Mellow vs Lo-fi Bedroom Solitude", "Public/social warm daytime cafe → Cozy Cafe Mellow. Private solitary room → Lo-fi Bedroom Solitude."],
+  ["K-R&B Night Drive vs Hip-Hop Night Drive", "Sensual/smooth solitary → K-R&B Night Drive. Confident rap/street cruise → Hip-Hop Night Drive. <b>Hardest pair in the system</b> — near-identical visuals, sonic/vocal difference isn't strongly visible in a photo."],
+  ["Hip-Hop Night Drive vs Dark Heavy Hip-Hop", "Smooth relaxed cruise → Hip-Hop Night Drive. Aggressive/tense/menacing → Dark Heavy Hip-Hop."],
+  ["Neon Electronic Night vs Funk / Disco Night", "Cool synthetic neon → Neon Electronic Night. Warm colorful dancefloor → Funk / Disco Night. Color temperature decides."],
+  ["Highteen Pop Room vs Trendy Pop Chic", "Playful teen/school/friend energy → Highteen Pop Room. Adult glossy fashion/editorial → Trendy Pop Chic."],
+  ["Modern Romance Pop vs K-R&B Night Drive", "Couple/shared intimacy → Modern Romance Pop. Solitary nocturnal sensuality → K-R&B Night Drive."],
+  ["Dream Pop / Shoegaze Fog vs Lo-fi Bedroom Solitude", "Hazy/blurred/outdoor dreamscape → Dream Pop. Plain private indoor stillness → Lo-fi Bedroom Solitude."],
+  ["American Alternative Drive vs Indie Road Movie", "Friends/casual/energetic road trip → American Alternative Drive. Solo/wistful/departure narrative → Indie Road Movie."],
+  ["Modern Jazz Groove vs Cozy Cafe Mellow", "Rhythmic, often nighttime lounge groove → Modern Jazz Groove. Plain warm daytime cafe comfort → Cozy Cafe Mellow."],
+  ["Classic Soul / Old Film vs City Pop / Retro Drive", "Decades-old sepia/analog nostalgia → Classic Soul. 80s glossy synth/sunset drive → City Pop. Both 'retro' but different eras."],
+  ["Big City Swagger vs Hip-Hop Night Drive vs Dark Heavy Hip-Hop", "Confident/luxury/stillness → Big City Swagger. Smooth relaxed in-motion cruise → Hip-Hop Night Drive. Aggressive/tense → Dark Heavy Hip-Hop. Subtle three-way split."],
+];
+
+const scenarios = [
+  [1,"Bright blue sky + ocean/harbor + sunny daytime","open sky, water, bright midday sun","Summer Beach Pop","Trendy Pop Chic, Indie Road Movie","City Pop / Retro Drive","Open sky/water/sun outweighs any Japan/city association — the original bug case."],
+  [2,"Sunset city skyline + warm retro colors","golden-hour light, retro grading","City Pop / Retro Drive","Classic Soul / Old Film","Summer Beach Pop","Genuine retro/sunset glow signal present."],
+  [3,"Rainy window + quiet room + alone","rain on glass, domestic clutter","K-Indie Rainy Room","Lo-fi Bedroom Solitude, Dream Pop","Cozy Cafe Mellow","Rain + ordinary room + diary feeling is the core trigger."],
+  [4,"Neon city night + movement","cool neon, motion","Neon Electronic Night","Hip-Hop Night Drive","Funk / Disco Night","Cool synthetic neon + motion beats warm dancefloor."],
+  [5,"Dark car interior + night road","in-motion car, city lights","Hip-Hop Night Drive","K-R&B Night Drive","Dark Heavy Hip-Hop","Motion + moderate energy reads as cruise, not menace."],
+  [6,"Cozy cafe table + warm light","window seat, daylight","Cozy Cafe Mellow","Modern Jazz Groove (if night+rhythmic)","Lo-fi Bedroom Solitude","Public daylight cafe setting."],
+  [7,"Stylish outfit/selfie/editorial","mirror selfie, polish","Trendy Pop Chic","—","City Pop, Highteen Pop Room","Modern glossy polish, not retro or teen-playful."],
+  [8,"Young bedroom/friends/school vibe","posters, friends, school","Highteen Pop Room","—","Trendy Pop Chic, Lo-fi Bedroom Solitude","Youthful social energy, not adult-fashion or solitary."],
+  [9,"Foggy field/window/dreamy blur","fog, haze","Dream Pop / Shoegaze Fog","K-Indie Rainy Room (indoor rain)","Summer Beach Pop","Haze/blur is the defining signal."],
+  [10,"Intense dark street/aggressive pose","shadow, confrontational pose","Dark Heavy Hip-Hop","Big City Swagger (confident-not-aggressive)","Hip-Hop Night Drive","Aggression/menace over smooth cruise."],
+  [11,"Live band/guitar/highway rush","performance, speed","J-Rock Highway Rush","American Alternative Drive","Indie Road Movie","Actual performance+speed signal present."],
+  [12,"Couple/soft romantic date","two people, intimacy","Modern Romance Pop","K-R&B Night Drive (only if solo)","Highteen Pop Room","Couple/shared intimacy over group/teen energy."],
+  [13,"Luxury skyline/black car/confident city posture","skyline, luxury car","Big City Swagger Hip-Hop","Hip-Hop Night Drive (in motion)","Dark Heavy Hip-Hop","Confident dominance, not menace."],
+  [14,"Old family photo/vintage street/film memory","sepia, film grain","Classic Soul / Old Film","—","City Pop / Retro Drive","Decades-old analog warmth, not 80s glossy synth."],
+  [15,"Colorful dancefloor/social party","disco lighting, group dancing","Funk / Disco Night","Trendy Pop Chic (fashion-focused)","Neon Electronic Night","Warm colorful social groove, not cool synthetic."],
+  [16,"Private desk/headphones/late-night alone","desk lamp, headphones, solitude","Lo-fi Bedroom Solitude","K-Indie Rainy Room (rain visible)","Highteen Pop Room","Solitary stillness, no social/teen signal."],
+  [17,"Casual sunny road trip with friends","friends, sunlit highway","American Alternative Drive","—","J-Rock Highway Rush, Indie Road Movie","Friends+casual+sun beats solo/speed signals."],
+  [18,"Airport/platform/train departure","departure gate, solitary traveler","Indie Road Movie","—","City Pop / Retro Drive","Travel/departure narrative is the defining trigger."],
+  [19,"Bright casual home selfie","plain home, no styling","Cozy Cafe Mellow or Lo-fi Bedroom Solitude","the other of the two","Trendy Pop Chic","No fashion/editorial polish, just casual home."],
+  [20,"Futuristic subway/screens/cold neon","cold neon, screens","Neon Electronic Night","Hip-Hop Night Drive (confident cruise)","City Pop / Retro Drive","Cold/futuristic beats warm/retro."],
+  [21,"Sunny Japanese street with no retro mood","plain daylight, no motion/glow","Summer Beach Pop or Cozy Cafe Mellow","—","City Pop, J-Rock Highway Rush","Tests 'don't choose from location alone.'"],
+  [22,"Japanese alley at night with warm neon and retro signage","warm neon, retro signage","City Pop / Retro Drive","Classic Soul / Old Film","Neon Electronic Night","Warm neon+retro signage is a genuine glow signal, not just location."],
+  [23,"Korean rainy street","rain, street","K-Indie Rainy Room or K-R&B Night Drive","the other of the two","—","Culture is flavor; rain+intimacy vs neon+loneliness decides."],
+  [24,"New York skyline daylight","skyline, daylight","Depends on framing (Big City Swagger only if confident/dominant)","Cozy Cafe Mellow, Summer Beach Pop","Hip-Hop Night Drive automatically","Exactly the case the cultural-context cleanup targets."],
+  [25,"Beach selfie with fashion/editorial pose","beach + editorial pose","Trendy Pop Chic","Summer Beach Pop (candid pose)","—","Fashion/editorial framing outweighs the beach backdrop."],
+  [26,"Indoor hotel window looking at ocean","window framing, ocean beyond","Summer Beach Pop or Cozy Cafe Mellow","the other of the two","City Pop (unless sunset)","Openness through window vs enclosed-room framing decides."],
+  [27,"Empty bedroom with posters and daylight, no people","posters, daylight","Highteen Pop Room","Lo-fi Bedroom Solitude (minimal/adult)","—","Posters+youthful decor vs plain minimal room."],
+  [28,"Crowd at concert","crowd, performance","Ambiguous — depends on genre cues","multiple, genre-dependent","—","'Concert' alone is ambiguous; flagged in Red Flags."],
+  [29,"Quiet library/study desk","solitary desk","Lo-fi Bedroom Solitude","Cozy Cafe Mellow (public daylight)","Highteen Pop Room (unless teen study space)","Solitary desk stillness."],
+  [30,"Mountain road at sunset","drive, sunset","City Pop or Indie Road Movie","the other of the two","—","Sunset+drive vs open-road-journey framing decides."],
+  [31,"Tunnel/highway motion blur","motion blur","J-Rock Highway Rush","American Alternative Drive (casual/American)","Indie Road Movie","Motion blur is a hard speed signal."],
+  [32,"Mirror selfie in a glossy outfit","glossy fashion polish","Trendy Pop Chic","—","Highteen Pop Room, City Pop","Glossy/modern editorial polish is the defining trigger."],
+  [33,"Romantic dinner table","two people, intimate table","Modern Romance Pop","Cozy Cafe Mellow (calm/daytime)","Funk / Disco Night","Intimate couple framing over party energy."],
+  [34,"Lonely late-night convenience store","solitary, night, still","K-R&B Night Drive","Lo-fi Bedroom Solitude (interior-focused)","Hip-Hop Night Drive","No motion/cruise present."],
+  [35,"Old film street photo","sepia, film grain, street","Classic Soul / Old Film","—","City Pop (unless 80s-glossy)","Analog/sepia vs glossy-synth distinction."],
+  [36,"Modern cafe with laptop","cafe, laptop","Cozy Cafe Mellow","Lo-fi Bedroom Solitude (private/enclosed)","—","Public daylight cafe setting is the default read."],
+  [37,"Dark underground club","dark, club","Ambiguous — tone-dependent","multiple, tone-dependent","—","'Dark club' alone is ambiguous; flagged in Red Flags."],
+  [38,"Warm disco party","warm party lighting","Funk / Disco Night","—","Neon Electronic Night","Warm saturated party lighting is the defining cue."],
+  [39,"Blue-hour city walk","blue hour, ambiguous social context","K-R&B / Modern Romance / Dream Pop","multiple, context-dependent","—","Blue hour alone is ambiguous; flagged in Red Flags."],
+  [40,"Sunny poolside vacation","pool, sun, vacation","Summer Beach Pop","Trendy Pop Chic (editorial/fashion-posed)","City Pop / Retro Drive","Bright open-air water/sun energy, same as scenario #1."],
+];
+
+const redFlags = [
+  "<b>K-R&B Night Drive vs Hip-Hop Night Drive is the hardest unresolved pair.</b> Both describe near-identical car/night-street visuals; the real difference (smooth R&B vocals vs. confident rap flow) is sonic, not reliably visible in a photo.",
+  "<b>Big City Swagger vs Hip-Hop Night Drive vs Dark Heavy Hip-Hop</b> is a real three-way overlap depending on subtle emotional-tone reading GPT may not always get right.",
+  "<b>Classic Soul / Old Film vs City Pop / Retro Drive</b> both trade on 'retro' — decades-old sepia vs 80s glossy synth is a fine-grained aesthetic-era judgment call.",
+  "Several scenarios (concert crowds, dark clubs, blue-hour walks) are genuinely multi-valent — no amount of prompt wording fully resolves them; GPT's answer there is a best-guess.",
+  "<code>avoidWhen</code> is prompt guidance, not a hard constraint. The backend only validates that <code>primary_lane_id</code> is one of the 20 valid IDs — it does not check consistency with the lane's own avoidWhen list.",
+  "City Pop / Retro Drive is now the most heavily-guarded lane in the system (named in 3 guard sections + the conflict resolver + 3 other lanes' avoidWhen lists) — this fixes the over-selection bug but carries a small risk of the opposite problem (mild under-selection in genuinely ambiguous retro-adjacent cases).",
+  "Summer Beach Pop and Trendy Pop Chic should now win more often for bright/open-air and fashion-forward images — but this is <b>untested against real GPT-4o Vision output</b>. This review is reasoning about the prompt text, not measured model behavior.",
+  "<b>There is no automated eval harness.</b> No test suite feeds real images through the endpoint and checks the returned lane. Building a small eval set (20-40 labeled test images run against the real endpoint) is the natural next step to verify this instead of just reasoning about it.",
+];
+
+function renderLanes() {
+  const grid = document.getElementById("lane-grid");
+  grid.innerHTML = lanes.map(l => `
+    <div class="lane-card${l.flag ? " flag" : ""}">
+      <h4>${l.name}</h4>
+      <div class="lane-id">${l.id}${l.flag ? ' <span class="badge">notable case</span>' : ""}</div>
+      <div class="field"><b>Meaning</b>${l.meaning}</div>
+      <div class="field"><b class="yes" style="color:var(--good)">Choose when</b>${l.win}</div>
+      <div class="field"><b class="no" style="color:var(--warn)">Do NOT choose when</b>${l.lose}</div>
+      <div class="field"><b>Confused with</b>${l.confused}</div>
+      <div class="field"><b>Tie-breaker</b>${l.tie}</div>
+      <div class="field"><b>Typical energy</b>${l.energy}</div>
+      <div class="field"><b>Typical space</b>${l.space}</div>
+    </div>
+  `).join("");
+}
+
+function renderConflicts() {
+  document.getElementById("conflicts-body").innerHTML = conflicts.map(c => `<tr><td>${c[0]}</td><td>${c[1]}</td></tr>`).join("");
+}
+
+function renderScenarios() {
+  document.getElementById("scenarios-body").innerHTML = scenarios.map(s => `
+    <tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4]}</td><td>${s[5]}</td><td>${s[6]}</td></tr>
+  `).join("");
+}
+
+function renderRedFlags() {
+  document.getElementById("redflags").innerHTML = `<div class="panel redflag"><ul>${redFlags.map(f => `<li>${f}</li>`).join("")}</ul></div>`;
+}
+
+renderLanes();
+renderConflicts();
+renderScenarios();
+renderRedFlags();
+</script>
+</body>
+</html>
