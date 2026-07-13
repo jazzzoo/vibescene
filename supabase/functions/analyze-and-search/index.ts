@@ -13,7 +13,7 @@ import {
   updatePlaylistStatus,
 } from "./services/db.ts";
 import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
-import { sequencePlaylistArc } from "./services/sequencing.ts";
+import { sequenceCatalogTracksWithAnchors } from "./services/sequencing.ts";
 import {
   type CatalogSeedTrack,
   selectCatalogTracks,
@@ -39,6 +39,10 @@ function toVerifiedTrackRows(tracks: CatalogSeedTrack[], laneId: string): Youtub
 
 const MIN_TRACKS = 5;
 const MIN_CATALOG_TRACKS = 5;
+// 최종적으로는 10곡만 쓰지만, "신뢰 오프너(1번)/친숙한 mood lock(2번)" 후보가 seededShuffle에서
+// 잘려나가지 않도록 선택 후보 풀 자체를 조금 더 크게(count) 가져온다. 실제 삽입 트랙 수는 변하지 않음.
+const CATALOG_CANDIDATE_POOL_SIZE = 16;
+const FINAL_TRACK_COUNT = 10;
 const IMAGE_BUCKET = "user-images";
 const SIGNED_URL_TTL_SECONDS = 300; // GPT 호출 시간을 고려한 5분
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -199,23 +203,22 @@ Deno.serve(async (req) => {
     const verifiedCatalogTracks = selectVerifiedCatalogTracks({
       laneId: gptResult.primary_lane_id,
       seed: playlistId,
-      count: 10,
+      count: CATALOG_CANDIDATE_POOL_SIZE,
     });
     setStage("catalog_verified_check_completed");
 
     if (verifiedCatalogTracks.length >= MIN_CATALOG_TRACKS) {
       await updatePlaylistAnalysis(supabaseAdmin, playlistId, gptResult, "catalog");
 
-      // 트랙 정체성은 그대로 두고 순서만 opener→mood lock→energy lift→emotional peak→cooldown→closer
-      // 아크로 재배치한다. 실패하면 원래 seededShuffle 순서로 안전하게 fallback.
-      let sequencedVerifiedTracks = verifiedCatalogTracks;
-      try {
-        sequencedVerifiedTracks = sequencePlaylistArc(verifiedCatalogTracks);
-      } catch (seqErr) {
-        console.error("[analyze-and-search] sequencing_failed_verified_catalog", {
-          errorMessage: seqErr instanceof Error ? seqErr.message : String(seqErr),
-        });
-      }
+      // 트랙 정체성은 그대로 두고 순서만 재배치한다: 1번(신뢰 오프너)/2번(친숙한 mood lock)은
+      // lane 대표성을 우선 고려하고, 3-10번은 opener→mood lock→energy lift→emotional peak→
+      // cooldown→closer 에너지 아크를 따른다. 실패 시 내부적으로 energy-fit → 원본 순서로 fallback.
+      const sequencedVerifiedTracks = sequenceCatalogTracksWithAnchors(
+        verifiedCatalogTracks,
+        gptResult.primary_lane_id,
+        playlistId,
+        FINAL_TRACK_COUNT,
+      );
 
       const rankedTracks = toVerifiedTrackRows(sequencedVerifiedTracks, gptResult.primary_lane_id);
 
@@ -233,23 +236,18 @@ Deno.serve(async (req) => {
     const catalogTracks = selectCatalogTracks({
       laneId: gptResult.primary_lane_id,
       seed: playlistId,
-      count: 10,
+      count: CATALOG_CANDIDATE_POOL_SIZE,
     });
 
     const trackSource: TrackSource = catalogTracks.length >= MIN_CATALOG_TRACKS ? "catalog" : "youtube_fallback";
 
-    // 트랙 정체성은 그대로 두고 순서만 opener→mood lock→energy lift→emotional peak→cooldown→closer
-    // 아크로 재배치한다. 실패하면 원래 seededShuffle 순서로 안전하게 fallback.
-    let sequencedCatalogTracks = catalogTracks;
-    if (trackSource === "catalog") {
-      try {
-        sequencedCatalogTracks = sequencePlaylistArc(catalogTracks);
-      } catch (seqErr) {
-        console.error("[analyze-and-search] sequencing_failed_catalog", {
-          errorMessage: seqErr instanceof Error ? seqErr.message : String(seqErr),
-        });
-      }
-    }
+    // 트랙 정체성은 그대로 두고 순서만 재배치한다: 1번(신뢰 오프너)/2번(친숙한 mood lock)은
+    // lane 대표성을 우선 고려하고, 3-10번은 opener→mood lock→energy lift→emotional peak→
+    // cooldown→closer 에너지 아크를 따른다. 실패 시 내부적으로 energy-fit → 원본 순서로 fallback.
+    const sequencedCatalogTracks =
+      trackSource === "catalog"
+        ? sequenceCatalogTracksWithAnchors(catalogTracks, gptResult.primary_lane_id, playlistId, FINAL_TRACK_COUNT)
+        : catalogTracks;
 
     const tracksForYoutubeSearch: GptPlaylistItem[] = trackSource === "catalog"
       ? sequencedCatalogTracks.map((track, idx) => ({

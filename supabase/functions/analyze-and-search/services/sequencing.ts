@@ -1,4 +1,4 @@
-import type { CatalogSeedTrack, TrackEnergy } from "../../_shared/musicCatalog.ts";
+import { getTracksByLane, type CatalogSeedTrack, type TrackEnergy } from "../../_shared/musicCatalog.ts";
 
 // catalog 트랙은 musicCatalog.ts의 seededShuffle로 이미 결정론적으로 "선택"되어 있다.
 // 이 모듈은 그 선택 결과(트랙 정체성)는 절대 바꾸지 않고, 순서만 6단계 아크로 재배치한다:
@@ -81,4 +81,146 @@ export function sequencePlaylistArc<T extends Pick<CatalogSeedTrack, "energy">>(
   if (sequenced.length !== n) return tracks;
 
   return sequenced;
+}
+
+// ── Phase 8: 신뢰 오프너(1번) + 친숙한 mood lock(2번) ──────────────────────
+//
+// 위의 energy-fit 재배치만으로는 1-2번 트랙이 "그 lane의 아무 low/medium 에너지 곡"이 될 수 있다.
+// 첫 1-2곡은 사용자가 "이 서비스가 내 사진을 이해했구나"를 느끼는 신뢰 구간이므로,
+// 에너지 적합도뿐 아니라 "이 lane에서 얼마나 대표적인 곡인가"도 함께 고려한다.
+//
+// catalog에는 인기도/친숙도 필드가 없다 — 664곡을 수동 태깅하거나 GPT를 추가 호출하지 않기 위해,
+// 각 lane 배열 안에서 트랙이 등장하는 "원래 순서"를 낮을수록 더 대표적이라는 가벼운 proxy로 사용한다.
+// (이 순서가 실제로 "대표곡 우선" 의도로 입력되었다는 보장은 없다 — 확인된 사실이 아니라
+//  현재 쓸 수 있는 최선의 근사치라는 점을 최종 리포트에 명시한다.)
+
+const ANCHOR_POSITION_COUNT = 2; // 앵커 로직을 적용하는 앞쪽 포지션 수 (1번, 2번 트랙)
+const ANCHOR_SHORTLIST_SIZE = 6; // lane 원본 순서 기준 상위 몇 곡을 "앵커 후보"로 볼지
+const ANCHOR_ENERGY_TOLERANCE = 1; // 포지션 목표 에너지와 이보다 많이 차이나면 앵커 후보에서 제외
+
+function simpleSeedHash(text: string): number {
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+// lane 원본(작성 순서) 배열에서 각 트랙의 index를 조회하기 위한 Map.
+// getTracksByLane/selectCatalogTracks/selectVerifiedCatalogTracks는 모두 같은 트랙 객체 참조를
+// 공유하므로(필터/셔플만 하고 복제하지 않음) 객체 참조 키만으로 정확히 매칭된다.
+function buildLaneIndexMap(laneId: string): Map<CatalogSeedTrack, number> {
+  const map = new Map<CatalogSeedTrack, number>();
+  getTracksByLane(laneId).forEach((track, idx) => map.set(track, idx));
+  return map;
+}
+
+function expandStageSequence(bucketSizes: number[]): number[] {
+  const sequence: number[] = [];
+  bucketSizes.forEach((size, stage) => {
+    for (let i = 0; i < size; i += 1) sequence.push(stage);
+  });
+  return sequence;
+}
+
+// candidatePool 중에서 1번/2번 포지션에 놓을 "신뢰 오프너 + 친숙한 mood lock"을 고른다.
+// 조건에 맞는 후보가 없는 포지션부터는 빈 채로 두어, 호출부가 일반 energy-fit 로직으로
+// 자연스럽게 이어받게 한다(억지로 채우지 않음).
+function pickAnchorTracks(
+  candidatePool: CatalogSeedTrack[],
+  laneIndexMap: Map<CatalogSeedTrack, number>,
+  positionTargets: number[],
+  seed: string,
+): CatalogSeedTrack[] {
+  const anchors: CatalogSeedTrack[] = [];
+  const remaining = [...candidatePool];
+
+  for (let position = 0; position < ANCHOR_POSITION_COUNT; position += 1) {
+    const target = positionTargets[position];
+    if (target === undefined) break;
+
+    // "유명하다는 이유로 고에너지 절정곡을 1번에 놓지 않는다" — high energy는 항상 앵커 후보에서 제외.
+    // 그 외에는 해당 포지션 목표 에너지와 크게 어긋나지 않는 곡만 앵커 후보로 인정한다.
+    const eligible = remaining.filter(
+      (track) => track.energy !== "high" && Math.abs(energyScore(track.energy) - target) <= ANCHOR_ENERGY_TOLERANCE,
+    );
+    if (eligible.length === 0) break;
+
+    // lane 원본 순서(대표곡 proxy) 기준 오름차순 정렬 후 상위 N곡을 숏리스트로 삼는다.
+    const shortlist = [...eligible]
+      .sort(
+        (a, b) =>
+          (laneIndexMap.get(a) ?? Number.MAX_SAFE_INTEGER) - (laneIndexMap.get(b) ?? Number.MAX_SAFE_INTEGER),
+      )
+      .slice(0, ANCHOR_SHORTLIST_SIZE);
+
+    // 같은 lane이라도 playlist(=seed)마다 다른 앵커가 나오도록, 숏리스트 안에서 seed 기반으로 회전 선택.
+    // 매번 같은 두 곡으로 시작하는 것을 피하면서도, seed가 같으면 항상 같은 결과(결정론)를 유지한다.
+    const pickedIndex = simpleSeedHash(`${seed}:anchor:${position}`) % shortlist.length;
+    const picked = shortlist[pickedIndex];
+
+    anchors.push(picked);
+    remaining.splice(remaining.indexOf(picked), 1);
+  }
+
+  return anchors;
+}
+
+// 앵커 인지 시퀀싱 — 1/2번 포지션은 "신뢰할 수 있고 친숙한" 곡을 우선하고,
+// 나머지 포지션은 기존 energy-fit 아크 로직을 그대로 사용한다.
+// 트랙을 추가/삭제/변경하지 않는다 — candidatePool 안에서 어떤 targetCount곡을 어떤 "순서"로 쓸지만 정한다.
+//
+// 3단계 fallback:
+//   1) 앵커 인지 시퀀싱 실패 → sequencePlaylistArc(순수 energy-fit)로 fallback
+//   2) 그것도 실패 → candidatePool의 원본(seededShuffle) 순서를 그대로 사용
+export function sequenceCatalogTracksWithAnchors(
+  candidatePool: CatalogSeedTrack[],
+  laneId: string,
+  seed: string,
+  finalCount = 10,
+): CatalogSeedTrack[] {
+  const targetCount = Math.min(finalCount, candidatePool.length);
+  if (targetCount <= 0) return [];
+
+  // count:10으로 선택했을 때와 동일한 seededShuffle 순서(앞쪽 targetCount개) — energy-fit fallback 입력.
+  const legacySelection = candidatePool.slice(0, targetCount);
+
+  try {
+    const bucketSizes = computeArcBucketSizes(targetCount);
+    const positionTargets = expandStageSequence(bucketSizes).map((stage) => STAGE_TARGET_ENERGY[stage]);
+    const laneIndexMap = buildLaneIndexMap(laneId);
+
+    const anchors = pickAnchorTracks(candidatePool, laneIndexMap, positionTargets, seed);
+    const pool = candidatePool.filter((track) => !anchors.includes(track));
+    const sequenced: CatalogSeedTrack[] = [...anchors];
+
+    for (let position = anchors.length; position < targetCount; position += 1) {
+      const target = positionTargets[position];
+      pool.sort((a, b) => Math.abs(energyScore(a.energy) - target) - Math.abs(energyScore(b.energy) - target));
+      const next = pool.shift();
+      if (!next) break;
+      sequenced.push(next);
+    }
+
+    if (sequenced.length !== targetCount) {
+      throw new Error(`anchor sequencing produced ${sequenced.length} tracks, expected ${targetCount}`);
+    }
+
+    return sequenced;
+  } catch (anchorErr) {
+    console.error("[sequencing] anchor_aware_sequencing_failed", {
+      laneId,
+      errorMessage: anchorErr instanceof Error ? anchorErr.message : String(anchorErr),
+    });
+
+    try {
+      return sequencePlaylistArc(legacySelection);
+    } catch (energyErr) {
+      console.error("[sequencing] energy_fit_sequencing_failed", {
+        laneId,
+        errorMessage: energyErr instanceof Error ? energyErr.message : String(energyErr),
+      });
+      return legacySelection;
+    }
+  }
 }
