@@ -211,6 +211,8 @@ export const CURATION_LANES: CurationLane[] = [
       "the scene has strong speed/adrenaline/guitar-driven rush rather than a wistful pace (prefer J-Rock Highway Rush instead)",
       "the scene shows friends casually enjoying a sunny drive rather than a solitary departure story (prefer American Alternative Drive instead)",
       "the scene feels like retro city nostalgia (sunset drive, glossy synths) rather than a travel/departure narrative (prefer City Pop / Retro Drive instead)",
+      "the scene is a plain peaceful outdoor or indoor scenic view — pavilion, mountain, park, nature, city-view, or ocean-view — with no visible road, transit, vehicle, platform, airport, suitcase, or journey narrative; a calm or scenic view alone is never enough to choose this lane, even if the mood reads as nostalgic, wistful, dreamy, or expansive (judge another lane on its own visual evidence instead)",
+      "the mood is generically nostalgic, wistful, peaceful, or dreamy but the image shows no departure, transit, vehicle, or road-trip narrative — do not choose this lane from mood words alone",
     ],
   },
   {
