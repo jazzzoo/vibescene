@@ -23,7 +23,7 @@ export const CURATION_LANES: CurationLane[] = [
       "Beat-driven modern jazz built on live sax, warm Rhodes piano, and laid-back grooves — closer to jazz-hop and neo-soul than traditional swing jazz.",
     sceneSignals: [
       "dim jazz bar with a live sax player",
-      "rain streaking a late-night cafe window",
+      "rain streaking a late-night cafe window that also shows a rhythmic lounge/sax/Rhodes-piano or adult-sophisticated nightlife cue (not just any rainy window)",
       "warm Rhodes-piano lounge glow",
       "adult city apartment at night with warm lamp light",
       "stylish rooftop or wine-bar scene after dark",
@@ -56,6 +56,7 @@ export const CURATION_LANES: CurationLane[] = [
       "the scene is a sunlit daytime cafe with simple, gentle comfort rather than a rhythmic night groove (prefer Cozy Cafe Mellow instead)",
       "the scene is a solitary late-night car or window mood with smooth R&B sensuality rather than a jazz-club groove (prefer K-R&B Night Drive instead)",
       "the setting is a quiet, empty room with no social/stylish energy (prefer Lo-fi Bedroom Solitude instead)",
+      "the scene is simply a rainy late-night window, room, or cafe with no visible jazz/lounge/sax/Rhodes-piano/rhythmic or adult-sophisticated nightlife cue (prefer K-Indie Rainy Room, Cozy Cafe Mellow, or Lo-fi Bedroom Solitude instead, depending on the room and context)",
     ],
   },
   {
@@ -98,6 +99,7 @@ export const CURATION_LANES: CurationLane[] = [
       "a lone silhouette against a glowing storefront or apartment window",
       "soft neon reflected on wet pavement",
       "a quiet late-night portrait with moody, low lighting",
+      "a static or parked moment — a figure standing still, sitting alone, or seen through a window reflection rather than in motion",
     ],
     energySignals: ["smooth, sensual mid-tempo", "moody but groovy R&B pulse", "late-night electronic softness", "lonely, intimate night energy"],
     allowedGenres: ["K-R&B", "Korean alt R&B", "mellow K-pop", "late-night electronic pop", "Korean city pop"],
@@ -116,6 +118,7 @@ export const CURATION_LANES: CurationLane[] = [
       "the scene has aggressive, confident street/rap energy rather than smooth sensuality (prefer Hip-Hop Night Drive instead)",
       "the scene shows a couple or romantic warmth rather than solitary loneliness (prefer Modern Romance Pop instead)",
       "the scene feels tense, menacing, or heavy rather than smooth and moody (prefer Dark Heavy Hip-Hop instead)",
+      "the scene shows a moving car mid-cruise, downtown lights streaming past with motion, confident posture, or streetwear/rap energy rather than a static, solo, intimate moment (prefer Hip-Hop Night Drive instead)",
     ],
   },
   {
@@ -310,6 +313,7 @@ export const CURATION_LANES: CurationLane[] = [
       "a laptop or notebook lit only by screen glow",
       "a plain, minimally decorated private room at night",
       "a single unmade bed or quiet nighttime bedroom with no one else present",
+      "a private, quiet home selfie or personal desk/bedroom moment alone with low energy and no cafe, party, or youthful/poster styling",
     ],
     energySignals: ["very low tempo, minimal beats", "introspective, unhurried stillness", "soft tape-hiss quietness", "solitary, unbothered pace"],
     allowedGenres: ["lo-fi", "bedroom pop", "slowcore", "soft melancholy indie", "minimal beats"],
@@ -358,6 +362,7 @@ export const CURATION_LANES: CurationLane[] = [
       "the scene is a golden-hour/sunset city drive with retro nostalgia rather than bright midday openness (prefer City Pop / Retro Drive instead)",
       "the scene is an indoor fashion/editorial shoot rather than an actual open-air water/beach scene (prefer Trendy Pop Chic instead)",
       "the scene is a travel/departure story (train, airport, road) without beach/sun/water energy (prefer Indie Road Movie instead)",
+      "the scene is merely a sunny street, city block, or clear-sky daytime scene with no visible ocean, beach, pool, harbor, or open-air vacation/leisure cue — bright sunlight or a clear sky alone is never enough to choose this lane (judge other lanes on their own signals instead)",
     ],
   },
   {
@@ -461,6 +466,7 @@ export const CURATION_LANES: CurationLane[] = [
       "friends laughing together in a casual, youthful setting",
       "a playful selfie with bright, unpolished styling",
       "handwritten notes, stickers, or DIY decor",
+      "a casual home selfie with youthful, poster, friends, school, or cute/playful energy rather than polished editorial fashion",
     ],
     energySignals: ["playful, mid-to-high tempo bounce", "bright and dramatic teen energy", "youthful, unfiltered enthusiasm"],
     allowedGenres: ["bedroom pop", "teen pop", "pop rock", "indie pop"],
@@ -521,6 +527,7 @@ export const CURATION_LANES: CurationLane[] = [
       "a fashion-forward look on a city street",
       "polished, high-contrast, social-media-ready framing",
       "designer or trend-driven styling with minimal clutter",
+      "a polished home or mirror selfie with fashion/makeup/editorial confidence, even indoors or at home",
     ],
     energySignals: ["confident, mid-to-high polished tempo", "sleek and trend-driven energy", "clean, camera-ready confidence"],
     allowedGenres: ["K-pop", "trendy pop", "fashion pop", "hyper-pop"],
@@ -538,7 +545,7 @@ export const CURATION_LANES: CurationLane[] = [
       "the setting is a rainy melancholic day",
       "the scene is a playful teenage bedroom or school setting rather than adult editorial polish (prefer Highteen Pop Room instead)",
       "the scene feels retro, nostalgic, or sunset-glow rather than modern and glossy (prefer City Pop / Retro Drive instead)",
-      "the scene is a plain, unstyled casual home moment with no fashion/editorial polish (prefer Cozy Cafe Mellow or Lo-fi Bedroom Solitude instead)",
+      "the scene is a plain, unstyled casual home selfie with no fashion/makeup/editorial polish — youthful/poster/friends/school/cute energy points to Highteen Pop Room instead, and a quiet/private/alone low-energy moment points to Lo-fi Bedroom Solitude instead",
     ],
   },
   {
@@ -569,6 +576,7 @@ export const CURATION_LANES: CurationLane[] = [
       "the scene has a rhythmic, stylish night-lounge groove rather than gentle daytime comfort (prefer Modern Jazz Groove instead)",
       "the scene is a private bedroom or desk with no public cafe setting (prefer Lo-fi Bedroom Solitude instead)",
       "the scene shows rain against a window with a soft diary-like domestic mood rather than a cafe table (prefer K-Indie Rainy Room instead)",
+      "the scene is a private home, bedroom, or personal selfie with no visible cafe, bakery, coffee cup, public table, or window-seat cue — warm daylight alone is never enough to choose this lane (prefer Lo-fi Bedroom Solitude for quiet/private moments, Highteen Pop Room for youthful/casual home selfies, or Trendy Pop Chic for polished/editorial home selfies instead)",
     ],
   },
   {
@@ -581,6 +589,7 @@ export const CURATION_LANES: CurationLane[] = [
       "a confident but relaxed nighttime cruise through the city",
       "neon signage blurred by motion through a windshield",
       "a late-night city street with moderate, moving energy rather than stillness",
+      "clear motion — a moving car, cruising downtown, confident posture, or streetwear styling rather than a parked/static moment",
     ],
     energySignals: ["smooth, melodic mid-tempo", "rhythmic but relaxed cruise energy", "confident, late-night groove"],
     allowedGenres: ["K-hip-hop", "melodic rap", "alt R&B-rap", "chill trap"],
@@ -599,6 +608,7 @@ export const CURATION_LANES: CurationLane[] = [
       "the scene is soft, lonely, and sensual rather than a confident rap cruise (prefer K-R&B Night Drive instead)",
       "the scene feels tense, menacing, or underground rather than smooth and relaxed (prefer Dark Heavy Hip-Hop instead)",
       "the scene shows luxury/skyline dominance and stillness rather than an in-motion cruise (prefer Big City Swagger Hip-Hop instead)",
+      "the scene is static, parked, or intimate — a solo figure standing still, soft neon reflection, window/glass reflection, or a lonely stationary mood rather than in-motion cruise energy (prefer K-R&B Night Drive instead)",
     ],
   },
   {

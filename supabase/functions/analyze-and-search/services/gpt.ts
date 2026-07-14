@@ -35,6 +35,8 @@ Classify the image into one of three types:
 
 ## STEP 2: ANALYSIS
 
+Describe only what is visible or strongly implied in the image. Do not decide a genre or a curation lane in this step — that happens later, in STEP 4, using this analysis plus STEP 3 and STEP 3.5 together.
+
 ### IF SCENE:
 **Location/Space:**
 - Indoor (cafe, home, bar, hotel, alley, gallery, etc.)
@@ -46,7 +48,7 @@ Classify the image into one of three types:
 - Spring / Summer / Autumn / Winter
 - Be precise based on light, color, vegetation, clothing, atmosphere
 
-**Mood/Emotion (pick 3-5):**
+**Mood/Emotion (pick 3-5):** the emotional tone the image evokes — a feeling, not a visual measurement.
 - nostalgic, romantic, lonely, excited, peaceful, mysterious, melancholic, dreamy, energetic, cozy, bittersweet, euphoric, tense, liberating, languid
 
 **Sensory impressions (pick 2-4):**
@@ -101,25 +103,38 @@ Energy score guide:
 - 4 = groovy, engaging
 - 5 = energetic, upbeat
 
+Important: "energy_score" means expected MUSICAL intensity (how driving/energetic the songs should feel), not image brightness or visual energy. A bright, sunlit image can still call for a low energy_score (e.g. a quiet sunny cafe), and a dark image can call for a high one (e.g. a pulsing night club). Decide it from mood/emotion and implied motion, not from how light or dark the photo looks.
+
 All 10 songs must stay within ±1 of the energy score.
 
-primary_genre and secondary_genre in this profile MUST be chosen from the allowedGenres of the curation lane you select in STEP 4 below — read STEP 4 before finalizing this profile.
+energy_score, tempo, valence, and season can be finalized now from STEP 2 and STEP 3.5. primary_genre and secondary_genre are the only two fields in this profile that must wait — they MUST be chosen from the allowedGenres of the curation lane you select in STEP 4 below, so finalize them only after completing STEP 4.
 
 ---
 
-## STEP 3.5: ADDITIONAL VISUAL SIGNALS (internal reasoning only — do not add these as new JSON fields)
+## STEP 3.5: VISUAL PROFILE (internal reasoning only — do not add these as new JSON fields)
 
-Before choosing the curation lane in STEP 4, silently note these signals from the image. They exist to sharpen the lane choice — they are NOT part of the STEP 6 output schema, so do not invent new JSON fields for them and do not output them directly.
+Before choosing the curation lane in STEP 4, silently build a rich visual profile of the image. This profile exists only to sharpen the lane choice — it is NOT part of the STEP 6 output schema. Never invent new JSON fields for it and never output it directly, in the JSON or otherwise.
 
-- Scene type: beach, street, cafe, room/bedroom, car interior, city/skyline, nature/landscape, party, concert, station/airport, etc.
-- Weather feeling: sunny, rainy, cloudy, foggy, snowy, humid, dry, stormy, clear.
-- Openness: wide open air, window view, enclosed room, tunnel, crowded space, empty landscape.
-- Energy/motion: still, relaxed, lively, fast, intense — and whether the scene implies static stillness, walking, driving, dancing, performing, or travel/departure.
-- Social context: alone, couple, friends, crowd, public space, private space.
-- Color/lighting and aesthetic era: warm, cool, neon, pastel, washed-out, high-contrast, film-like — and whether the overall aesthetic reads as retro, modern, cinematic, analog, glossy, or casual.
-- Dominant subject/object: people, ocean, skyline, road, bedroom, food, instruments, car, etc.
+Silently tag the image across each of these dimensions (pick the closest fit, don't overthink exact wording):
 
-Use these signals together with STEP 2's mood/season/context and STEP 3's energy profile to choose the lane in STEP 4 — visible scene/weather/openness/energy/motion/social/aesthetic signals should outweigh cultural or location guesses.
+- **Scene/subject**: street, room, cafe, ocean/water, car, airport/train/platform, concert, selfie/portrait, food, friends, couple, skyline, road, nature, club/party, store/convenience store, study/desk, hotel/window view, or other.
+- **Weather feeling** (when outdoors/visible): sunny, rainy, cloudy, foggy, snowy, humid, dry, stormy, or clear.
+- **Brightness** (visual luminance — how light or dark the image looks, independent of mood): dark / dim / soft / bright / very bright.
+- **Saturation** (vividness of colors): muted / natural / vivid / highly saturated.
+- **Contrast** (difference between the brightest and darkest areas): low / medium / high / harsh.
+- **Color temperature**: cool / neutral / warm / mixed.
+- **Dominant palette**: blue-white, amber-orange, pink-purple neon, beige-brown, green-natural, monochrome, sepia/film, pastel, high-contrast black, or mixed colorful.
+- **Light quality**: direct sun, diffused window light, golden hour, neon, fluorescent, candle/warm lamp, overcast, low-light, flash, or screen light.
+- **Texture/finish**: clean digital, glossy editorial, grainy film, hazy blur, soft focus, noisy low-light, analog snapshot, or polished commercial.
+- **Visual density**: minimal, cozy clutter, busy city, crowded social, wide-open, or compressed/enclosed.
+- **Composition energy** (visual dynamism — density, movement, rhythm, and framing intensity in the shot itself, NOT musical energy): still, balanced, playful, cinematic, fast, intense, or chaotic.
+- **Openness**: enclosed room, semi-open window, street, wide-open landscape, car interior, transit space, or crowded indoor.
+- **Motion** (visible or clearly implied physical movement — walking, driving, dancing, performing, traveling, or resting): static, slow walk, driving/cruising, fast motion, dancing, performance, travel/departure, or resting.
+- **Social context**: alone, couple, friends, crowd, public space, private space, or unclear.
+
+Note the difference between the two "energy" concepts in this prompt: composition energy above describes the image's visual dynamism, while STEP 3's `energy_score` describes the expected musical intensity — they usually agree but are not the same thing, and a mismatch between them is a signal worth noticing, not an error.
+
+This profile is the primary evidence for STEP 4 — combine it with STEP 2's mood/season/context and STEP 3's energy profile. Visible tone/light/texture/density/motion/social signals should always outweigh cultural or location guesses, and should outweigh any single object in the frame.
 
 ---
 
@@ -128,7 +143,7 @@ Use these signals together with STEP 2's mood/season/context and STEP 3's energy
 Different genre worlds do not mix well. A nu-jazz/jazz-hop track and a J-rock track next to each other breaks the playlist's coherence even if both are "good music." Before picking any songs, choose exactly ONE primary curation lane from the catalogue below — it defines the single genre world the entire playlist must live in.
 
 **Lane selection rules (follow strictly):**
-- Choose exactly ONE primary curation lane based on the scene/mood/energy signals from STEP 2 and STEP 3.
+- Choose exactly ONE primary curation lane based on the scene/mood signals from STEP 2, the music profile from STEP 3, and the visual profile from STEP 3.5 together — never from STEP 2 alone.
 - Do not create a mixed sampler playlist.
 - Do not blend unrelated lanes.
 - Use only genres allowed by the selected lane's allowed genres.
@@ -139,6 +154,30 @@ Different genre worlds do not mix well. A nu-jazz/jazz-hop track and a J-rock tr
 - Do not add variety by randomly mixing genres across lanes.
 - Diversity should happen inside the selected lane (different artists, different shades of the same world), never across unrelated lanes.
 - After selecting the lane, output its exact lane_id (shown in parentheses next to each lane name above) as "primary_lane_id" in STEP 6's JSON response. Copy it exactly as written — never invent a new id, never modify it, never leave it empty.
+
+**Decision process (follow in this order — this is how the lane must actually be chosen, not just a checklist):**
+- Step A: Build the internal visual profile from STEP 3.5 (scene/subject, brightness, saturation, contrast, color temperature, dominant palette, light quality, texture/finish, visual density, composition energy, openness, motion, social context).
+- Step B: Use scene/subject + social context alone to open 2-4 CANDIDATE lanes from the catalogue below. Do not commit to a final lane yet — this step only narrows the field.
+- Step C: Re-rank those candidates using brightness, saturation, contrast, color temperature, dominant palette, light quality, texture/finish, visual density, and motion from the visual profile — these tone signals decide which candidate actually fits the image, not just which candidates are plausible.
+- Step D: Check each remaining candidate against the STEP 3 music profile — does the candidate's usual energy/tempo (see its Energy line in the catalogue below) roughly match the emotional tone and implied motion from STEP 2/3.5? Deprioritize a candidate if its typical energy clearly clashes with the image (e.g. a still, quiet, lonely image should not lean toward a lane whose energy is described as high-energy/aggressive/uptempo).
+- Step E: Drop any remaining candidate whose "Avoid this lane when" conditions match the image.
+- Step F: If more than one candidate remains, use the conflict resolver / tie-breakers below to settle on exactly ONE primary_lane_id.
+
+Hard rules — none of these alone ever decides a lane:
+- Brightness alone never decides a lane.
+- Warmth alone never decides a lane.
+- Neon alone never decides a lane.
+- A country/city/culture cue alone never decides a lane.
+- A single object in the frame (an ocean, a coffee cup, a neon sign) usually should not decide a lane by itself unless it strongly defines the entire image's mood — tone, light, texture, motion, and social context must also agree with it.
+
+**Signal hierarchy (when signals disagree, weigh them in this order):**
+1. Dominant visible scene/subject + social context (what the image actually shows, and who is in it).
+2. Visual tone/color/light structure (brightness, saturation, contrast, color temperature, palette, light quality, texture, density).
+3. Energy/motion/composition (implied physical movement and visual dynamism).
+4. Emotional tone / music profile (mood keywords plus energy_score/tempo/valence).
+5. Aesthetic era/style (retro/modern/cinematic/analog/glossy/casual).
+6. Cultural/geographic cues — always last, always secondary flavor only.
+No single signal from this list should decide a lane by itself unless it strongly defines the whole image. When signals conflict, use the strongest combined pattern across scene + tone + motion + emotion, not any one signal in isolation.
 
 **Energy/mood mismatch guard (do not let location override mood):**
 - Do not choose a high-energy rock lane just because the photo is in Japan or contains a landmark like Tokyo Tower. Location and cultural context can flavor the choice, but mood, energy, time of day, and overall scene feeling from STEP 2/STEP 3 must dominate the decision.
@@ -160,14 +199,32 @@ Different genre worlds do not mix well. A nu-jazz/jazz-hop track and a J-rock tr
 - Motion matters: driving, walking, dancing, performing, traveling, and resting point to different lanes — travel/departure/open-road/airport/train/highway framing should strongly consider Indie Road Movie (wistful, cinematic) or a driving lane like American Alternative Drive/J-Rock Highway Rush (energetic, guitar-driven) depending on the energy level.
 - Fashion-forward, glossy, modern, social-media-style images (mirror selfies, editorial-style portraits, stylish city fashion) should strongly consider Trendy Pop Chic rather than City Pop / Retro Drive — glossy/modern is not the same as retro/nostalgic.
 
+**Visual-tone lane rules (Step C — use these to re-rank candidates by tone, not to trigger a lane from one raw signal):**
+1. Bright / vivid / very bright images can become: Summer Beach Pop (only with water/beach/pool/harbor/open-air vacation cues), Trendy Pop Chic (fashion/makeup/editorial/selfie-dominant confidence), American Alternative Drive (friends/road trip/car/highway casual energy), Highteen Pop Room (youthful bedroom/school/friends/cute playful energy), Indie Road Movie (solo travel/train/airport/platform/departure), or Cozy Cafe Mellow (only with actual cafe/bakery/table cues). Never pick Summer Beach Pop from sky/sunlight alone; never pick Cozy Cafe Mellow from warm daylight alone.
+2. Warm / golden-hour / amber-orange images can become: City Pop / Retro Drive (retro urban drive, 80s glossy city, sunset windshield, metropolitan nostalgia), Classic Soul / Old Film (old analog memory, sepia, grainy family/street history), Modern Romance Pop (warmth centered on couple intimacy or soft romantic date energy), Indie Road Movie (warmth supporting a travel/departure story), or Cozy Cafe Mellow (only with cafe/bakery/table cues). Do not default every warm or golden-hour image to City Pop / Retro Drive.
+3. Cool / neon / blue-purple images can become: Neon Electronic Night (synthetic, futuristic, screen-lit, subway/cyber, cold electronic), Hip-Hop Night Drive (moving car, cruise, downtown lights, confident posture, streetwear, motion), K-R&B Night Drive (static, solo, intimate, soft neon, window/reflection, parked/slow, lonely), Dark Heavy Hip-Hop (shadows, aggression, menace, underground tension), or Big City Swagger Hip-Hop (skyline, luxury car, dominance, confident city posture). Never pick Neon Electronic Night from any neon sign alone.
+4. Muted / soft / low-contrast images can become: Lo-fi Bedroom Solitude (private, alone, desk/bedroom/headphones/lamp, low energy), K-Indie Rainy Room (rainy window, ordinary room, diary-like daily melancholy), Dream Pop / Shoegaze Fog (haze, blur, fog, soft focus, distance, or surreal atmosphere — never just because the image is calm), Cozy Cafe Mellow (public cafe warmth and daylight comfort), or Modern Romance Pop (soft intimacy between two people).
+5. Glossy editorial / polished modern images can become: Trendy Pop Chic (fashion, makeup, styling, mirror selfie, editorial framing, or social-media confidence), Big City Swagger Hip-Hop (luxury skyline, black car, dominance, expensive city posture), or City Pop / Retro Drive (only when the gloss is retro/80s/city-sunset/nostalgic, not modern editorial).
+6. Grainy film / analog images can become: Classic Soul / Old Film (old memory, sepia, vintage family/street, analog warmth), City Pop / Retro Drive (80s glossy city, sunset drive, retro synth urban nostalgia), Indie Road Movie (travel, departure, road, train, airport, or wistful movement), or K-Indie Rainy Room (ordinary rainy daily-life melancholy). "Film-like" is never a synonym for City Pop by itself.
+7. Wide-open compositions can become: Summer Beach Pop (water/beach/pool/harbor/vacation/outdoor leisure present), American Alternative Drive (friends/casual road trip/sunny car/highway energy present), Indie Road Movie (solo travel, open road, train, airport, or departure story present), or Dream Pop / Shoegaze Fog (the openness feels foggy, blurred, distant, or ethereal). Never pick Summer Beach Pop from open sky alone.
+8. Home selfie routing: polished/editorial/fashion/makeup/confident styling → Trendy Pop Chic (being indoors never disqualifies it); youthful/friends/posters/school/cute playful energy → Highteen Pop Room; private/alone/low-energy/desk/bedroom/headphones/lamp → Lo-fi Bedroom Solitude; an actual cafe-like setting with visible coffee/table/public comfort → Cozy Cafe Mellow. Never default a plain home selfie to Cozy Cafe Mellow unless it genuinely looks like a cafe/public-comfort scene.
+
+**Candidate-first rule (Step B/C in practice — for images with mixed signals):**
+When an image has mixed signals, mentally shortlist the strongest 2-4 candidate lanes first, then choose the one whose visual tone + scene + emotion align best together — never force a lane just because one object or cue is present.
+- A bright street with no water/cafe/fashion/retro/travel signal: do not force Summer Beach Pop, Cozy Cafe Mellow, City Pop / Retro Drive, or J-Rock Highway Rush — decide from the remaining social/emotional/subject cues instead.
+- A sunny Japanese street is not automatically City Pop / Retro Drive, J-Rock Highway Rush, Summer Beach Pop, or Cozy Cafe Mellow.
+- An ocean-view hotel window: Summer Beach Pop only if the water/open-air/vacation feeling dominates; otherwise weigh Cozy Cafe Mellow, Indie Road Movie, or another lane based on the interior mood/emotion.
+- A beach fashion selfie: Trendy Pop Chic can beat Summer Beach Pop if fashion/editorial styling dominates over the beach setting.
+- A golden-hour road: City Pop / Retro Drive if retro urban drive dominates, Indie Road Movie if travel/departure dominates, American Alternative Drive if a casual friends road trip dominates.
+
 **Conflict resolver (quick reference for the most commonly confused lane pairs):**
-- Modern Jazz Groove vs Cozy Cafe Mellow: rhythmic/stylish night groove → Modern Jazz Groove; plain warm daytime cafe comfort → Cozy Cafe Mellow.
+- Modern Jazz Groove vs Cozy Cafe Mellow vs K-Indie Rainy Room vs Lo-fi Bedroom Solitude: a rainy late-night cafe/window is Modern Jazz Groove ONLY if jazz/lounge/sax/Rhodes/rhythmic/adult-sophisticated cues are visible; otherwise prefer K-Indie Rainy Room (rain + ordinary room + diary feeling), Cozy Cafe Mellow (plain warm daytime cafe comfort), or Lo-fi Bedroom Solitude (private desk/bedroom stillness) depending on context.
 - J-Rock Highway Rush vs American Alternative Drive vs Indie Road Movie: speed/adrenaline/guitar rush → J-Rock Highway Rush; casual sunny friends road trip → American Alternative Drive; solo wistful departure/travel → Indie Road Movie.
-- K-R&B Night Drive vs Hip-Hop Night Drive vs Dark Heavy Hip-Hop: smooth/sensual/lonely night mood → K-R&B Night Drive; confident rap/street cruise → Hip-Hop Night Drive; aggressive/tense/menacing → Dark Heavy Hip-Hop.
+- K-R&B Night Drive vs Hip-Hop Night Drive vs Dark Heavy Hip-Hop: static/solo/soft neon/window-reflection/parked/lonely → K-R&B Night Drive; moving car/cruise/downtown lights/confident posture/streetwear/motion → Hip-Hop Night Drive; aggressive/tense/menacing → Dark Heavy Hip-Hop.
 - K-Indie Rainy Room vs Lo-fi Bedroom Solitude vs Dream Pop / Shoegaze Fog: rain + ordinary room + diary feeling → K-Indie Rainy Room; private desk/bedroom stillness → Lo-fi Bedroom Solitude; hazy fog/blur/dreamscape → Dream Pop / Shoegaze Fog.
-- City Pop / Retro Drive vs Summer Beach Pop vs Trendy Pop Chic vs Indie Road Movie: retro sunset city glow → City Pop / Retro Drive; bright open sky/water/vacation → Summer Beach Pop; modern glossy fashion/editorial → Trendy Pop Chic; travel/departure narrative → Indie Road Movie.
+- City Pop / Retro Drive vs Summer Beach Pop vs Trendy Pop Chic vs Indie Road Movie: retro sunset city glow → City Pop / Retro Drive; bright open sky/vacation → Summer Beach Pop, but only when an actual water/beach/ocean/pool/harbor/open-air-leisure cue is visible (sunlight or a clear sky alone is never enough — a plain sunny street with no such cue belongs to another lane on its own merits); modern glossy fashion/editorial → Trendy Pop Chic; travel/departure narrative → Indie Road Movie.
 - Neon Electronic Night vs Funk / Disco Night: cool synthetic neon/futuristic → Neon Electronic Night; warm colorful dancefloor/groove → Funk / Disco Night.
-- Highteen Pop Room vs Trendy Pop Chic: playful teen/school/friends energy → Highteen Pop Room; adult glossy fashion/editorial → Trendy Pop Chic.
+- Home selfie routing (Trendy Pop Chic vs Highteen Pop Room vs Lo-fi Bedroom Solitude vs Cozy Cafe Mellow): a home/mirror selfie with polished styling, makeup, or editorial/fashion confidence → Trendy Pop Chic (indoors/at-home does not disqualify it); casual/youthful/poster/friends/school/cute energy → Highteen Pop Room; quiet/private/alone/low-energy → Lo-fi Bedroom Solitude. Do not default a plain home selfie to Cozy Cafe Mellow — that lane requires an actual visible cafe/bakery/coffee/public-table cue, not just warm daylight.
 - Modern Romance Pop vs K-R&B Night Drive: couple/romantic warmth → Modern Romance Pop; solo nocturnal sensuality → K-R&B Night Drive.
 - Classic Soul / Old Film vs City Pop / Retro Drive: old-film analog/soulful nostalgia → Classic Soul / Old Film; 80s glossy synth/sunset city drive → City Pop / Retro Drive.
 
