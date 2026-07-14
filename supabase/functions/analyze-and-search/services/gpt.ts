@@ -278,7 +278,7 @@ Rules:
 - BANNED structure: do NOT mechanically stack "{Mood adjective} + {Place/Object noun} + {Genre}" (e.g. "Nostalgic Station Indie", "Peaceful Spring Pop", "Romantic Train Indie"). These read like three tags glued together, not a real title — avoid this even if it technically fits the word-count rule.
 - BANNED structure: do NOT stack "{Landmark/Place} + {Genre} + Vibes" (e.g. "Tower Park Rock Vibes", "Tokyo Park Rock Vibes", "City Pop Vibes"). Never end a title with the word "Vibes".
 - BANNED structure: do NOT stack "{Mood/Place} + {Genre}" as a two-word tag pair (e.g. "Romantic Park Pop", "Sunny Park Rock").
-- Avoid generic title words like "Vibes", "Mood", "Playlist", "Mix" unless the complete title genuinely sounds like a natural, premium playlist name with that word in it — these words are almost always a sign the title is tag-glued, not written.
+- NEVER use generic title words like "Vibes", "Mood", "Playlist", or "Mix" — these are almost always a sign the title is tag-glued, not written. "[Scene/Place] + Vibes" (e.g. "Ocean View Vibes", "Beach Vibes", "City Night Mood") is always wrong.
 - Do not force the selected lane's genre into the title. Genre is OPTIONAL — only include it if it sounds natural, not as a default word slotted in to prove the lane was chosen.
 - Do not use a landmark name literally (e.g. "Tower", "Tokyo Tower") unless the resulting phrase reads like something a person would genuinely title a playlist — not just the landmark name plus a mood/genre word appended.
 - Instead, let a place, object, light, time of day, or feeling combine into a phrase someone would actually title a playlist with. The title should feel like a real album, mixtape, or curated playlist title — not a label describing the image.
@@ -303,8 +303,14 @@ GOOD examples (match this style):
 - "Soft City Sunday"
 - "Parkside Daydreams"
 - "Tokyo Sun Rewind"
+- "Open Water Afternoon"
+- "Blue Glass Coast"
+- "Clouds Over the Harbor"
+- "Harbor Under Blue Skies"
+- "Low Lights on Seoul"
+- "Rain at the Window"
 
-BAD examples — mechanical mood+place+genre stacking (never produce this style):
+BAD examples — mechanical mood+place+genre stacking or [scene]+Vibes (never produce this style):
 - "Nostalgic Station Indie"
 - "Peaceful Spring Pop"
 - "Romantic Train Indie"
@@ -313,6 +319,10 @@ BAD examples — mechanical mood+place+genre stacking (never produce this style)
 - "City Pop Vibes"
 - "Romantic Park Pop"
 - "Sunny Park Rock"
+- "Ocean View Vibes"
+- "Beach Vibes"
+- "City Night Mood"
+- "Window Mix"
 
 BAD examples — full sentences (never produce this style):
 - "A journey through nostalgic and romantic indie pop melodies, capturing the peaceful essence of an indoor afternoon station in spring."
@@ -324,14 +334,22 @@ BAD examples — full sentences (never produce this style):
 
 Generate "playlist_subtitle" as one short English line that reads like editorial playlist curation copy — the kind of line you'd see under an album title or a Spotify playlist description.
 
+CRITICAL — genre label timing: The final track list is selected from a curated catalog AFTER this subtitle is written. You cannot know the exact genres of the final tracks. Do NOT claim a narrow genre (e.g. "indie pop", "city-pop", "alt-rock") unless the selected lane is entirely defined by that genre. When in doubt, use a sonic world descriptor (e.g. "bright guitars", "breezy pop", "soft rhythms") instead of a genre label.
+
+Preferred broader descriptors for open-air / coastal / outdoor scenes (use instead of narrow genre claims):
+- Instead of "indie pop" → "breezy pop", "sunlit pop", "open-sky melodies"
+- Instead of "city-pop" → "warm city sound", "sun-glazed grooves", "bright urban pop"
+- Instead of "surf rock" → "bright guitars", "open-water guitars"
+- Instead of "dream-pop" → "hazy sound", "drifting melodies", "cloud-soft sound"
+
 Rules:
 - One short English line.
 - 7-16 words recommended.
 - Natural sentence case.
 - No final period unless it feels absolutely natural.
 - Must sound premium, emotional, and playlist-like.
-- Should connect the image mood with the selected lane's sonic world.
-- Can mention a genre or sonic world only if it sounds natural.
+- Should evoke the image mood and the lane's sonic world — without naming the lane.
+- Use a sonic world descriptor instead of a narrow genre label unless you are certain.
 - It should feel like a line under an album title, Spotify playlist description, or editorial music curation copy.
 - It is NOT an explanation of the AI decision.
 - Do NOT mention AI, analysis, image detection, mood tags, or lane selection.
@@ -342,14 +360,17 @@ Rules:
 - Avoid generic wording.
 
 Good examples:
-- "Warm city-pop for bright afternoons and soft city memories"
-- "Slow indie for rain-lit rooms and quiet evening thoughts"
+- "Breezy pop for sunlit ocean views and open skies"
+- "Warm city sound for bright afternoons and soft city memories"
+- "Slow, drifting melodies for rain-lit rooms and quiet evening thoughts"
 - "Neon R&B for midnight windows and low city lights"
-- "Fuzzy dream-pop for foggy streets and half-remembered feelings"
+- "Hazy, cloud-soft sound for foggy streets and half-remembered feelings"
 - "Dusty soul for old-film light and slow romantic moments"
-- "Fast guitars for highway light and restless summer energy"
+- "Bright guitars for highway light and restless summer energy"
+- "Sun-glazed grooves for open water and wide blue afternoons"
 
 Bad examples:
+- "Indie pop for breezy afternoons and open-water dreams" ← narrow genre claim for a broad coastal lane
 - "This playlist was selected because the image looks romantic"
 - "The AI chose this lane based on your photo"
 - "Matched for romantic joyful peaceful city pop"
@@ -388,7 +409,7 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
     }
   ],
   "playlist_concept": "Natural evocative playlist title, 2-5 words (6 words max), e.g. 'Platform Daydreams' — NEVER mood+place+genre word-stacking, NEVER a sentence",
-  "playlist_subtitle": "Short premium playlist subtitle, 7-16 words, e.g. 'Warm city-pop for bright afternoons and soft city memories' — NEVER an AI explanation, NEVER a mood-tag list",
+  "playlist_subtitle": "Short premium playlist subtitle, 7-16 words, e.g. 'Breezy pop for sunlit ocean views and open skies' — NEVER an AI explanation, NEVER a narrow genre claim, NEVER a mood-tag list",
   "primary_lane_id": "the exact lane_id you selected in STEP 4 — must match one of the lane_id values in the catalogue exactly"
 }
 
