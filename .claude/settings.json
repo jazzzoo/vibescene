@@ -8,6 +8,7 @@
     ]
   },
   "enabledPlugins": {
-    "expo@claude-plugins-official": true
+    "expo@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true
   }
 }
