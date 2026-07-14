@@ -132,7 +132,7 @@ Silently tag the image across each of these dimensions (pick the closest fit, do
 - **Motion** (visible or clearly implied physical movement — walking, driving, dancing, performing, traveling, or resting): static, slow walk, driving/cruising, fast motion, dancing, performance, travel/departure, or resting.
 - **Social context**: alone, couple, friends, crowd, public space, private space, or unclear.
 
-Note the difference between the two "energy" concepts in this prompt: composition energy above describes the image's visual dynamism, while STEP 3's `energy_score` describes the expected musical intensity — they usually agree but are not the same thing, and a mismatch between them is a signal worth noticing, not an error.
+Note the difference between the two "energy" concepts in this prompt: composition energy above describes the image's visual dynamism, while STEP 3's energy_score describes the expected musical intensity — they usually agree but are not the same thing, and a mismatch between them is a signal worth noticing, not an error.
 
 This profile is the primary evidence for STEP 4 — combine it with STEP 2's mood/season/context and STEP 3's energy profile. Visible tone/light/texture/density/motion/social signals should always outweigh cultural or location guesses, and should outweigh any single object in the frame.
 
