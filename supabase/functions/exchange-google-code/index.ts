@@ -9,6 +9,10 @@ import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 
+// 소프트 프리뷰 기간 동안 Google OAuth 비활성화 (oauth_tokens 평문 저장 이슈 해소 전까지)
+// 다시 켤 때는 이 상수만 true로 바꾸면 된다 — 토큰 교환 및 저장 로직은 그대로 보존되어 있다.
+const GOOGLE_OAUTH_ENABLED = false;
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -23,6 +27,14 @@ Deno.serve(async (req) => {
 
   if (req.method !== "POST") {
     return Response.json({ success: false, error: "Method not allowed" }, { status: 405, headers: CORS_HEADERS });
+  }
+
+  // 기능 플래그 — 요청 바디·헤더·토큰을 일절 읽지 않고 즉시 반환
+  if (!GOOGLE_OAUTH_ENABLED) {
+    return Response.json(
+      { success: false, error: "Google login is temporarily disabled during the early preview." },
+      { status: 503, headers: CORS_HEADERS },
+    );
   }
 
   try {

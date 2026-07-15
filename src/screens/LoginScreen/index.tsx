@@ -17,6 +17,10 @@ type ScreenState = 'idle' | 'loading' | 'error';
 
 const CANCEL_MESSAGE = 'Google sign-in was canceled.';
 
+// 소프트 프리뷰 기간 동안 Google OAuth 비활성화 (oauth_tokens 평문 저장 이슈 해소 전까지)
+// 다시 켤 때는 이 상수만 true로 바꾸면 된다 — 아래 로그인 로직은 그대로 보존되어 있다.
+const GOOGLE_LOGIN_ENABLED = false;
+
 function GoogleIcon() {
   return <Text style={styles.googleIcon}>G</Text>;
 }
@@ -48,6 +52,21 @@ export default function LoginScreen() {
       setErrorMessage(message);
       setScreenState('error');
     }
+  }
+
+  if (!GOOGLE_LOGIN_ENABLED) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.appName}>VibeScene</Text>
+          <Text style={styles.tagline}>Turn your photos into playlists.</Text>
+        </View>
+        <Text style={styles.disclaimer}>YouTube playlist saving is coming soon.</Text>
+        <Text style={[styles.disclaimer, styles.disclaimerSpacing]}>
+          For now, you can still generate playlists and open them on YouTube.
+        </Text>
+      </View>
+    );
   }
 
   if (screenState === 'loading') {

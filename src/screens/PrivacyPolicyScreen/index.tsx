@@ -20,7 +20,11 @@ export default function PrivacyPolicyScreen() {
       <Bullet>Photos you choose to upload</Bullet>
       <Bullet>Limited file metadata</Bullet>
       <Paragraph>Purpose: generate playlist recommendations</Paragraph>
-      <Paragraph>Retention: deleted within 7 days</Paragraph>
+      <Paragraph>
+        Retention: stored temporarily to provide playlist results and shared pages. During
+        the early preview, we may retain uploaded images while the service is being tested
+        and improved. You can contact us to request deletion.
+      </Paragraph>
 
       <SubHeading>Playlist results</SubHeading>
       <Bullet>Playlist title</Bullet>
@@ -67,8 +71,10 @@ export default function PrivacyPolicyScreen() {
 
       <SectionTitle>4. Uploaded Images and Playlist Results</SectionTitle>
       <Paragraph>
-        Original uploaded images are kept only for the short period needed to generate and
-        display playlist results. We delete original uploaded images within 7 days.
+        Uploaded images may be stored temporarily to provide playlist results and shared
+        pages. During the early preview, we may retain uploaded images while the service is
+        being tested and improved. You can contact us to request deletion of your uploaded
+        image or playlist data.
       </Paragraph>
       <Paragraph>
         Playlist result data is stored separately from the original image and may include
