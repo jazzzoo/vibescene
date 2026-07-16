@@ -239,7 +239,7 @@ export default function LoadingScreen() {
           <Text style={styles.spotlightLabel}>LANE SPOTLIGHT</Text>
           <Animated.View style={{ opacity: laneOpacity }}>
             <Text style={styles.spotlightName} numberOfLines={1} ellipsizeMode="tail">
-              {laneSpotlight.name}
+              {laneSpotlight.displayName}
             </Text>
             <Text style={styles.spotlightDescription} numberOfLines={2}>
               {laneSpotlight.description}

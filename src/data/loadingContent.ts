@@ -57,32 +57,33 @@ export const SHAPING_PHASE_START_INDEX =
 // 1:1로 대응하는 프론트엔드 전용 카피. 백엔드 lane_id 문자열이 아니라 사람이 읽는 이름/설명만 사용한다.
 // lane이 추가/제거되면 이 배열도 함께 갱신해야 한다.
 export type LaneSpotlightEntry = {
-  name: string;
+  laneId: string;
+  displayName: string;
   description: string;
 };
 
 export const LANE_SPOTLIGHTS: readonly LaneSpotlightEntry[] = [
-  { name: 'Modern Jazz Groove', description: 'Warm brass, deep grooves, and city evenings with a little swing.' },
-  { name: 'J-Rock Highway Rush', description: 'Fast guitars for roads, motion, and wind through an open window.' },
-  { name: 'K-R&B Night Drive', description: 'Soft neon, quiet confidence, and late-night streets moving slowly.' },
-  { name: 'K-Indie Rainy Room', description: 'Rain outside, warm lights inside, and songs that let time slow down.' },
-  { name: 'City Pop / Retro Drive', description: 'Polished basslines, retro lights, and memories glowing after sunset.' },
-  { name: 'Indie Road Movie', description: 'Departures, distant scenery, and songs built for the journey between places.' },
-  { name: 'American Alternative Drive', description: 'Big guitars, open roads, and the feeling of going somewhere.' },
-  { name: 'Dream Pop / Shoegaze Fog', description: 'Soft haze, blurred light, and melodies drifting just out of reach.' },
-  { name: 'Neon Electronic Night', description: 'Cold light, synthetic motion, and a city still awake at 2 AM.' },
-  { name: 'Lo-fi Bedroom Solitude', description: 'Small rooms, late thoughts, and gentle beats that stay close.' },
-  { name: 'Summer Beach Pop', description: 'Salt air, open water, and pop made for sunlit afternoons.' },
-  { name: 'Funk / Disco Night', description: 'Bright basslines, moving lights, and a night that refuses to sit still.' },
-  { name: 'Classic Soul / Old Film', description: 'Warm voices, faded frames, and romance from another decade.' },
-  { name: 'Big City Swagger Hip-Hop', description: 'Sharp confidence, tall buildings, and bass that owns the sidewalk.' },
-  { name: 'Highteen Pop Room', description: 'Mirrors, posters, friends, and bright pop with bedroom energy.' },
-  { name: 'Modern Romance Pop', description: 'Warm closeness, small gestures, and a soundtrack for two.' },
-  { name: 'Trendy Pop Chic', description: 'Polished style, glossy light, and pop that knows the camera is watching.' },
-  { name: 'Cozy Cafe Mellow', description: 'Coffee, window light, and soft songs for an unhurried table.' },
-  { name: 'Hip-Hop Night Drive', description: 'Empty roads, heavy bass, and city lights sliding past the window.' },
-  { name: 'Dark Heavy Hip-Hop', description: 'Deep shadows, hard edges, and bass with serious weight.' },
-  { name: 'Sunny Stroll Pop', description: 'Flower pots, blue skies, and playful pop for a bright neighborhood walk.' },
+  { laneId: 'modern-jazz-groove', displayName: 'Velvet Lounge', description: 'Warm brass, deep grooves, and city evenings with a little swing.' },
+  { laneId: 'j-rock-highway-rush', displayName: 'Blue Sky Rush', description: 'Fast guitars for roads, motion, and wind through an open window.' },
+  { laneId: 'k-rnb-night-drive', displayName: 'Seoul After Hours', description: 'Soft neon, quiet confidence, and late-night streets moving slowly.' },
+  { laneId: 'k-indie-rainy-room', displayName: 'Rain on the Window', description: 'Rain outside, warm lights inside, and songs that let time slow down.' },
+  { laneId: 'city-pop-retro-glow', displayName: 'Neon Memories', description: 'Polished basslines, retro lights, and memories glowing after sunset.' },
+  { laneId: 'indie-road-movie', displayName: 'Somewhere Along the Way', description: 'Departures, distant scenery, and songs built for the journey between places.' },
+  { laneId: 'american-alternative-drive', displayName: 'Highway Static', description: 'Big guitars, open roads, and the feeling of going somewhere.' },
+  { laneId: 'dream-pop-shoegaze-fog', displayName: 'Soft Haze', description: 'Soft haze, blurred light, and melodies drifting just out of reach.' },
+  { laneId: 'neon-electronic-night', displayName: 'Electric Midnight', description: 'Cold light, synthetic motion, and a city still awake at 2 AM.' },
+  { laneId: 'lofi-bedroom-solitude', displayName: 'Quiet Hours', description: 'Small rooms, late thoughts, and gentle beats that stay close.' },
+  { laneId: 'summer-beach-pop', displayName: 'Sunlit Coast', description: 'Salt air, open water, and pop made for sunlit afternoons.' },
+  { laneId: 'funk-disco-night', displayName: 'Mirrorball Heat', description: 'Bright basslines, moving lights, and a night that refuses to sit still.' },
+  { laneId: 'classic-soul-old-film', displayName: 'Faded Frames', description: 'Warm voices, faded frames, and romance from another decade.' },
+  { laneId: 'big-city-swagger-hiphop', displayName: 'Concrete Crown', description: 'Sharp confidence, tall buildings, and bass that owns the sidewalk.' },
+  { laneId: 'highteen-pop-room', displayName: 'Friday Forever', description: 'Mirrors, posters, friends, and bright pop with bedroom energy.' },
+  { laneId: 'modern-romance-pop', displayName: 'Close to You', description: 'Warm closeness, small gestures, and a soundtrack for two.' },
+  { laneId: 'trendy-pop-chic', displayName: 'Camera Ready', description: 'Polished style, glossy light, and pop that knows the camera is watching.' },
+  { laneId: 'cozy-cafe-mellow', displayName: 'Corner Table', description: 'Coffee, window light, and soft songs for an unhurried table.' },
+  { laneId: 'hip-hop-night-drive', displayName: 'Streetlight Cruise', description: 'Empty roads, heavy bass, and city lights sliding past the window.' },
+  { laneId: 'dark-heavy-hiphop', displayName: 'Heavy Shadows', description: 'Deep shadows, hard edges, and bass with serious weight.' },
+  { laneId: 'sunny-stroll-pop', displayName: 'Little Sunny Things', description: 'Flower pots, blue skies, and playful pop for a bright neighborhood walk.' },
 ];
 
 // ── Shuffle helper ──────────────────────────────────────────────────────
