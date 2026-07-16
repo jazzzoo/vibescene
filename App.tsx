@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import AnalyticsProvider from './src/components/common/AnalyticsProvider';
 import WebAppFrame from './src/components/common/WebAppFrame';
 import RootNavigator from './src/navigation/RootNavigator';
 
@@ -45,6 +46,7 @@ export default function App() {
         <WebAppFrame>
           <RootNavigator />
         </WebAppFrame>
+        <AnalyticsProvider />
       </SafeAreaProvider>
     </ErrorBoundary>
   );
