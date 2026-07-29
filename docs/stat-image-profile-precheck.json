@@ -1,0 +1,232 @@
+{
+  "taskStatus": "PARTIAL — read-only pre-check completed for feasible sections only; live model-calling sections blocked (see blockers)",
+  "requestedTestImages": [
+    {
+      "label": "pavilion / mountain image",
+      "found": false,
+      "searchedLocations": [
+        "repo-wide file search (all extensions .jpg/.jpeg/.png/.webp/.heic), excluding node_modules/.git/dist/.expo/android/ios"
+      ]
+    },
+    {
+      "label": "city window with sea image",
+      "found": false,
+      "searchedLocations": [
+        "repo-wide file search (same scope as above)"
+      ]
+    },
+    {
+      "label": "beach image",
+      "found": false,
+      "searchedLocations": [
+        "repo-wide file search (same scope as above)"
+      ]
+    },
+    {
+      "label": "neon Seoul image",
+      "found": false,
+      "searchedLocations": [
+        "repo-wide file search (same scope as above)"
+      ]
+    }
+  ],
+  "imageFilesActuallyFoundInRepo": [
+    "assets/android-icon-background.png",
+    "assets/android-icon-foreground.png",
+    "assets/android-icon-monochrome.png",
+    "assets/favicon.png",
+    "assets/icon.png",
+    "assets/splash-icon.png"
+  ],
+  "proposedModelConfig": {
+    "status": "PROPOSED — NOT EXECUTED (no live calls were made in this pre-check)",
+    "rationale": "Reuses the vision model already integrated and paid for in supabase/functions/analyze-and-search/services/gpt.ts (analyzeImage), since that is the production vision endpoint this experimental schema is meant to eventually feed into. Two production defaults are deliberately overridden below because they would otherwise inject non-determinism into a reproducibility test.",
+    "model": "gpt-4o",
+    "api": "https://api.openai.com/v1/chat/completions (OpenAI Chat Completions API)",
+    "temperature": 0,
+    "temperatureNote": "Production analyzeImage() does not set temperature (defaults to provider default, effectively 1.0). For a reproducibility test specifically, temperature must be pinned to 0 — otherwise instability would be conflated with the sampling temperature rather than isolating the model/schema's own consistency.",
+    "image_detail": "high",
+    "image_detailNote": "Production uses detail: \"auto\", which can silently change the internal image resolution/tiling OpenAI uses depending on image dimensions -- that is itself a source of run-to-run variance unrelated to the schema being tested. Pinning to \"high\" removes that confound.",
+    "response_format": {
+      "type": "json_object"
+    },
+    "max_tokens": 700,
+    "seed": "Not set — OpenAI's seed parameter for vision/multimodal chat completions is not guaranteed to produce identical outputs even when supported for text-only requests, so it was not treated as a substitute for the temperature=0 + fixed-prompt reproducibility test itself.",
+    "systemPromptNote": "A new, separate system prompt would be required for this experimental 30-value schema — it must not reuse or modify the existing production SYSTEM_PROMPT (System 프롬프트 v2), per project rule against modifying that prompt. This pre-check did not draft that new prompt's full text since it was never executed against a live model; only the schema (field list, grouping, scale, and visible-vs-inferred separation) was defined, per task section 2."
+  },
+  "experimentalSchema": {
+    "totalDimensions": 30,
+    "groups": {
+      "sharedAtmosphereStats": {
+        "count": 10,
+        "fields": [
+          "brightness",
+          "warmth",
+          "openness",
+          "motion",
+          "intimacy",
+          "socialEnergy",
+          "tension",
+          "nostalgia",
+          "playfulness",
+          "dreaminess"
+        ],
+        "groundingRule": "Must be grounded in visible composition, lighting, space, motion, people, weather, and visual tone. Model must not infer these from cultural/location guesses alone."
+      },
+      "affinityValues": {
+        "count": 13,
+        "fields": [
+          "spring",
+          "summer",
+          "autumn",
+          "winter",
+          "morning",
+          "day",
+          "dusk",
+          "night",
+          "lateNight",
+          "clear",
+          "cloudy",
+          "rain",
+          "snow"
+        ],
+        "groundingRule": "Same visible-evidence grounding rule as sharedAtmosphereStats — season/time/weather read from visible light, color, vegetation, clothing, sky condition; not from country/culture guesses."
+      },
+      "desiredSoundInference": {
+        "count": 7,
+        "fields": [
+          "energy",
+          "groove",
+          "density",
+          "acousticness",
+          "electronicness",
+          "vocalPresence",
+          "climaxIntensity"
+        ],
+        "groundingRule": "Explicitly NOT visually observed facts — these represent inferred musical fit. Prompt must instruct the model to label this group as inference, never as an observation, and must not claim audio/listening evidence."
+      }
+    },
+    "scaleRule": "All 30 values are integers 0-100 inclusive.",
+    "chainOfThoughtRule": "Prompt must instruct the model to return only the structured JSON object with no explanation, no markdown fencing, and no visible reasoning trace."
+  },
+  "blockers": {
+    "liveCallsCompleted": 0,
+    "liveCallsExpected": 12,
+    "blockingConditions": [
+      {
+        "condition": "No API credential available",
+        "detail": "Checked the execution environment for OPENAI_API_KEY (and any other OpenAI/Anthropic-style key). None is set. The production analyzeImage() function itself throws a SafeError under this exact condition (\"이미지 분석 서비스가 설정되지 않았습니다.\") — same failure mode would apply here.",
+        "checkedVia": "Shell environment variable inspection (key presence only, no value printed)."
+      },
+      {
+        "condition": "None of the 4 named test images exist locally",
+        "detail": "Searched the entire repository (all .jpg/.jpeg/.png/.webp/.heic files) excluding node_modules, .git, dist, .expo, android, ios. Only 6 files exist under assets/, all app icons/splash graphics (android-icon-background.png, android-icon-foreground.png, android-icon-monochrome.png, favicon.png, icon.png, splash-icon.png) — none depict a pavilion/mountain, a city window with sea, a beach, or neon Seoul streets. No test-image or fixture directory exists anywhere in the repo.",
+        "checkedVia": "Recursive filename/extension search across the full working tree."
+      }
+    ],
+    "consequence": "Both blockers are independently sufficient to stop the live pre-check; together they make it impossible to execute sections 3-5 of the requested task (reproducibility test, similarity pre-check, human-readable review) truthfully. Per the task's explicit instruction (\"If API credentials or test images are unavailable, do not fake results\"), no placeholder/synthetic profile values, rankings, or overlap numbers were generated. All corresponding fields below are marked null / \"NOT EXECUTED\"."
+  },
+  "callsCompleted": 0,
+  "callsExpected": 12,
+  "structuredOutputs": [],
+  "structuredOutputsNote": "Empty — no live calls were made (see blockers). No synthetic/placeholder profiles were generated in their place.",
+  "perDimensionReproducibilityMetrics": null,
+  "perImageReproducibilityMetrics": null,
+  "rankingResults": null,
+  "top5Top10OverlapMetrics": null,
+  "dimensionQualityFindings": {
+    "disclaimer": "The following is a priori prompt-design / schema-design reasoning only, based on the vocabulary/visual-profile evidence already gathered in docs/music-atmosphere-vocabulary-audit.md and on how each field is defined in section 2 of this task. It is NOT an empirical stability, correlation, or ranking-influence finding — those require the live repeated-call test in sections 3-6, which is blocked (see limitations). Recommendations below should be re-checked once live data exists.",
+    "perDimensionNotes": [
+      {
+        "dimension": "nostalgia",
+        "concern": "Purely emotional/associative; the audit already found mood/emotion tags (nostalgic, wistful) are among the least visually-anchored fields in the current STEP 2 prompt (see vocabulary audit). Likely to be one of the least stable-across-repeated-calls fields once tested.",
+        "recommendation": "retained, but flag as a priority dimension to check for instability first when live testing resumes"
+      },
+      {
+        "dimension": "dreaminess",
+        "concern": "Overlaps conceptually with openness and with atmospheric haze/blur cues; risk of the model treating \"dreamy\" as a mood label rather than a visual-evidence label (same failure mode the production prompt already guards against for the Dream Pop lane).",
+        "recommendation": "redefined — tie the field definition explicitly to visible haze/blur/soft-focus/diffused-light evidence, mirroring the production prompt's existing Dream Pop guard, rather than leaving it as a free mood read"
+      },
+      {
+        "dimension": "intimacy",
+        "concern": "Conceptually overlaps with lateNight and rain (task explicitly flagged this triad) — an image could score high intimacy for reasons unrelated to time-of-day or weather (e.g. a close two-person composition in daylight).",
+        "recommendation": "retained, but should be scored independently of lateNight/rain in the prompt instructions to avoid the model anchoring intimacy to time/weather cues"
+      },
+      {
+        "dimension": "socialEnergy",
+        "concern": "Directly definable from visible people-count/crowd-density evidence, which is the clearest-grounded field in the whole schema.",
+        "recommendation": "retained as-is"
+      },
+      {
+        "dimension": "vocalPresence",
+        "concern": "This is a desired-sound-inference field, not visible at all — image content gives essentially zero direct evidence for whether the suited music should be vocal-heavy or instrumental. Highest risk of being an arbitrary/unsupported guess in the whole 30-field schema.",
+        "recommendation": "down-weighted in any downstream matching formula until validated; consider moving to a lower-confidence tier distinct from the other 6 desired-sound fields"
+      },
+      {
+        "dimension": "climaxIntensity",
+        "concern": "Also a desired-sound-inference field with no direct visual analogue; likely correlates heavily with the model's read of composition energy/motion rather than being independently judged.",
+        "recommendation": "redefined or merged — likely redundant with motion once live correlation data exists"
+      },
+      {
+        "dimension": "season affinity (spring/summer/autumn/winter)",
+        "concern": "The existing vocabulary audit already found lane-level bias in season/weather tagging (tracks over-represented for summer, under-represented for winter) purely from catalog composition, not visual grounding — the same bias risk applies to an image model's season guess, especially given cultural-cue leakage (e.g. cherry blossoms => spring is fine, but ambiguous foliage could bias toward whichever season is culturally salient).",
+        "recommendation": "retained but down-weighted; cross-check with the catalog-side finding that snow/winter affinity is already the sparsest-evidenced value on the track side (mean 30.2, docs/music-catalog-with-stats-report.md §3) — a mismatch here would compound rather than cancel"
+      },
+      {
+        "dimension": "weather affinity (clear/cloudy/rain/snow)",
+        "concern": "More visually groundable than season (sky condition, wet surfaces, snow cover are directly visible) but still degrades for indoor/interior images where no weather is visible at all — the prompt needs an explicit fallback rule for indoor scenes.",
+        "recommendation": "retained, but the prompt must define an explicit indoor/no-visible-weather fallback (e.g. default toward neutral 45-55, not toward whichever weather the model free-associates from mood)"
+      }
+    ],
+    "overlapPairs": [
+      {
+        "pair": "brightness / clear / day",
+        "concern": "All three can move together for a very common image type (bright sunny daytime scene), risking one visual signal being triple-counted across three of the 30 dimensions.",
+        "recommendation": "retained as distinct fields (they are conceptually separable: brightness is luminance, clear is sky condition, day is time-of-day — a bright image can occur at any time of day, e.g. bright snow at dusk), but flag for an empirical correlation check once live data exists; if correlation proves very high in practice, consider down-weighting two of the three in the matching formula rather than removing them from the schema"
+      },
+      {
+        "pair": "intimacy / lateNight / rain",
+        "concern": "Same triple-counting risk as above, already named explicitly in the task.",
+        "recommendation": "same treatment — keep conceptually distinct, verify empirically, down-weight in matching formula if redundant rather than deleting from the schema"
+      },
+      {
+        "pair": "motion / energy",
+        "concern": "motion is a visible-image-profile field (physical movement in the frame); energy is a desired-sound-inference field. They are supposed to correlate somewhat (per the production prompt's own STEP 3.5 note that composition energy and musical energy \"usually agree but are not the same thing\"), so correlation here is expected and desired, not necessarily redundancy.",
+        "recommendation": "retained — this pair is intentionally correlated by design, not a flaw"
+      },
+      {
+        "pair": "openness / dreaminess",
+        "concern": "Open, wide landscapes could bias the model toward reflexively high dreaminess scores even without haze/blur evidence, if dreaminess is not tightly defined (see dreaminess note above).",
+        "recommendation": "redefine dreaminess (see above) — once tightly scoped to atmospheric-haze evidence, this pair's correlation should drop; re-check empirically"
+      },
+      {
+        "pair": "acousticness / electronicness",
+        "concern": "This pair is a visible-vs-inferred mismatch risk: both are desired-sound-inference fields with zero direct visual evidence (an acoustic guitar is sometimes visible, but usually image content gives no signal at all). Risk of the model defaulting both toward a lazy 50/50 split.",
+        "recommendation": "retained, but the prompt should explicitly instruct the model to use only clearly visible instrument/performance cues when present, and otherwise fall back to a genre-neutral prior rather than a flat midpoint for both simultaneously"
+      }
+    ],
+    "fieldsFlaggedUnsupportedByVisibleEvidence": [
+      "energy",
+      "groove",
+      "density",
+      "acousticness",
+      "electronicness",
+      "vocalPresence",
+      "climaxIntensity"
+    ],
+    "fieldsFlaggedUnsupportedNote": "This is the full desired-sound-inference group by definition (task section 2 explicitly separates it from the visible-image-profile group for this exact reason) — the finding here is not that these 7 fields are a design mistake, but that they need materially wider confidence bands / lower weight in any downstream similarity formula than the 23 visible-image-profile fields, and that the live pre-check (once unblocked) should specifically test whether repeated calls converge on similar values for this group or scatter widely, since there is no image evidence to anchor them."
+  },
+  "provisionalPassFail": {
+    "numericReproducibility": "NOT EVALUATED — blocked upstream (0/12 calls completed)",
+    "rankingReproducibility": "NOT EVALUATED — blocked upstream",
+    "plausibility": "NOT EVALUATED — blocked upstream",
+    "overallDecision": "FAIL (by default) — a pre-check with 0 completed live calls cannot produce a pass. This is a process-blocked non-result, not a negative finding about the schema's viability."
+  },
+  "limitations": [
+    "This pre-check performed zero live vision-model calls. No OPENAI_API_KEY (or equivalent vision-API credential) was present in the execution environment, and none of the 4 named test images exist anywhere in the repository.",
+    "The 30-track validation subset (docs/stat-precheck-validation-tracks.json) and the 30-value experimental schema definition (this file's experimentalSchema block) are ready and validated, so the live test can run immediately once both blockers are resolved (API credential + the 4 source images supplied).",
+    "The dimension-quality findings in this report are a priori design analysis only, cross-referenced against the earlier atmosphere-vocabulary audit and the with-stats catalog report — they are not empirical stability/correlation/ranking-influence measurements, since those require the blocked live test.",
+    "Because no similarity/ranking computation was possible, the weighted squared-distance formula's actual behavior against the 30-track validation subset remains completely untested.",
+    "This report does not constitute evidence either for or against runtime integration; it only confirms that the offline pieces (validation subset, schema) are prepared, and specifies exactly what is needed to run the real test."
+  ]
+}

@@ -1,0 +1,1920 @@
+{
+  "reportType": "music-catalog-with-stats-draft",
+  "derivedFrom": [
+    "docs/music-catalog-simplified-draft.ts (read-only, unmodified)"
+  ],
+  "trackCount": 673,
+  "statSummary": {
+    "brightness": {
+      "mean": 55.9,
+      "min": 0,
+      "max": 100
+    },
+    "warmth": {
+      "mean": 55.4,
+      "min": 6,
+      "max": 100
+    },
+    "openness": {
+      "mean": 54.1,
+      "min": 33,
+      "max": 100
+    },
+    "motion": {
+      "mean": 53.5,
+      "min": 2,
+      "max": 100
+    },
+    "intimacy": {
+      "mean": 48,
+      "min": 12,
+      "max": 100
+    },
+    "socialEnergy": {
+      "mean": 52.4,
+      "min": 0,
+      "max": 97
+    },
+    "tension": {
+      "mean": 36.6,
+      "min": 0,
+      "max": 100
+    },
+    "nostalgia": {
+      "mean": 40,
+      "min": 8,
+      "max": 100
+    },
+    "playfulness": {
+      "mean": 48.4,
+      "min": 8,
+      "max": 100
+    },
+    "dreaminess": {
+      "mean": 36.7,
+      "min": 13,
+      "max": 100
+    },
+    "energy": {
+      "mean": 53.7,
+      "min": 9,
+      "max": 96
+    },
+    "groove": {
+      "mean": 58.3,
+      "min": 15,
+      "max": 100
+    },
+    "density": {
+      "mean": 51.2,
+      "min": 3,
+      "max": 100
+    },
+    "acousticness": {
+      "mean": 38.9,
+      "min": 0,
+      "max": 100
+    },
+    "electronicness": {
+      "mean": 53.5,
+      "min": 0,
+      "max": 100
+    },
+    "vocalPresence": {
+      "mean": 67.3,
+      "min": 25,
+      "max": 100
+    },
+    "climaxIntensity": {
+      "mean": 53.3,
+      "min": 13,
+      "max": 100
+    }
+  },
+  "affinitySummary": {
+    "spring": {
+      "mean": 48.2,
+      "min": 30,
+      "max": 68
+    },
+    "summer": {
+      "mean": 52.6,
+      "min": 26,
+      "max": 81
+    },
+    "autumn": {
+      "mean": 46.9,
+      "min": 29,
+      "max": 73
+    },
+    "winter": {
+      "mean": 41.7,
+      "min": 26,
+      "max": 64
+    },
+    "morning": {
+      "mean": 41.4,
+      "min": 21,
+      "max": 67
+    },
+    "day": {
+      "mean": 49.5,
+      "min": 21,
+      "max": 72
+    },
+    "dusk": {
+      "mean": 51.5,
+      "min": 35,
+      "max": 69
+    },
+    "night": {
+      "mean": 55.4,
+      "min": 21,
+      "max": 86
+    },
+    "lateNight": {
+      "mean": 45.4,
+      "min": 12,
+      "max": 81
+    },
+    "clear": {
+      "mean": 50,
+      "min": 30,
+      "max": 65
+    },
+    "cloudy": {
+      "mean": 43.4,
+      "min": 32,
+      "max": 61
+    },
+    "rain": {
+      "mean": 38.6,
+      "min": 25,
+      "max": 65
+    },
+    "snow": {
+      "mean": 30.2,
+      "min": 18,
+      "max": 48
+    }
+  },
+  "confidenceSummary": {
+    "mean": 0.737,
+    "min": 0.43,
+    "max": 0.93,
+    "buckets": {
+      "0.85-1.00": 52,
+      "0.72-0.84": 540,
+      "0.55-0.71": 72,
+      "<0.55": 9
+    },
+    "tracksAtOrAbove072": 592
+  },
+  "needsStatReview": [
+    {
+      "id": "B1tqsYYiY9Q",
+      "title": "You Hate Jazz?",
+      "artist": "Harrison & Jaleel Shaw",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "hQ5x8pHoIPA",
+      "title": "Feather",
+      "artist": "Nujabes feat. Cise Starr & Akin",
+      "genre": "jazz-funk",
+      "statConfidence": 0.85,
+      "notes": [
+        "Source copies conflict on legacy energy (see review.notes) -- energy stat is a provisional midpoint"
+      ]
+    },
+    {
+      "id": "M1N_wbhAfQ4",
+      "title": "It Runs Through Me",
+      "artist": "Tom Misch feat. De La Soul",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "XrY2m5rdlQQ",
+      "title": "Keep On",
+      "artist": "Alfa Mist",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "1vXjhfTloHo",
+      "title": "Superhero",
+      "artist": "Kiefer",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "4JkIs37a2JE",
+      "title": "Virtual Insanity",
+      "artist": "Jamiroquai",
+      "genre": "jazz-funk",
+      "statConfidence": 0.7,
+      "notes": [
+        "statConfidence 0.7 below 0.72 threshold",
+        "Canonical track merges >1 YouTube video id -- same-recording status unverified, stats assume they match"
+      ]
+    },
+    {
+      "id": "VArOUfVOjqI",
+      "title": "From The Start",
+      "artist": "Laufey",
+      "genre": "jazz-funk",
+      "statConfidence": 0.73,
+      "notes": [
+        "Canonical track merges >1 YouTube video id -- same-recording status unverified, stats assume they match"
+      ]
+    },
+    {
+      "id": "0TWpmLskS6U",
+      "title": "Kimi to Iu Hana",
+      "artist": "ASIAN KUNG-FU GENERATION",
+      "genre": "rock",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "iCO8c7HafII",
+      "title": "Starrrrrrr",
+      "artist": "[Alexandros]",
+      "genre": "rock",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "m34DPnRUfMU",
+      "title": "Ao to Natsu",
+      "artist": "Mrs. GREEN APPLE",
+      "genre": "rock",
+      "statConfidence": 0.43,
+      "notes": [
+        "statConfidence 0.43 below 0.72 threshold",
+        "Zero legacy tags and no specific artist knowledge matched -- stats are genre-prior-only",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "qPBaI3165Jk",
+      "title": "ELECTRIC SUMMER",
+      "artist": "Base Ball Bear",
+      "genre": "rock",
+      "statConfidence": 0.43,
+      "notes": [
+        "statConfidence 0.43 below 0.72 threshold",
+        "Zero legacy tags and no specific artist knowledge matched -- stats are genre-prior-only",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "gD2mhJ3ByGQ",
+      "title": "Gunjou Biyori",
+      "artist": "Tokyo Jihen",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "U1o8NS3LNRw",
+      "title": "Shangri-La",
+      "artist": "Chatmonchy",
+      "genre": "rock",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "oFvHoyLpCoQ",
+      "title": "TMI",
+      "artist": "GRAY",
+      "genre": "hip-hop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "vadat46yfwg",
+      "title": "Life is Wet",
+      "artist": "CAMO feat. JMIN",
+      "genre": "hip-hop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "Ao2qQCqRSZs",
+      "title": "Y",
+      "artist": "FANXY CHILD",
+      "genre": "hip-hop",
+      "statConfidence": 0.43,
+      "notes": [
+        "statConfidence 0.43 below 0.72 threshold",
+        "Zero legacy tags and no specific artist knowledge matched -- stats are genre-prior-only",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "Dst9gZkq1a8",
+      "title": "goosebumps",
+      "artist": "Travis Scott feat. Kendrick Lamar",
+      "genre": "hip-hop",
+      "statConfidence": 0.75,
+      "notes": [
+        "Canonical track merges >1 YouTube video id -- same-recording status unverified, stats assume they match"
+      ]
+    },
+    {
+      "id": "dYwWCUsIKbI",
+      "title": "Oasis",
+      "artist": "Crush feat. ZICO",
+      "genre": "rnb-soul",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "rCeM57e2BfU",
+      "title": "And July",
+      "artist": "Heize feat. DEAN & DJ Friz",
+      "genre": "rnb-soul",
+      "statConfidence": 0.51,
+      "notes": [
+        "statConfidence 0.51 below 0.72 threshold",
+        "Zero legacy tags; matched artist-family pattern is not strong enough to count as reliable track-specific knowledge"
+      ]
+    },
+    {
+      "id": "-mtlIhSY9W8",
+      "title": "HANGANG",
+      "artist": "Hoody",
+      "genre": "rnb-soul",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "tzL4A8hyXc8",
+      "title": "A Long Dream",
+      "artist": "SE SO NEON",
+      "genre": "rock",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "yHKb38-nl3U",
+      "title": "Remember Summer Days",
+      "artist": "Anri",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "_sOKkON_UnQ",
+      "title": "4:00A.M.",
+      "artist": "Taeko Ohnuki",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "XJWqHmY-g9U",
+      "title": "Telephone Number",
+      "artist": "Junko Ohashi",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "2Kt8HP1VEPU",
+      "title": "Fantasy",
+      "artist": "Meiko Nakahara",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "g0p_jI6T2WQ",
+      "title": "Flyday Chinatown",
+      "artist": "Yasuha",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "CYweetJWgoA",
+      "title": "Kimi wa 1000%",
+      "artist": "1986 Omega Tribe",
+      "genre": "pop",
+      "statConfidence": 0.43,
+      "notes": [
+        "statConfidence 0.43 below 0.72 threshold",
+        "Zero legacy tags and no specific artist knowledge matched -- stats are genre-prior-only",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "fLxQtcrzTlA",
+      "title": "Airport Lady",
+      "artist": "Toshiki Kadomatsu",
+      "genre": "pop",
+      "statConfidence": 0.43,
+      "notes": [
+        "statConfidence 0.43 below 0.72 threshold",
+        "Zero legacy tags and no specific artist knowledge matched -- stats are genre-prior-only",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "z8UYBunE6Kk",
+      "title": "Summer Breeze",
+      "artist": "Piper",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "BxqYUbNR-c0",
+      "title": "Wasurerarenaino",
+      "artist": "Sakanaction",
+      "genre": "pop",
+      "statConfidence": 0.43,
+      "notes": [
+        "statConfidence 0.43 below 0.72 threshold",
+        "Zero legacy tags and no specific artist knowledge matched -- stats are genre-prior-only",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "mHrjM6oVez0",
+      "title": "LOOP",
+      "artist": "SIRUP",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "5pkBqmX2ymc",
+      "title": "NEW ERA",
+      "artist": "Nulbarich",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "SIuF37EWaLU",
+      "title": "Tokyo Flash",
+      "artist": "Vaundy",
+      "genre": "pop",
+      "statConfidence": 0.43,
+      "notes": [
+        "statConfidence 0.43 below 0.72 threshold",
+        "Zero legacy tags and no specific artist knowledge matched -- stats are genre-prior-only",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "Y36b8_WFejI",
+      "title": "Killer Tune Kills Me",
+      "artist": "KIRINJI feat. YonYon",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "ZLjs8rfejcU",
+      "title": "Caffeine",
+      "artist": "Eyedi",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "99WMzIxyfiI",
+      "title": "Drive",
+      "artist": "Kim A Reum",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "Uoutn3GVHqs",
+      "title": "Orange Road",
+      "artist": "Bronze feat. Yukika",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "2MiQonPvlVM",
+      "title": "Lady",
+      "artist": "Yubin",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "FVikHLyW500",
+      "title": "Just A Joke",
+      "artist": "Yurie Kokubu",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "qQYpF2pCkLI",
+      "title": "My Body",
+      "artist": "Young the Giant",
+      "genre": "rock",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "49FB9hhoO6c",
+      "title": "Where Is My Mind?",
+      "artist": "Pixies",
+      "genre": "rock",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "f0pdwd0miqs",
+      "title": "Sextape",
+      "artist": "Deftones",
+      "genre": "ambient-dream",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "EgBJmlPo8Xw",
+      "title": "everything i wanted",
+      "artist": "Billie Eilish",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "b7pE8AG1jjE",
+      "title": "Ribs",
+      "artist": "Lorde",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "wjHgiSx0RNQ",
+      "title": "Robbers",
+      "artist": "The 1975",
+      "genre": "pop",
+      "statConfidence": 0.58,
+      "notes": [
+        "statConfidence 0.58 below 0.72 threshold",
+        "Canonical track merges >1 YouTube video id -- same-recording status unverified, stats assume they match"
+      ]
+    },
+    {
+      "id": "ggG9ySCChYw",
+      "title": "Softcore",
+      "artist": "The Neighbourhood",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "TjWAWcx4xdE",
+      "title": "Grindin'",
+      "artist": "Clipse",
+      "genre": "hip-hop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "DDWAk8-leVA",
+      "title": "Survival Tactics",
+      "artist": "Joey Bada$$ feat. Capital STEEZ",
+      "genre": "hip-hop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "uK2kqW0_6Tg",
+      "title": "Summer Drop",
+      "artist": "Cordae feat. Anderson .Paak",
+      "genre": "hip-hop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "NLZRYQMLDW4",
+      "title": "DNA.",
+      "artist": "Kendrick Lamar",
+      "genre": "hip-hop",
+      "statConfidence": 0.75,
+      "notes": [
+        "Canonical track merges >1 YouTube video id -- same-recording status unverified, stats assume they match"
+      ]
+    },
+    {
+      "id": "xvZqHgFz51I",
+      "title": "Mask Off",
+      "artist": "Future",
+      "genre": "hip-hop",
+      "statConfidence": 0.73,
+      "notes": [
+        "Canonical track merges >1 YouTube video id -- same-recording status unverified, stats assume they match"
+      ]
+    },
+    {
+      "id": "eimgRedLkkU",
+      "title": "Walking On A Dream",
+      "artist": "Empire of the Sun",
+      "genre": "ambient-dream",
+      "statConfidence": 0.82,
+      "notes": [
+        "Source copies conflict on legacy energy (see review.notes) -- energy stat is a provisional midpoint"
+      ]
+    },
+    {
+      "id": "pki8HdJ59iw",
+      "title": "stacy's brother",
+      "artist": "Mad Tsai",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "vDPxVVyZzAY",
+      "title": "Prom Dress",
+      "artist": "mxmtoon",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "_BMBDY01kPk",
+      "title": "Girls",
+      "artist": "girl in red",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "VjGqTT0drP8",
+      "title": "Not Another Rockstar",
+      "artist": "Maisie Peters",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "1x1wjGKHjBI",
+      "title": "Tongue Tied",
+      "artist": "Grouplove",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "IVB9Yjjvw54",
+      "title": "Last Friday Night (T.G.I.F.)",
+      "artist": "Katy Perry",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "VuNIsY6JdUw",
+      "title": "You Belong With Me",
+      "artist": "Taylor Swift",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "5NPBIwQyPWE",
+      "title": "Complicated",
+      "artist": "Avril Lavigne",
+      "genre": "rock",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "TIy3n2b7V9k",
+      "title": "Sk8er Boi",
+      "artist": "Avril Lavigne",
+      "genre": "rock",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "by3yRdlQvzs",
+      "title": "Location",
+      "artist": "Khalid",
+      "genre": "rnb-soul",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "TL_oroU9eN8",
+      "title": "Riptide",
+      "artist": "Vance Joy",
+      "genre": "folk-acoustic",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "EkHTsc9PU2A",
+      "title": "I'm Yours",
+      "artist": "Jason Mraz",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "5JxgDJvqGmM",
+      "title": "The Ocean",
+      "artist": "Mike Perry feat. Shy Martin",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "VkQrJ3SVXko",
+      "title": "Let's Go Surfing",
+      "artist": "The Drums",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "jGflUbPQfW8",
+      "title": "Cheerleader (Felix Jaehn Remix)",
+      "artist": "OMI",
+      "genre": "pop",
+      "statConfidence": 0.43,
+      "notes": [
+        "statConfidence 0.43 below 0.72 threshold",
+        "Zero legacy tags and no specific artist knowledge matched -- stats are genre-prior-only",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "pUjE9H8QlA4",
+      "title": "Waves (Robin Schulz Remix Radio Edit)",
+      "artist": "Mr. Probz",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "DkjwyAk2GRw",
+      "title": "Don't Stop 'Til You Get Enough",
+      "artist": "Michael Jackson",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "Omnpu8mzX4c",
+      "title": "Give Me the Night",
+      "artist": "George Benson",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "aD7F6M9fsms",
+      "title": "Free Yourself",
+      "artist": "Jessie Ware",
+      "genre": "electronic",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "BcsfftwLUf0",
+      "title": "Busy Earnin'",
+      "artist": "Jungle",
+      "genre": "rnb-soul",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold",
+        "Broad genre 'rnb-soul' was itself uncertain (soul-funk-disco/vintage-soul-oldies split) and too few tags/artist evidence corroborate the stat priors chosen"
+      ]
+    },
+    {
+      "id": "51r5f5OdIY0",
+      "title": "Good Times",
+      "artist": "Chic",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "42wfEs7oIP8",
+      "title": "FaSHioN",
+      "artist": "CORTIS",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "To4SWGZkEPk",
+      "title": "greedy",
+      "artist": "Tate McRae",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "uAYG46w1SCA",
+      "title": "Say So",
+      "artist": "Doja Cat",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "l9CZykYZkOQ",
+      "title": "Touch",
+      "artist": "KATSEYE",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "kTJczUoc26U",
+      "title": "STAY",
+      "artist": "The Kid LAROI & Justin Bieber",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "VF-FGf_ZZiI",
+      "title": "Bad Habit",
+      "artist": "Steve Lacy",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "5C4FnlftQt4",
+      "title": "Chain of Fools",
+      "artist": "Aretha Franklin",
+      "genre": "rnb-soul",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold",
+        "Broad genre 'rnb-soul' was itself uncertain (soul-funk-disco/vintage-soul-oldies split) and too few tags/artist evidence corroborate the stat priors chosen"
+      ]
+    },
+    {
+      "id": "Zv8czIoAw5w",
+      "title": "Unchained Melody",
+      "artist": "The Righteous Brothers",
+      "genre": "rnb-soul",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold",
+        "groove/density/acousticness/electronicness/climaxIntensity are genre-prior estimates with no corroborating tag or artist evidence"
+      ]
+    },
+    {
+      "id": "kLO8XoNf5EM",
+      "title": "The Girl from Ipanema",
+      "artist": "Stan Getz & João Gilberto feat. Astrud Gilberto",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "bsnAarN0sDc",
+      "title": "So Nice (Summer Samba)",
+      "artist": "Bebel Gilberto",
+      "genre": "jazz-funk",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "q604eed4ad0",
+      "title": "Black Skinhead",
+      "artist": "Kanye West",
+      "genre": "hip-hop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "H7HmzwI67ec",
+      "title": "Good Time",
+      "artist": "Owl City & Carly Rae Jepsen",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "Qlsu7RhOnsQ",
+      "title": "Cut To The Feeling",
+      "artist": "Carly Rae Jepsen",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    },
+    {
+      "id": "hh1WeQxfCX0",
+      "title": "Can I Call You Tonight?",
+      "artist": "Dayglow",
+      "genre": "pop",
+      "statConfidence": 0.65,
+      "notes": [
+        "statConfidence 0.65 below 0.72 threshold"
+      ]
+    }
+  ],
+  "genreAverages": {
+    "jazz-funk": {
+      "trackCount": 62,
+      "brightness": 51.4,
+      "warmth": 61,
+      "openness": 50,
+      "motion": 49.7,
+      "intimacy": 49.8,
+      "socialEnergy": 59,
+      "tension": 20.1,
+      "nostalgia": 41,
+      "playfulness": 51.9,
+      "dreaminess": 37.5,
+      "energy": 57.6,
+      "groove": 80.5,
+      "density": 54.1,
+      "acousticness": 59.5,
+      "electronicness": 31.7,
+      "vocalPresence": 40.8,
+      "climaxIntensity": 40.9
+    },
+    "hip-hop": {
+      "trackCount": 122,
+      "brightness": 39.7,
+      "warmth": 40.1,
+      "openness": 46.5,
+      "motion": 55.7,
+      "intimacy": 37.6,
+      "socialEnergy": 54.5,
+      "tension": 62,
+      "nostalgia": 26.9,
+      "playfulness": 42.4,
+      "dreaminess": 27.4,
+      "energy": 54.6,
+      "groove": 69.2,
+      "density": 62.7,
+      "acousticness": 21.6,
+      "electronicness": 68.4,
+      "vocalPresence": 80.4,
+      "climaxIntensity": 59.6
+    },
+    "rnb-soul": {
+      "trackCount": 87,
+      "brightness": 44.8,
+      "warmth": 73.9,
+      "openness": 45.7,
+      "motion": 41.2,
+      "intimacy": 75,
+      "socialEnergy": 37.7,
+      "tension": 21,
+      "nostalgia": 48.3,
+      "playfulness": 33.9,
+      "dreaminess": 43.2,
+      "energy": 41,
+      "groove": 57.3,
+      "density": 42.7,
+      "acousticness": 46.7,
+      "electronicness": 37,
+      "vocalPresence": 74.6,
+      "climaxIntensity": 46.6
+    },
+    "pop": {
+      "trackCount": 249,
+      "brightness": 71.1,
+      "warmth": 59.3,
+      "openness": 56.2,
+      "motion": 55.6,
+      "intimacy": 44.8,
+      "socialEnergy": 59.6,
+      "tension": 27.8,
+      "nostalgia": 38.3,
+      "playfulness": 62.3,
+      "dreaminess": 36.2,
+      "energy": 55.2,
+      "groove": 57.9,
+      "density": 48.7,
+      "acousticness": 30.4,
+      "electronicness": 63.5,
+      "vocalPresence": 70.9,
+      "climaxIntensity": 55
+    },
+    "rock": {
+      "trackCount": 89,
+      "brightness": 53.3,
+      "warmth": 46,
+      "openness": 61.6,
+      "motion": 71.2,
+      "intimacy": 37.8,
+      "socialEnergy": 55.3,
+      "tension": 61.7,
+      "nostalgia": 46.7,
+      "playfulness": 43,
+      "dreaminess": 26.2,
+      "energy": 65.3,
+      "groove": 45.9,
+      "density": 60.8,
+      "acousticness": 55,
+      "electronicness": 40.1,
+      "vocalPresence": 66,
+      "climaxIntensity": 67.4
+    },
+    "folk-acoustic": {
+      "trackCount": 24,
+      "brightness": 54.1,
+      "warmth": 74.8,
+      "openness": 69.3,
+      "motion": 37.5,
+      "intimacy": 62.8,
+      "socialEnergy": 27.5,
+      "tension": 21,
+      "nostalgia": 60,
+      "playfulness": 34.7,
+      "dreaminess": 43,
+      "energy": 35.9,
+      "groove": 29.8,
+      "density": 26.3,
+      "acousticness": 88.9,
+      "electronicness": 10.6,
+      "vocalPresence": 64.7,
+      "climaxIntensity": 30.1
+    },
+    "ambient-dream": {
+      "trackCount": 26,
+      "brightness": 42.4,
+      "warmth": 40.6,
+      "openness": 68,
+      "motion": 21.9,
+      "intimacy": 60.4,
+      "socialEnergy": 16.9,
+      "tension": 20.1,
+      "nostalgia": 53.9,
+      "playfulness": 19.2,
+      "dreaminess": 90.6,
+      "energy": 35.8,
+      "groove": 27.1,
+      "density": 30.4,
+      "acousticness": 40.2,
+      "electronicness": 57.7,
+      "vocalPresence": 34.2,
+      "climaxIntensity": 26.8
+    },
+    "electronic": {
+      "trackCount": 14,
+      "brightness": 62.5,
+      "warmth": 34.1,
+      "openness": 54.9,
+      "motion": 65.4,
+      "intimacy": 36.6,
+      "socialEnergy": 59,
+      "tension": 39.7,
+      "nostalgia": 23.5,
+      "playfulness": 40.7,
+      "dreaminess": 39.8,
+      "energy": 69,
+      "groove": 62.8,
+      "density": 55.6,
+      "acousticness": 11.2,
+      "electronicness": 96,
+      "vocalPresence": 36.6,
+      "climaxIntensity": 62.7
+    }
+  },
+  "zeroTagTracks": [
+    {
+      "id": "m34DPnRUfMU",
+      "title": "Ao to Natsu",
+      "artist": "Mrs. GREEN APPLE",
+      "genre": "rock",
+      "needsStatReview": true,
+      "statConfidence": 0.43
+    },
+    {
+      "id": "qPBaI3165Jk",
+      "title": "ELECTRIC SUMMER",
+      "artist": "Base Ball Bear",
+      "genre": "rock",
+      "needsStatReview": true,
+      "statConfidence": 0.43
+    },
+    {
+      "id": "Ao2qQCqRSZs",
+      "title": "Y",
+      "artist": "FANXY CHILD",
+      "genre": "hip-hop",
+      "needsStatReview": true,
+      "statConfidence": 0.43
+    },
+    {
+      "id": "rCeM57e2BfU",
+      "title": "And July",
+      "artist": "Heize feat. DEAN & DJ Friz",
+      "genre": "rnb-soul",
+      "needsStatReview": true,
+      "statConfidence": 0.51
+    },
+    {
+      "id": "CYweetJWgoA",
+      "title": "Kimi wa 1000%",
+      "artist": "1986 Omega Tribe",
+      "genre": "pop",
+      "needsStatReview": true,
+      "statConfidence": 0.43
+    },
+    {
+      "id": "fLxQtcrzTlA",
+      "title": "Airport Lady",
+      "artist": "Toshiki Kadomatsu",
+      "genre": "pop",
+      "needsStatReview": true,
+      "statConfidence": 0.43
+    },
+    {
+      "id": "BxqYUbNR-c0",
+      "title": "Wasurerarenaino",
+      "artist": "Sakanaction",
+      "genre": "pop",
+      "needsStatReview": true,
+      "statConfidence": 0.43
+    },
+    {
+      "id": "SIuF37EWaLU",
+      "title": "Tokyo Flash",
+      "artist": "Vaundy",
+      "genre": "pop",
+      "needsStatReview": true,
+      "statConfidence": 0.43
+    },
+    {
+      "id": "jGflUbPQfW8",
+      "title": "Cheerleader (Felix Jaehn Remix)",
+      "artist": "OMI",
+      "genre": "pop",
+      "needsStatReview": true,
+      "statConfidence": 0.43
+    }
+  ],
+  "repeatedVectors": [],
+  "outliers": {
+    "duplicateVectorGroups": 0,
+    "largestSharedVectorGroup": 0,
+    "multiplesOf5Percent": 21.2,
+    "lowVarianceWarnings": [],
+    "affinity45to55Percent": 32.4,
+    "contradictions": {
+      "acousticElectronicBoth80": [],
+      "intimacySocialBothHigh": [],
+      "highEnergyLowMotion": [],
+      "highMotionLowEnergy": []
+    },
+    "highConfidenceGenreOnlyTracks": []
+  },
+  "validationResults": {
+    "passed": true,
+    "errors": [],
+    "checks": {
+      "trackCount": 673,
+      "totalSourceEntries": 701,
+      "idsUnchanged": true,
+      "allStatsInRange": true,
+      "allAffinityInRange": true
+    },
+    "outlierReport": {
+      "duplicateVectorGroups": 0,
+      "duplicateVectorTracks": 0,
+      "largestSharedVectorGroup": 0,
+      "duplicateVectorDetails": [],
+      "multiplesOf5Percent": 21.2,
+      "genreVariance": {
+        "jazz-funk": {
+          "brightness": {
+            "mean": 51.4,
+            "stddev": 9.7
+          },
+          "warmth": {
+            "mean": 61,
+            "stddev": 12.2
+          },
+          "openness": {
+            "mean": 50,
+            "stddev": 6.8
+          },
+          "motion": {
+            "mean": 49.7,
+            "stddev": 9.2
+          },
+          "intimacy": {
+            "mean": 49.8,
+            "stddev": 10.4
+          },
+          "socialEnergy": {
+            "mean": 59,
+            "stddev": 10.6
+          },
+          "tension": {
+            "mean": 20.1,
+            "stddev": 11
+          },
+          "nostalgia": {
+            "mean": 41,
+            "stddev": 8.1
+          },
+          "playfulness": {
+            "mean": 51.9,
+            "stddev": 12
+          },
+          "dreaminess": {
+            "mean": 37.5,
+            "stddev": 9.8
+          },
+          "energy": {
+            "mean": 57.6,
+            "stddev": 21.8
+          },
+          "groove": {
+            "mean": 80.5,
+            "stddev": 12.8
+          },
+          "density": {
+            "mean": 54.1,
+            "stddev": 8.3
+          },
+          "acousticness": {
+            "mean": 59.5,
+            "stddev": 10.4
+          },
+          "electronicness": {
+            "mean": 31.7,
+            "stddev": 8.1
+          },
+          "vocalPresence": {
+            "mean": 40.8,
+            "stddev": 7.1
+          },
+          "climaxIntensity": {
+            "mean": 40.9,
+            "stddev": 8
+          }
+        },
+        "hip-hop": {
+          "brightness": {
+            "mean": 39.7,
+            "stddev": 13.7
+          },
+          "warmth": {
+            "mean": 40.1,
+            "stddev": 12.4
+          },
+          "openness": {
+            "mean": 46.5,
+            "stddev": 7.2
+          },
+          "motion": {
+            "mean": 55.7,
+            "stddev": 9.4
+          },
+          "intimacy": {
+            "mean": 37.6,
+            "stddev": 9.9
+          },
+          "socialEnergy": {
+            "mean": 54.5,
+            "stddev": 9
+          },
+          "tension": {
+            "mean": 62,
+            "stddev": 18.8
+          },
+          "nostalgia": {
+            "mean": 26.9,
+            "stddev": 10.2
+          },
+          "playfulness": {
+            "mean": 42.4,
+            "stddev": 8
+          },
+          "dreaminess": {
+            "mean": 27.4,
+            "stddev": 9.8
+          },
+          "energy": {
+            "mean": 54.6,
+            "stddev": 23.9
+          },
+          "groove": {
+            "mean": 69.2,
+            "stddev": 8.3
+          },
+          "density": {
+            "mean": 62.7,
+            "stddev": 14.5
+          },
+          "acousticness": {
+            "mean": 21.6,
+            "stddev": 8.1
+          },
+          "electronicness": {
+            "mean": 68.4,
+            "stddev": 9.2
+          },
+          "vocalPresence": {
+            "mean": 80.4,
+            "stddev": 7.9
+          },
+          "climaxIntensity": {
+            "mean": 59.6,
+            "stddev": 8.5
+          }
+        },
+        "rnb-soul": {
+          "brightness": {
+            "mean": 44.8,
+            "stddev": 10
+          },
+          "warmth": {
+            "mean": 73.9,
+            "stddev": 14.2
+          },
+          "openness": {
+            "mean": 45.7,
+            "stddev": 7.5
+          },
+          "motion": {
+            "mean": 41.2,
+            "stddev": 7.7
+          },
+          "intimacy": {
+            "mean": 75,
+            "stddev": 12
+          },
+          "socialEnergy": {
+            "mean": 37.7,
+            "stddev": 8.9
+          },
+          "tension": {
+            "mean": 21,
+            "stddev": 11.8
+          },
+          "nostalgia": {
+            "mean": 48.3,
+            "stddev": 10.3
+          },
+          "playfulness": {
+            "mean": 33.9,
+            "stddev": 10.5
+          },
+          "dreaminess": {
+            "mean": 43.2,
+            "stddev": 9.2
+          },
+          "energy": {
+            "mean": 41,
+            "stddev": 18.9
+          },
+          "groove": {
+            "mean": 57.3,
+            "stddev": 7.6
+          },
+          "density": {
+            "mean": 42.7,
+            "stddev": 8.5
+          },
+          "acousticness": {
+            "mean": 46.7,
+            "stddev": 7.7
+          },
+          "electronicness": {
+            "mean": 37,
+            "stddev": 8.9
+          },
+          "vocalPresence": {
+            "mean": 74.6,
+            "stddev": 6.8
+          },
+          "climaxIntensity": {
+            "mean": 46.6,
+            "stddev": 8.5
+          }
+        },
+        "pop": {
+          "brightness": {
+            "mean": 71.1,
+            "stddev": 12.8
+          },
+          "warmth": {
+            "mean": 59.3,
+            "stddev": 11.9
+          },
+          "openness": {
+            "mean": 56.2,
+            "stddev": 7.6
+          },
+          "motion": {
+            "mean": 55.6,
+            "stddev": 7.8
+          },
+          "intimacy": {
+            "mean": 44.8,
+            "stddev": 11.1
+          },
+          "socialEnergy": {
+            "mean": 59.6,
+            "stddev": 9.1
+          },
+          "tension": {
+            "mean": 27.8,
+            "stddev": 10.9
+          },
+          "nostalgia": {
+            "mean": 38.3,
+            "stddev": 10.6
+          },
+          "playfulness": {
+            "mean": 62.3,
+            "stddev": 12.9
+          },
+          "dreaminess": {
+            "mean": 36.2,
+            "stddev": 9.1
+          },
+          "energy": {
+            "mean": 55.2,
+            "stddev": 19.2
+          },
+          "groove": {
+            "mean": 57.9,
+            "stddev": 8.8
+          },
+          "density": {
+            "mean": 48.7,
+            "stddev": 8
+          },
+          "acousticness": {
+            "mean": 30.4,
+            "stddev": 7.3
+          },
+          "electronicness": {
+            "mean": 63.5,
+            "stddev": 9
+          },
+          "vocalPresence": {
+            "mean": 70.9,
+            "stddev": 6.9
+          },
+          "climaxIntensity": {
+            "mean": 55,
+            "stddev": 8.2
+          }
+        },
+        "rock": {
+          "brightness": {
+            "mean": 53.3,
+            "stddev": 10.9
+          },
+          "warmth": {
+            "mean": 46,
+            "stddev": 8.7
+          },
+          "openness": {
+            "mean": 61.6,
+            "stddev": 11.8
+          },
+          "motion": {
+            "mean": 71.2,
+            "stddev": 13.1
+          },
+          "intimacy": {
+            "mean": 37.8,
+            "stddev": 8.6
+          },
+          "socialEnergy": {
+            "mean": 55.3,
+            "stddev": 7
+          },
+          "tension": {
+            "mean": 61.7,
+            "stddev": 13
+          },
+          "nostalgia": {
+            "mean": 46.7,
+            "stddev": 12
+          },
+          "playfulness": {
+            "mean": 43,
+            "stddev": 8
+          },
+          "dreaminess": {
+            "mean": 26.2,
+            "stddev": 8.3
+          },
+          "energy": {
+            "mean": 65.3,
+            "stddev": 17
+          },
+          "groove": {
+            "mean": 45.9,
+            "stddev": 6.8
+          },
+          "density": {
+            "mean": 60.8,
+            "stddev": 7.6
+          },
+          "acousticness": {
+            "mean": 55,
+            "stddev": 7.8
+          },
+          "electronicness": {
+            "mean": 40.1,
+            "stddev": 6.7
+          },
+          "vocalPresence": {
+            "mean": 66,
+            "stddev": 7.3
+          },
+          "climaxIntensity": {
+            "mean": 67.4,
+            "stddev": 9.9
+          }
+        },
+        "folk-acoustic": {
+          "brightness": {
+            "mean": 54.1,
+            "stddev": 6.5
+          },
+          "warmth": {
+            "mean": 74.8,
+            "stddev": 13.2
+          },
+          "openness": {
+            "mean": 69.3,
+            "stddev": 14.1
+          },
+          "motion": {
+            "mean": 37.5,
+            "stddev": 10.8
+          },
+          "intimacy": {
+            "mean": 62.8,
+            "stddev": 8.2
+          },
+          "socialEnergy": {
+            "mean": 27.5,
+            "stddev": 9.5
+          },
+          "tension": {
+            "mean": 21,
+            "stddev": 11.9
+          },
+          "nostalgia": {
+            "mean": 60,
+            "stddev": 15.5
+          },
+          "playfulness": {
+            "mean": 34.7,
+            "stddev": 6.7
+          },
+          "dreaminess": {
+            "mean": 43,
+            "stddev": 10.4
+          },
+          "energy": {
+            "mean": 35.9,
+            "stddev": 17.4
+          },
+          "groove": {
+            "mean": 29.8,
+            "stddev": 6.2
+          },
+          "density": {
+            "mean": 26.3,
+            "stddev": 8
+          },
+          "acousticness": {
+            "mean": 88.9,
+            "stddev": 6.9
+          },
+          "electronicness": {
+            "mean": 10.6,
+            "stddev": 6.5
+          },
+          "vocalPresence": {
+            "mean": 64.7,
+            "stddev": 6.8
+          },
+          "climaxIntensity": {
+            "mean": 30.1,
+            "stddev": 8.2
+          }
+        },
+        "ambient-dream": {
+          "brightness": {
+            "mean": 42.4,
+            "stddev": 15.7
+          },
+          "warmth": {
+            "mean": 40.6,
+            "stddev": 11.9
+          },
+          "openness": {
+            "mean": 68,
+            "stddev": 8.1
+          },
+          "motion": {
+            "mean": 21.9,
+            "stddev": 9.6
+          },
+          "intimacy": {
+            "mean": 60.4,
+            "stddev": 11.5
+          },
+          "socialEnergy": {
+            "mean": 16.9,
+            "stddev": 8.6
+          },
+          "tension": {
+            "mean": 20.1,
+            "stddev": 10
+          },
+          "nostalgia": {
+            "mean": 53.9,
+            "stddev": 14.7
+          },
+          "playfulness": {
+            "mean": 19.2,
+            "stddev": 5.8
+          },
+          "dreaminess": {
+            "mean": 90.6,
+            "stddev": 10.4
+          },
+          "energy": {
+            "mean": 35.8,
+            "stddev": 19.8
+          },
+          "groove": {
+            "mean": 27.1,
+            "stddev": 9.3
+          },
+          "density": {
+            "mean": 30.4,
+            "stddev": 9.6
+          },
+          "acousticness": {
+            "mean": 40.2,
+            "stddev": 6.2
+          },
+          "electronicness": {
+            "mean": 57.7,
+            "stddev": 8.6
+          },
+          "vocalPresence": {
+            "mean": 34.2,
+            "stddev": 6.7
+          },
+          "climaxIntensity": {
+            "mean": 26.8,
+            "stddev": 8.3
+          }
+        },
+        "electronic": {
+          "brightness": {
+            "mean": 62.5,
+            "stddev": 10.4
+          },
+          "warmth": {
+            "mean": 34.1,
+            "stddev": 9.1
+          },
+          "openness": {
+            "mean": 54.9,
+            "stddev": 6.8
+          },
+          "motion": {
+            "mean": 65.4,
+            "stddev": 8.3
+          },
+          "intimacy": {
+            "mean": 36.6,
+            "stddev": 9.7
+          },
+          "socialEnergy": {
+            "mean": 59,
+            "stddev": 7.1
+          },
+          "tension": {
+            "mean": 39.7,
+            "stddev": 8.9
+          },
+          "nostalgia": {
+            "mean": 23.5,
+            "stddev": 9.7
+          },
+          "playfulness": {
+            "mean": 40.7,
+            "stddev": 8.7
+          },
+          "dreaminess": {
+            "mean": 39.8,
+            "stddev": 8.8
+          },
+          "energy": {
+            "mean": 69,
+            "stddev": 13.2
+          },
+          "groove": {
+            "mean": 62.8,
+            "stddev": 9.4
+          },
+          "density": {
+            "mean": 55.6,
+            "stddev": 9.2
+          },
+          "acousticness": {
+            "mean": 11.2,
+            "stddev": 6.1
+          },
+          "electronicness": {
+            "mean": 96,
+            "stddev": 6.7
+          },
+          "vocalPresence": {
+            "mean": 36.6,
+            "stddev": 5.7
+          },
+          "climaxIntensity": {
+            "mean": 62.7,
+            "stddev": 8.5
+          }
+        }
+      },
+      "lowVarianceWarnings": [],
+      "affinity45to55Percent": 32.4,
+      "contradictions": {
+        "acousticElectronicBoth80": [],
+        "intimacySocialBothHigh": [],
+        "highEnergyLowMotion": [],
+        "highMotionLowEnergy": []
+      },
+      "highConfidenceGenreOnlyTracks": [],
+      "laneIdUsageCheck": {
+        "note": "scoreTrack() in step2_score.mjs never reads legacy.sourceEntries or laneId as scoring input -- verified by code inspection.",
+        "violatingTracks": 0
+      }
+    }
+  },
+  "knownLimitations": [
+    "Stats and affinity are rule-based estimates (genre prior + legacy-tag evidence + curated artist-specific overrides + deterministic jitter), NOT derived from audio analysis, listening, or an external music service.",
+    "The genre-prior and tag-effect tables were authored by this task alone and not cross-checked against a second source -- see report.md section 10 recommendation.",
+    "Artist-specific overrides cover a curated subset (~120 tracks) of frequently-recognized artists in this catalog; the remaining tracks rely on genre prior + tag evidence only.",
+    "Affinity values (especially weather) were deliberately kept closer to neutral with tighter jitter than sound/atmosphere stats, reflecting lower confidence in season/weather evidence per docs/music-atmosphere-vocabulary-audit.md.",
+    "87 tracks (12.9%) are flagged needsStatReview and should not be treated as final without human review -- see needsStatReview for the full list."
+  ]
+}
