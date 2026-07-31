@@ -1,11 +1,14 @@
 // Validates supabase/functions/_shared/musicCatalog.ts against the accepted
-// Step 2 stat/affinity source (docs/music-catalog-stats-correction-draft.ts).
+// Step 2 stat/affinity source (docs/music-catalog-stats-correction-draft.ts)
+// and the accepted Step 3-1 genre source
+// (docs/music-catalog-genre-classification-revised-draft.ts), and against
+// the production taxonomy (supabase/functions/_shared/musicGenreTaxonomy.ts).
 //
 // Usage: node scripts/validate-music-catalog.mjs
 //
-// docs/music-catalog-stats-correction-draft.ts is a temporary migration input,
-// read here only to prove exact equality with production. It is not imported
-// by any runtime or build code.
+// The docs/ files above are temporary migration inputs, read here only to
+// prove exact equality with production. They are not imported by any
+// runtime or build code.
 
 import { readFileSync, readdirSync, statSync } from 'fs';
 import ts from 'typescript';
@@ -19,7 +22,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
 const PROD_PATH = path.join(ROOT, 'supabase/functions/_shared/musicCatalog.ts');
+const TAXONOMY_PATH = path.join(ROOT, 'supabase/functions/_shared/musicGenreTaxonomy.ts');
 const STEP2_PATH = path.join(ROOT, 'docs/music-catalog-stats-correction-draft.ts');
+const GENRE_DRAFT_PATH = path.join(ROOT, 'docs/music-catalog-genre-classification-revised-draft.ts');
 const EXPECTED_CANONICAL_COUNT = 673;
 const STAT_KEYS = ['brightness','warmth','openness','motion','intimacy','socialEnergy','tension','nostalgia','playfulness','dreaminess','energy','groove','density','acousticness','electronicness','vocalPresence','climaxIntensity'];
 const AFFINITY_KEYS = ['spring','summer','autumn','winter','morning','day','dusk','night','lateNight','clear','cloudy','rain','snow'];
@@ -158,7 +163,113 @@ for (const id of step2ById.keys()) {
 }
 
 // ---------------------------------------------------------------------------
-// 3. No production import from docs/
+// 3. Genre classification (Step 3-1): load taxonomy + accepted genre draft
+// ---------------------------------------------------------------------------
+const taxonomyMod = loadModule(TAXONOMY_PATH, ['PRIMARY_GENRES', 'SUBGENRES_BY_PRIMARY', 'CROSSOVER_ADJACENCY']);
+const validPrimaries = new Set(taxonomyMod.PRIMARY_GENRES.map(p => p.id));
+const subgenreToPrimary = new Map();
+for (const [primary, subs] of Object.entries(taxonomyMod.SUBGENRES_BY_PRIMARY)) {
+  for (const s of subs) subgenreToPrimary.set(s, primary);
+}
+
+const genreMod = loadModule(GENRE_DRAFT_PATH, ['MUSIC_CATALOG_GENRE_CLASSIFICATION_REVISED_DRAFT']);
+const genreTracks = genreMod.MUSIC_CATALOG_GENRE_CLASSIFICATION_REVISED_DRAFT;
+if (genreTracks.length !== EXPECTED_CANONICAL_COUNT) {
+  fail(`genre draft source has ${genreTracks.length} tracks, expected exactly ${EXPECTED_CANONICAL_COUNT}`);
+}
+const genreById = new Map(genreTracks.map(t => [t.id, t]));
+
+const genreByCanonicalId = new Map(); // canonical id -> [production entries with resolved genre]
+const canonicalIdsRepresentedForGenre = new Set();
+
+for (const t of prodTracks) {
+  if (!t.youtubeVideoId) continue; // already flagged above
+
+  const step2Canonical = step2ById.get(t.youtubeVideoId) || altToCanonical.get(t.youtubeVideoId);
+  const genreCanonical = step2Canonical ? genreById.get(step2Canonical.id) : undefined;
+
+  const requiredGenreFields = ['primaryGenre', 'subgenre', 'crossoverGenres', 'genreConfidence', 'needsGenreReview', 'genreReason'];
+  const missing = requiredGenreFields.filter(f => t[f] === undefined || t[f] === null);
+  if (missing.length > 0) {
+    fail(`production track ${t.youtubeVideoId} (lane ${t.laneId}) missing genre field(s): ${missing.join(', ')}`);
+    continue;
+  }
+
+  if (!genreCanonical) {
+    fail(`production track ${t.youtubeVideoId} (lane ${t.laneId}) has genre data but no matching genre-draft canonical track`);
+    continue;
+  }
+  canonicalIdsRepresentedForGenre.add(genreCanonical.id);
+  if (!genreByCanonicalId.has(genreCanonical.id)) genreByCanonicalId.set(genreCanonical.id, []);
+  genreByCanonicalId.get(genreCanonical.id).push(t);
+
+  // primaryGenre / subgenre validity
+  if (!validPrimaries.has(t.primaryGenre)) fail(`unknown primaryGenre "${t.primaryGenre}" for ${t.youtubeVideoId}`);
+  if (!subgenreToPrimary.has(t.subgenre)) fail(`unknown subgenre "${t.subgenre}" for ${t.youtubeVideoId}`);
+  else if (subgenreToPrimary.get(t.subgenre) !== t.primaryGenre) fail(`subgenre "${t.subgenre}" does not belong to primaryGenre "${t.primaryGenre}" for ${t.youtubeVideoId}`);
+
+  // crossoverGenres validity, duplicates, self-collision
+  const seenCrossover = new Set();
+  for (const cg of t.crossoverGenres) {
+    if (seenCrossover.has(cg)) fail(`duplicate crossoverGenres entry "${cg}" for ${t.youtubeVideoId}`);
+    seenCrossover.add(cg);
+    if (cg === t.subgenre) fail(`crossoverGenres entry "${cg}" duplicates own subgenre for ${t.youtubeVideoId}`);
+    if (cg === t.primaryGenre) fail(`crossoverGenres entry "${cg}" duplicates own primaryGenre for ${t.youtubeVideoId}`);
+    const cgPrimary = subgenreToPrimary.get(cg);
+    if (!cgPrimary) { fail(`unknown crossoverGenres subgenre "${cg}" for ${t.youtubeVideoId}`); continue; }
+    if (cgPrimary === t.primaryGenre) continue; // same-primary crossover always allowed
+    const adjacency = taxonomyMod.CROSSOVER_ADJACENCY[t.primaryGenre] || [];
+    if (!adjacency.includes(cgPrimary)) {
+      warn(`crossoverGenres entry "${cg}" (primary "${cgPrimary}") is not listed as adjacent to primaryGenre "${t.primaryGenre}" for ${t.youtubeVideoId} — accepted Step 3-1 data as-is, not a defect introduced by this migration`);
+    }
+  }
+
+  // genreConfidence integer 0-100
+  if (!Number.isInteger(t.genreConfidence) || t.genreConfidence < 0 || t.genreConfidence > 100) {
+    fail(`genreConfidence must be an integer in [0,100] for ${t.youtubeVideoId}: ${t.genreConfidence}`);
+  }
+
+  // needsGenreReview -> non-empty genreReason
+  if (t.needsGenreReview && (!t.genreReason || !t.genreReason.trim())) {
+    fail(`needsGenreReview is true but genreReason is empty for ${t.youtubeVideoId}`);
+  }
+
+  // exact equality with accepted genre draft, by canonical track id
+  const gc = genreCanonical.genreClassification;
+  if (t.primaryGenre !== gc.primaryGenre) fail(`primaryGenre mismatch vs genre draft for ${t.youtubeVideoId}: prod=${t.primaryGenre} draft=${gc.primaryGenre}`);
+  if (t.subgenre !== gc.subgenre) fail(`subgenre mismatch vs genre draft for ${t.youtubeVideoId}: prod=${t.subgenre} draft=${gc.subgenre}`);
+  if (!deepEqual(t.crossoverGenres, gc.crossoverGenres)) fail(`crossoverGenres mismatch vs genre draft for ${t.youtubeVideoId}`);
+  if (t.genreConfidence !== gc.genreConfidence) fail(`genreConfidence mismatch vs genre draft for ${t.youtubeVideoId}: prod=${t.genreConfidence} draft=${gc.genreConfidence}`);
+  if (t.needsGenreReview !== gc.needsGenreReview) fail(`needsGenreReview mismatch vs genre draft for ${t.youtubeVideoId}`);
+  if (t.genreReason !== gc.genreReason) fail(`genreReason mismatch vs genre draft for ${t.youtubeVideoId}`);
+}
+
+if (canonicalIdsRepresentedForGenre.size !== EXPECTED_CANONICAL_COUNT) {
+  fail(`production represents ${canonicalIdsRepresentedForGenre.size} distinct canonical genre-classified tracks, expected exactly ${EXPECTED_CANONICAL_COUNT}`);
+}
+for (const id of genreById.keys()) {
+  if (!canonicalIdsRepresentedForGenre.has(id)) fail(`genre-draft canonical track ${id} is not represented anywhere in production`);
+}
+
+// ---------------------------------------------------------------------------
+// 4. Duplicate physical entries for the same canonical track must have
+//    identical genre classification
+// ---------------------------------------------------------------------------
+let genreDuplicateInconsistency = 0;
+for (const [id, entries] of genreByCanonicalId.entries()) {
+  if (entries.length < 2) continue;
+  const first = { primaryGenre: entries[0].primaryGenre, subgenre: entries[0].subgenre, crossoverGenres: entries[0].crossoverGenres, genreConfidence: entries[0].genreConfidence, needsGenreReview: entries[0].needsGenreReview, genreReason: entries[0].genreReason };
+  for (const e of entries.slice(1)) {
+    const cur = { primaryGenre: e.primaryGenre, subgenre: e.subgenre, crossoverGenres: e.crossoverGenres, genreConfidence: e.genreConfidence, needsGenreReview: e.needsGenreReview, genreReason: e.genreReason };
+    if (!deepEqual(cur, first)) {
+      genreDuplicateInconsistency++;
+      fail(`inconsistent genre classification across duplicate physical entries for canonical track ${id}`);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 5. No production import from docs/
 // ---------------------------------------------------------------------------
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -181,13 +292,15 @@ for (const f of runtimeFiles) {
 }
 
 // ---------------------------------------------------------------------------
-// 4. No second live production catalog source
+// 6. No second live production catalog or taxonomy source
 // ---------------------------------------------------------------------------
 for (const f of runtimeFiles) {
-  if (f === PROD_PATH) continue;
   const content = readFileSync(f, 'utf-8');
-  if (/export const ALL_SEED_TRACKS/.test(content) || /MUSIC_CATALOG_STATS_CORRECTION_DRAFT/.test(content)) {
+  if (f !== PROD_PATH && (/export const ALL_SEED_TRACKS/.test(content) || /MUSIC_CATALOG_STATS_CORRECTION_DRAFT/.test(content))) {
     fail(`potential second production catalog source: ${path.relative(ROOT, f)}`);
+  }
+  if (f !== TAXONOMY_PATH && /export const SUBGENRES_BY_PRIMARY/.test(content)) {
+    fail(`potential second production taxonomy source: ${path.relative(ROOT, f)}`);
   }
 }
 
@@ -196,8 +309,10 @@ for (const f of runtimeFiles) {
 // ---------------------------------------------------------------------------
 console.log(`Production physical track entries: ${prodTracks.length}`);
 console.log(`Distinct canonical step2 tracks represented: ${canonicalIdsRepresentedInProd.size} (expected ${EXPECTED_CANONICAL_COUNT})`);
+console.log(`Distinct canonical genre-classified tracks represented: ${canonicalIdsRepresentedForGenre.size} (expected ${EXPECTED_CANONICAL_COUNT})`);
 console.log(`Step2 canonical source track count: ${step2Tracks.length}`);
-console.log(`Runtime files scanned for docs/ imports and second-catalog check: ${runtimeFiles.length}`);
+console.log(`Genre draft source track count: ${genreTracks.length}`);
+console.log(`Runtime files scanned for docs/ imports and second-source check: ${runtimeFiles.length}`);
 console.log('');
 console.log(`Warnings: ${warnings.length}`);
 warnings.forEach(w => console.log('  [warn]', w));
