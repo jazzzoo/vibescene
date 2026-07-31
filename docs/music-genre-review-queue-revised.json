@@ -1,0 +1,852 @@
+{
+  "generatedAt": "2026-07-31T01:45:21.442Z",
+  "note": "Revised review queue (post taxonomy-sanity-pass). See docs/music-genre-review-queue.json for the original (unrevised) queue.",
+  "totalFlagged": 45,
+  "countsByPriority": {
+    "P1": 13,
+    "P2": 28,
+    "P3": 4
+  },
+  "items": [
+    {
+      "trackId": "e2Z0sON2UPc",
+      "title": "Ain't No Rest for the Wicked",
+      "artist": "Cage The Elephant",
+      "previousLane": "american-alternative-drive",
+      "legacyGenre": "rock",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "alternative-rock",
+      "crossoverGenres": [],
+      "confidence": 58,
+      "priority": "P1",
+      "reason": "[tag-derived] no genre-bearing subtags found; fell back to legacy genre 'rock' + lane default (american-alternative-drive).",
+      "suggestedAlternatives": [
+        "indie-rock",
+        "dream-pop",
+        "shoegaze"
+      ]
+    },
+    {
+      "trackId": "VuNIsY6JdUw",
+      "title": "You Belong With Me",
+      "artist": "Taylor Swift",
+      "previousLane": "highteen-pop-room",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 58,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Catalog spans pop, country and indie-folk eras; track-level identity genuinely varies, defaulted conservatively. [Step 3-1 sanity pass: removed indie-folk (catalog-wide generalization, not a defensible per-song playlist claim at the artist-default level).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "AgFeZr5ptV8",
+      "title": "22",
+      "artist": "Taylor Swift",
+      "previousLane": "highteen-pop-room",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 58,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Catalog spans pop, country and indie-folk eras; track-level identity genuinely varies, defaulted conservatively. [Step 3-1 sanity pass: removed indie-folk (catalog-wide generalization, not a defensible per-song playlist claim at the artist-default level).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "cvUAzpn48xA",
+      "title": "Lover",
+      "artist": "Taylor Swift",
+      "previousLane": "modern-romance-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 58,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Catalog spans pop, country and indie-folk eras; track-level identity genuinely varies, defaulted conservatively. [Step 3-1 sanity pass: removed indie-folk (catalog-wide generalization, not a defensible per-song playlist claim at the artist-default level).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "66TQBtlRKc4",
+      "title": "Style",
+      "artist": "Taylor Swift",
+      "previousLane": "modern-romance-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 58,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Catalog spans pop, country and indie-folk eras; track-level identity genuinely varies, defaulted conservatively. [Step 3-1 sanity pass: removed indie-folk (catalog-wide generalization, not a defensible per-song playlist claim at the artist-default level).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "UM9XNpgrqVk",
+      "title": "Kaiju no Hanauta",
+      "artist": "Vaundy",
+      "previousLane": "j-rock-highway-rush",
+      "legacyGenre": "rock",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "j-pop",
+      "crossoverGenres": [
+        "j-rock"
+      ],
+      "confidence": 62,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Genre-fluid modern Japanese artist moving between J-pop, rock and R&B; track-level identity varies.",
+      "suggestedAlternatives": [
+        "j-rock",
+        "dance-pop",
+        "synth-pop"
+      ]
+    },
+    {
+      "trackId": "SIuF37EWaLU",
+      "title": "Tokyo Flash",
+      "artist": "Vaundy",
+      "previousLane": "city-pop-retro-glow",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "j-pop",
+      "crossoverGenres": [
+        "j-rock"
+      ],
+      "confidence": 62,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Genre-fluid modern Japanese artist moving between J-pop, rock and R&B; track-level identity varies.",
+      "suggestedAlternatives": [
+        "j-rock",
+        "dance-pop",
+        "synth-pop"
+      ]
+    },
+    {
+      "trackId": "AEYN5w4T_aM",
+      "title": "Santeria",
+      "artist": "Sublime",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "alternative-rock",
+      "crossoverGenres": [],
+      "confidence": 62,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Ska-punk/reggae-rock hybrid the taxonomy has no dedicated bucket for; filed under alternative-rock with a funk/groove crossover as the closest fit. [Step 3-1 sanity pass: removed disco-funk (weak/generic). See taxonomy-gap note: catalog has no reggae-ska primary/subgenre and only this one track shows that character, so no crossover target is genuinely playlist-compatible; represented as rock/alternative-rock with an explicit taxonomy-gap flag instead.]",
+      "suggestedAlternatives": [
+        "indie-rock",
+        "dream-pop",
+        "shoegaze"
+      ]
+    },
+    {
+      "trackId": "EgBJmlPo8Xw",
+      "title": "everything i wanted",
+      "artist": "Billie Eilish",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "bedroom-pop",
+      "crossoverGenres": [],
+      "confidence": 65,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Broadly alt-pop/bedroom-pop artist; individual tracks vary (see track-level override for 'ocean eyes'). [Step 3-1 sanity pass: removed dream-pop at the artist-default level (ambiguous; kept only on the individually-verified 'ocean eyes' track override).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "iquhBgM-Qv0",
+      "title": "Adore You",
+      "artist": "Harry Styles",
+      "previousLane": "modern-romance-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 65,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Blends 70s glam/pop-rock influence with contemporary pop; stylistically broad catalog. [Step 3-1 sanity pass: removed power-pop (influence-only at the artist-default level).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "RwT77rlp2CE",
+      "title": "Late Night Talking",
+      "artist": "Harry Styles",
+      "previousLane": "modern-romance-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 65,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Blends 70s glam/pop-rock influence with contemporary pop; stylistically broad catalog. [Step 3-1 sanity pass: removed power-pop (influence-only at the artist-default level).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "E07s5ZYygMg",
+      "title": "Watermelon Sugar",
+      "artist": "Harry Styles",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 65,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Blends 70s glam/pop-rock influence with contemporary pop; stylistically broad catalog. [Step 3-1 sanity pass: removed power-pop (influence-only at the artist-default level).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "H5v3kku4y6Q",
+      "title": "As It Was",
+      "artist": "Harry Styles",
+      "previousLane": "trendy-pop-chic",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 65,
+      "priority": "P1",
+      "reason": "[artist-knowledge] Blends 70s glam/pop-rock influence with contemporary pop; stylistically broad catalog. [Step 3-1 sanity pass: removed power-pop (influence-only at the artist-default level).]",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "GxgqpCdOKak",
+      "title": "Hold On, We're Going Home",
+      "artist": "Drake feat. Majid Jordan",
+      "previousLane": "hip-hop-night-drive",
+      "legacyGenre": "hip-hop",
+      "proposedPrimaryGenre": "rnb-soul",
+      "proposedSubgenre": "alt-rnb",
+      "crossoverGenres": [
+        "contemporary-rnb"
+      ],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> alt-rnb.",
+      "suggestedAlternatives": [
+        "contemporary-rnb",
+        "neo-soul",
+        "classic-soul"
+      ]
+    },
+    {
+      "trackId": "FEoveD68H_Q",
+      "title": "Good Life",
+      "artist": "OneRepublic",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "alternative-rock",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> alternative-rock.",
+      "suggestedAlternatives": [
+        "indie-rock",
+        "dream-pop",
+        "shoegaze"
+      ]
+    },
+    {
+      "trackId": "5JxgDJvqGmM",
+      "title": "The Ocean",
+      "artist": "Mike Perry feat. Shy Martin",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "electronic",
+      "proposedSubgenre": "tropical-house",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> tropical-house.",
+      "suggestedAlternatives": [
+        "house",
+        "deep-house",
+        "progressive-house"
+      ]
+    },
+    {
+      "trackId": "8Ee4QjCEHHc",
+      "title": "Slide",
+      "artist": "Calvin Harris feat. Frank Ocean & Migos",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "hip-hop",
+      "proposedPrimaryGenre": "funk-disco",
+      "proposedSubgenre": "disco-funk",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> disco-funk.",
+      "suggestedAlternatives": [
+        "classic-funk",
+        "disco",
+        "nu-disco"
+      ]
+    },
+    {
+      "trackId": "v_B3qkp4nO4",
+      "title": "Shotgun",
+      "artist": "George Ezra",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "folk-acoustic",
+      "proposedSubgenre": "folk-pop",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> folk-pop.",
+      "suggestedAlternatives": [
+        "indie-folk",
+        "singer-songwriter",
+        "americana"
+      ]
+    },
+    {
+      "trackId": "KT7F15T9VBI",
+      "title": "Heat Waves",
+      "artist": "Glass Animals",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "dream-pop",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> dream-pop.",
+      "suggestedAlternatives": [
+        "alternative-rock",
+        "indie-rock",
+        "shoegaze"
+      ]
+    },
+    {
+      "trackId": "jGflUbPQfW8",
+      "title": "Cheerleader (Felix Jaehn Remix)",
+      "artist": "OMI",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "electronic",
+      "proposedSubgenre": "tropical-house",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> tropical-house.",
+      "suggestedAlternatives": [
+        "house",
+        "deep-house",
+        "progressive-house"
+      ]
+    },
+    {
+      "trackId": "pUjE9H8QlA4",
+      "title": "Waves (Robin Schulz Remix Radio Edit)",
+      "artist": "Mr. Probz",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "electronic",
+      "proposedSubgenre": "tropical-house",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> tropical-house.",
+      "suggestedAlternatives": [
+        "house",
+        "deep-house",
+        "progressive-house"
+      ]
+    },
+    {
+      "trackId": "RSSUa2qW4tc",
+      "title": "yes, and?",
+      "artist": "Ariana Grande",
+      "previousLane": "trendy-pop-chic",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "electronic",
+      "proposedSubgenre": "house",
+      "crossoverGenres": [
+        "disco-funk"
+      ],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> house.",
+      "suggestedAlternatives": [
+        "disco-funk",
+        "deep-house",
+        "progressive-house"
+      ]
+    },
+    {
+      "trackId": "-gykpFAst7I",
+      "title": "Just the Two of Us",
+      "artist": "Grover Washington, Jr. feat. Bill Withers",
+      "previousLane": "classic-soul-old-film",
+      "legacyGenre": "rnb-soul",
+      "proposedPrimaryGenre": "jazz",
+      "proposedSubgenre": "acid-jazz",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> acid-jazz.",
+      "suggestedAlternatives": [
+        "modern-jazz",
+        "nu-jazz",
+        "jazz-hop"
+      ]
+    },
+    {
+      "trackId": "VMs-l9Hru-I",
+      "title": "Don't Lose Sight",
+      "artist": "Lawrence",
+      "previousLane": "sunny-stroll-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "rnb-soul",
+      "proposedSubgenre": "classic-soul",
+      "crossoverGenres": [],
+      "confidence": 67,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> classic-soul.",
+      "suggestedAlternatives": [
+        "contemporary-rnb",
+        "neo-soul",
+        "motown-soul"
+      ]
+    },
+    {
+      "trackId": "1cEy4UyYHI0",
+      "title": "Outro",
+      "artist": "M83",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "dream-pop",
+      "crossoverGenres": [
+        "ambient-electronic"
+      ],
+      "confidence": 70,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Electronic-tinged dream-pop; genuinely straddles rock and electronic production.",
+      "suggestedAlternatives": [
+        "ambient-electronic",
+        "alternative-rock",
+        "indie-rock"
+      ]
+    },
+    {
+      "trackId": "dX3k_QDnzHE",
+      "title": "Midnight City",
+      "artist": "M83",
+      "previousLane": "neon-electronic-night",
+      "legacyGenre": "electronic",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "dream-pop",
+      "crossoverGenres": [
+        "ambient-electronic"
+      ],
+      "confidence": 70,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Electronic-tinged dream-pop; genuinely straddles rock and electronic production.",
+      "suggestedAlternatives": [
+        "ambient-electronic",
+        "alternative-rock",
+        "indie-rock"
+      ]
+    },
+    {
+      "trackId": "LIlZCmETvsY",
+      "title": "Shin Takarajima",
+      "artist": "Sakanaction",
+      "previousLane": "j-rock-highway-rush",
+      "legacyGenre": "rock",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "j-rock",
+      "crossoverGenres": [],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Blends rock-band instrumentation with electronic/dance production; genuinely hybrid. [Step 3-1 sanity pass: removed synthwave (shares electronic instrumentation only, not synthwave's specific retro aesthetic -- influence-only).]",
+      "suggestedAlternatives": [
+        "alternative-rock",
+        "indie-rock",
+        "dream-pop"
+      ]
+    },
+    {
+      "trackId": "65Ah1Yj59zA",
+      "title": "Aoi",
+      "artist": "Sakanaction",
+      "previousLane": "j-rock-highway-rush",
+      "legacyGenre": "rock",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "j-rock",
+      "crossoverGenres": [],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Blends rock-band instrumentation with electronic/dance production; genuinely hybrid. [Step 3-1 sanity pass: removed synthwave (shares electronic instrumentation only, not synthwave's specific retro aesthetic -- influence-only).]",
+      "suggestedAlternatives": [
+        "alternative-rock",
+        "indie-rock",
+        "dream-pop"
+      ]
+    },
+    {
+      "trackId": "m34DPnRUfMU",
+      "title": "Ao to Natsu",
+      "artist": "Mrs. GREEN APPLE",
+      "previousLane": "j-rock-highway-rush",
+      "legacyGenre": "rock",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "j-rock",
+      "crossoverGenres": [
+        "j-pop"
+      ],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Straddles J-rock band sound and mainstream J-pop songwriting fairly evenly.",
+      "suggestedAlternatives": [
+        "j-pop",
+        "alternative-rock",
+        "indie-rock"
+      ]
+    },
+    {
+      "trackId": "OTUtF7ZxRN8",
+      "title": "StaRt",
+      "artist": "Mrs. GREEN APPLE",
+      "previousLane": "j-rock-highway-rush",
+      "legacyGenre": "rock",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "j-rock",
+      "crossoverGenres": [
+        "j-pop"
+      ],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Straddles J-rock band sound and mainstream J-pop songwriting fairly evenly.",
+      "suggestedAlternatives": [
+        "j-pop",
+        "alternative-rock",
+        "indie-rock"
+      ]
+    },
+    {
+      "trackId": "SV6bIRBiPeQ",
+      "title": "Snow",
+      "artist": "SURL",
+      "previousLane": "k-indie-rainy-room",
+      "legacyGenre": "rock",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "dream-pop",
+      "crossoverGenres": [
+        "k-indie-rock"
+      ],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Korean dream-pop/shoegaze-adjacent indie act.",
+      "suggestedAlternatives": [
+        "k-indie-rock",
+        "alternative-rock",
+        "indie-rock"
+      ]
+    },
+    {
+      "trackId": "gnm7VTl96MM",
+      "title": "Dry Flower",
+      "artist": "SURL",
+      "previousLane": "k-indie-rainy-room",
+      "legacyGenre": "rock",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "dream-pop",
+      "crossoverGenres": [
+        "k-indie-rock"
+      ],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Korean dream-pop/shoegaze-adjacent indie act.",
+      "suggestedAlternatives": [
+        "k-indie-rock",
+        "alternative-rock",
+        "indie-rock"
+      ]
+    },
+    {
+      "trackId": "BxqYUbNR-c0",
+      "title": "Wasurerarenaino",
+      "artist": "Sakanaction",
+      "previousLane": "city-pop-retro-glow",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "j-rock",
+      "crossoverGenres": [],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Blends rock-band instrumentation with electronic/dance production; genuinely hybrid. [Step 3-1 sanity pass: removed synthwave (shares electronic instrumentation only, not synthwave's specific retro aesthetic -- influence-only).]",
+      "suggestedAlternatives": [
+        "alternative-rock",
+        "indie-rock",
+        "dream-pop"
+      ]
+    },
+    {
+      "trackId": "iQnRCdtECl8",
+      "title": "Wait",
+      "artist": "M83",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "ambient-dream",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "dream-pop",
+      "crossoverGenres": [
+        "ambient-electronic"
+      ],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[track-verified] Cinematic vocal ballad with dense synth atmosphere; sits between dream-pop and ambient-electronic — dream-pop chosen for its song/verse structure and vocal lead.",
+      "suggestedAlternatives": [
+        "ambient-electronic",
+        "alternative-rock",
+        "indie-rock"
+      ]
+    },
+    {
+      "trackId": "o3SqUUoJjW8",
+      "title": "West Coast",
+      "artist": "Lana Del Rey",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "ambient-dream",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [
+        "dream-pop"
+      ],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Cinematic baroque-pop artist straddling pop and dream-pop; track-level identity varies.",
+      "suggestedAlternatives": [
+        "dream-pop",
+        "dance-pop",
+        "synth-pop"
+      ]
+    },
+    {
+      "trackId": "cE6wxDqdOV0",
+      "title": "Video Games",
+      "artist": "Lana Del Rey",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "ambient-dream",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [
+        "dream-pop"
+      ],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Cinematic baroque-pop artist straddling pop and dream-pop; track-level identity varies.",
+      "suggestedAlternatives": [
+        "dream-pop",
+        "dance-pop",
+        "synth-pop"
+      ]
+    },
+    {
+      "trackId": "wycjnCCgUes",
+      "title": "Feels Like We Only Go Backwards",
+      "artist": "Tame Impala",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "alternative-rock",
+      "crossoverGenres": [],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Psychedelic rock act with heavy synth/production crossover into dream-pop and electronic. [Step 3-1 sanity pass: removed dream-pop (ambiguous alternative-rock~dream-pop boundary; tag-derived instances of this pair are conservatively removed pending human review, and this artist-level default follows the same rule).]",
+      "suggestedAlternatives": [
+        "indie-rock",
+        "dream-pop",
+        "shoegaze"
+      ]
+    },
+    {
+      "trackId": "GHe8kKO8uds",
+      "title": "Eventually",
+      "artist": "Tame Impala",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "alternative-rock",
+      "crossoverGenres": [],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Psychedelic rock act with heavy synth/production crossover into dream-pop and electronic. [Step 3-1 sanity pass: removed dream-pop (ambiguous alternative-rock~dream-pop boundary; tag-derived instances of this pair are conservatively removed pending human review, and this artist-level default follows the same rule).]",
+      "suggestedAlternatives": [
+        "indie-rock",
+        "dream-pop",
+        "shoegaze"
+      ]
+    },
+    {
+      "trackId": "1uFv9Ts7Sdw",
+      "title": "Mariners Apartment Complex",
+      "artist": "Lana Del Rey",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [
+        "dream-pop"
+      ],
+      "confidence": 72,
+      "priority": "P2",
+      "reason": "[artist-knowledge] Cinematic baroque-pop artist straddling pop and dream-pop; track-level identity varies.",
+      "suggestedAlternatives": [
+        "dream-pop",
+        "dance-pop",
+        "synth-pop"
+      ]
+    },
+    {
+      "trackId": "viimfQi_pUw",
+      "title": "ocean eyes",
+      "artist": "Billie Eilish",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "ambient-dream",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "dream-pop",
+      "crossoverGenres": [
+        "bedroom-pop"
+      ],
+      "confidence": 75,
+      "priority": "P2",
+      "reason": "[track-verified] Billie Eilish's debut single leans dream-pop/ambient in production though her broader catalog is alt-pop; flagged given artist identity ambiguity.",
+      "suggestedAlternatives": [
+        "bedroom-pop",
+        "alternative-rock",
+        "indie-rock"
+      ]
+    },
+    {
+      "trackId": "D88J_57QgxY",
+      "title": "Pictures of You",
+      "artist": "The Cure",
+      "previousLane": "dream-pop-shoegaze-fog",
+      "legacyGenre": "ambient-dream",
+      "proposedPrimaryGenre": "rock",
+      "proposedSubgenre": "dream-pop",
+      "crossoverGenres": [],
+      "confidence": 79,
+      "priority": "P2",
+      "reason": "[tag-derived] subtag/mood evidence -> dream-pop; agrees with legacy genre 'ambient-dream'; agrees with lane default (dream-pop-shoegaze-fog). [Step 3-1 sanity pass: ambiguous crossover(s) removed pending human review: alternative-rock.]",
+      "suggestedAlternatives": [
+        "alternative-rock",
+        "indie-rock",
+        "shoegaze"
+      ]
+    },
+    {
+      "trackId": "EkHTsc9PU2A",
+      "title": "I'm Yours",
+      "artist": "Jason Mraz",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "folk-acoustic",
+      "proposedSubgenre": "folk-pop",
+      "crossoverGenres": [],
+      "confidence": 79,
+      "priority": "P3",
+      "reason": "[tag-derived] subtag/mood evidence -> folk-pop.",
+      "suggestedAlternatives": [
+        "indie-folk",
+        "singer-songwriter",
+        "americana"
+      ]
+    },
+    {
+      "trackId": "9Sc-ir2UwGU",
+      "title": "Firestone",
+      "artist": "Kygo feat. Conrad Sewell",
+      "previousLane": "summer-beach-pop",
+      "legacyGenre": "pop",
+      "proposedPrimaryGenre": "electronic",
+      "proposedSubgenre": "tropical-house",
+      "crossoverGenres": [],
+      "confidence": 79,
+      "priority": "P3",
+      "reason": "[tag-derived] subtag/mood evidence -> tropical-house.",
+      "suggestedAlternatives": [
+        "house",
+        "deep-house",
+        "progressive-house"
+      ]
+    },
+    {
+      "trackId": "tyKu0uZS86Q",
+      "title": "Valentine",
+      "artist": "Laufey",
+      "previousLane": "cozy-cafe-mellow",
+      "legacyGenre": "jazz-funk",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 79,
+      "priority": "P3",
+      "reason": "[tag-derived] subtag/mood evidence -> soft-pop.",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    },
+    {
+      "trackId": "acvIVA9-FMQ",
+      "title": "Lucky",
+      "artist": "Jason Mraz feat. Colbie Caillat",
+      "previousLane": "cozy-cafe-mellow",
+      "legacyGenre": "folk-acoustic",
+      "proposedPrimaryGenre": "pop",
+      "proposedSubgenre": "soft-pop",
+      "crossoverGenres": [],
+      "confidence": 79,
+      "priority": "P3",
+      "reason": "[tag-derived] subtag/mood evidence -> soft-pop.",
+      "suggestedAlternatives": [
+        "dance-pop",
+        "synth-pop",
+        "electropop"
+      ]
+    }
+  ]
+}
