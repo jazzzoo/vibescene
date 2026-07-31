@@ -6682,7 +6682,7 @@ export const DARK_HEAVY_HIPHOP_SEED_TRACKS: CatalogSeedTrack[] = [
     subTags: ["rage-rap", "trap", "heavy-bass"],
   },
   {
-    laneId: "big-city-swagger-hiphop",
+    laneId: "dark-heavy-hiphop",
     title: "Runaway",
     artist: "Kanye West feat. Pusha T",
     youtubeVideoId: "cv1naUa3_3g",
