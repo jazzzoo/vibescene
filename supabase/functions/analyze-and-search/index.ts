@@ -13,23 +13,23 @@ import {
   updatePlaylistStatus,
 } from "./services/db.ts";
 import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
-import { sequenceCatalogTracksWithAnchors } from "./services/sequencing.ts";
+import { sequenceCatalogTracks } from "./services/sequencing.ts";
 import {
-  type CatalogSeedTrack,
-  selectCatalogTracks,
-  selectVerifiedCatalogTracks,
+  type CatalogTrack,
+  selectFlatCatalogTracks,
+  selectVerifiedFlatCatalogTracks,
 } from "../_shared/musicCatalog.ts";
 
 // verified(youtubeVideoId 보유) catalog track을 YoutubeTrack DB insert 형식으로 변환.
 // hasYoutubeVideoId로 필터링된 track만 들어오므로 youtubeVideoId는 항상 non-empty string이다.
-function toVerifiedTrackRows(tracks: CatalogSeedTrack[], laneId: string): YoutubeTrack[] {
+function toVerifiedTrackRows(tracks: CatalogTrack[]): YoutubeTrack[] {
   return tracks.map((track, idx) => {
     const videoId = track.youtubeVideoId as string;
     return {
       rank: idx + 1,
       title: track.title,
       artist: track.artist,
-      reason: `Catalog pick for the ${laneId} lane`,
+      reason: "Catalog pick",
       youtube_video_id: videoId,
       youtube_video_url: `https://www.youtube.com/watch?v=${videoId}`,
       thumbnail_url: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
@@ -206,10 +206,9 @@ Deno.serve(async (req) => {
     });
 
     // ── 7-1. verified(youtubeVideoId 보유) catalog track 우선 확인 ──────────────
-    // 해당 lane에 수동으로 채워진 youtubeVideoId가 충분하면 YouTube search API를
-    // 호출하지 않고 바로 DB에 저장한다. 부족하면 7-2의 기존 흐름(YouTube search fallback)으로 진행한다.
-    const verifiedCatalogTracks = selectVerifiedCatalogTracks({
-      laneId: gptResult.primary_lane_id,
+    // 전체 673-track flat 카탈로그에서 seeded shuffle로 후보를 선택한다.
+    // laneId는 더 이상 후보 풀을 좁히는 데 사용되지 않는다 (Phase 6, catalog-genre-reclassification).
+    const verifiedCatalogTracks = selectVerifiedFlatCatalogTracks({
       seed: playlistId,
       count: CATALOG_CANDIDATE_POOL_SIZE,
     });
@@ -218,43 +217,37 @@ Deno.serve(async (req) => {
     if (verifiedCatalogTracks.length >= MIN_CATALOG_TRACKS) {
       await updatePlaylistAnalysis(supabaseAdmin, playlistId, gptResult, "catalog");
 
-      // 트랙 정체성은 그대로 두고 순서만 재배치한다: 1번(신뢰 오프너)/2번(친숙한 mood lock)은
-      // lane 대표성을 우선 고려하고, 3-10번은 opener→mood lock→energy lift→emotional peak→
-      // cooldown→closer 에너지 아크를 따른다. 실패 시 내부적으로 energy-fit → 원본 순서로 fallback.
-      const sequencedVerifiedTracks = sequenceCatalogTracksWithAnchors(
+      // 트랙 정체성은 그대로 두고 순서만 energy arc로 재배치한다.
+      // Lane 기반 anchor 로직은 제거됨 (Phase 7). 실패 시 원본 순서로 fallback.
+      const sequencedVerifiedTracks = sequenceCatalogTracks(
         verifiedCatalogTracks,
-        gptResult.primary_lane_id,
-        playlistId,
         FINAL_TRACK_COUNT,
       );
 
-      const rankedTracks = toVerifiedTrackRows(sequencedVerifiedTracks, gptResult.primary_lane_id);
+      const rankedTracks = toVerifiedTrackRows(sequencedVerifiedTracks);
 
       setStage("db_save_started");
       await insertTracks(supabaseAdmin, playlistId, rankedTracks);
       setStage("db_save_completed");
 
       // status는 'searching' 유지 — Edge Function 2(create-youtube-playlist)가 creating/created 처리.
-      // verified path도 Edge Function 1의 책임 범위(searching까지)를 그대로 따른다.
       return Response.json({ playlist_id: playlistId }, { status: 200, headers: CORS_HEADERS });
     }
 
-    // ── 7-2. seed catalog에서 lane 트랙 선택 — GPT는 lane만 고르고, backend가 곡을 고른다.
-    // catalog에 해당 lane 트랙이 5개 미만이면(또는 lane이 catalog에 없으면) GPT 추천으로 fallback.
-    const catalogTracks = selectCatalogTracks({
-      laneId: gptResult.primary_lane_id,
+    // ── 7-2. flat 카탈로그에서 후보 선택 — 673개 전체 풀에서 seeded shuffle.
+    // verified track이 부족하면 youtubeVideoId 없는 트랙도 포함한 풀에서 선택한다.
+    // 5개 미만이면 GPT 추천(YouTube search) fallback.
+    const catalogTracks = selectFlatCatalogTracks({
       seed: playlistId,
       count: CATALOG_CANDIDATE_POOL_SIZE,
     });
 
     const trackSource: TrackSource = catalogTracks.length >= MIN_CATALOG_TRACKS ? "catalog" : "youtube_fallback";
 
-    // 트랙 정체성은 그대로 두고 순서만 재배치한다: 1번(신뢰 오프너)/2번(친숙한 mood lock)은
-    // lane 대표성을 우선 고려하고, 3-10번은 opener→mood lock→energy lift→emotional peak→
-    // cooldown→closer 에너지 아크를 따른다. 실패 시 내부적으로 energy-fit → 원본 순서로 fallback.
+    // 트랙 정체성은 그대로 두고 순서만 energy arc로 재배치한다.
     const sequencedCatalogTracks =
       trackSource === "catalog"
-        ? sequenceCatalogTracksWithAnchors(catalogTracks, gptResult.primary_lane_id, playlistId, FINAL_TRACK_COUNT)
+        ? sequenceCatalogTracks(catalogTracks, FINAL_TRACK_COUNT)
         : catalogTracks;
 
     const tracksForYoutubeSearch: GptPlaylistItem[] = trackSource === "catalog"
@@ -262,7 +255,7 @@ Deno.serve(async (req) => {
         rank: idx + 1,
         title: track.title,
         artist: track.artist,
-        reason: `Catalog pick for the ${gptResult.primary_lane_id} lane`,
+        reason: "Catalog pick",
       }))
       : gptResult.playlist;
 
