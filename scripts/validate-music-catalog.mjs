@@ -32,7 +32,7 @@ const ROOT = path.resolve(__dirname, '..');
 const PROD_PATH     = path.join(ROOT, 'supabase/functions/_shared/musicCatalog.ts');
 const TAXONOMY_PATH = path.join(ROOT, 'supabase/functions/_shared/musicGenreTaxonomy.ts');
 
-const EXPECTED_CANONICAL_COUNT = 673;
+const EXPECTED_CANONICAL_COUNT = 698;
 const STAT_KEYS    = ['brightness','warmth','openness','motion','intimacy','socialEnergy',
                       'tension','nostalgia','playfulness','dreaminess',
                       'energy','groove','density','acousticness','electronicness',
@@ -101,22 +101,36 @@ if (prodTracks.length !== EXPECTED_CANONICAL_COUNT) {
 // ---------------------------------------------------------------------------
 // 2. Per-track checks: uniqueness, required fields, no laneId, stat ranges
 // ---------------------------------------------------------------------------
-const seenPrimaryIds = new Map();  // youtubeVideoId -> track title
+const seenPrimaryIds = new Map();  // youtubeVideoId -> track title (checked when present)
 const seenAllAltIds  = new Set();  // alternateVideoIds globally
+const seenArtistTitle = new Map(); // normalized "artist|||title" -> track index
+
+function normArtistTitle(artist, title) {
+  return `${(artist || '').toLowerCase().trim()}|||${(title || '').toLowerCase().trim()}`;
+}
 
 for (const t of prodTracks) {
   if ('laneId' in t && t.laneId !== undefined) {
-    fail(`Track "${t.title}" (${t.youtubeVideoId}) has laneId field — must be removed`);
+    fail(`Track "${t.title}" (${t.youtubeVideoId ?? 'no-id'}) has laneId field — must be removed`);
   }
 
-  if (!t.title || !t.title.trim()) fail(`empty title for track with youtubeVideoId=${t.youtubeVideoId}`);
+  if (!t.title || !t.title.trim()) fail(`empty title for track with youtubeVideoId=${t.youtubeVideoId ?? 'none'}`);
   if (!t.artist || !t.artist.trim()) fail(`empty artist for track "${t.title}"`);
-  if (!t.youtubeVideoId) { fail(`missing youtubeVideoId for "${t.title}"`); continue; }
 
-  if (seenPrimaryIds.has(t.youtubeVideoId)) {
-    fail(`duplicate primary youtubeVideoId "${t.youtubeVideoId}" ("${t.title}" and "${seenPrimaryIds.get(t.youtubeVideoId)}")`);
+  // Duplicate normalized artist+title check (catches same-song duplicates regardless of video ID)
+  const atKey = normArtistTitle(t.artist, t.title);
+  if (seenArtistTitle.has(atKey)) {
+    fail(`duplicate normalized artist+title pair: "${t.artist}" — "${t.title}" (already seen as "${seenArtistTitle.get(atKey)}")`);
   }
-  seenPrimaryIds.set(t.youtubeVideoId, t.title);
+  seenArtistTitle.set(atKey, `${t.artist} — ${t.title}`);
+
+  // youtubeVideoId is optional for newly curated tracks; check uniqueness only when present
+  if (t.youtubeVideoId) {
+    if (seenPrimaryIds.has(t.youtubeVideoId)) {
+      fail(`duplicate primary youtubeVideoId "${t.youtubeVideoId}" ("${t.title}" and "${seenPrimaryIds.get(t.youtubeVideoId)}")`);
+    }
+    seenPrimaryIds.set(t.youtubeVideoId, t.title);
+  }
 
   for (const alt of (t.alternateVideoIds || [])) {
     if (seenPrimaryIds.has(alt)) {
@@ -128,28 +142,30 @@ for (const t of prodTracks) {
     seenAllAltIds.add(alt);
   }
 
+  const trackId = t.youtubeVideoId ?? `"${t.artist} — ${t.title}"`;
+
   if (!t.stats) {
-    fail(`missing stats on production track ${t.youtubeVideoId}`);
+    fail(`missing stats on production track ${trackId}`);
   } else {
     for (const k of STAT_KEYS) {
       const v = t.stats[k];
-      if (typeof v !== 'number' || !Number.isFinite(v)) fail(`stats.${k} not finite for ${t.youtubeVideoId}: ${v}`);
-      else if (v < 0 || v > 100) fail(`stats.${k}=${v} out of range [0,100] for ${t.youtubeVideoId}`);
+      if (typeof v !== 'number' || !Number.isFinite(v)) fail(`stats.${k} not finite for ${trackId}: ${v}`);
+      else if (v < 0 || v > 100) fail(`stats.${k}=${v} out of range [0,100] for ${trackId}`);
     }
   }
 
   if (!t.affinity) {
-    fail(`missing affinity on production track ${t.youtubeVideoId}`);
+    fail(`missing affinity on production track ${trackId}`);
   } else {
     for (const k of AFFINITY_KEYS) {
       const v = t.affinity[k];
-      if (typeof v !== 'number' || !Number.isFinite(v)) fail(`affinity.${k} not finite for ${t.youtubeVideoId}: ${v}`);
-      else if (v < 0 || v > 100) fail(`affinity.${k}=${v} out of range [0,100] for ${t.youtubeVideoId}`);
+      if (typeof v !== 'number' || !Number.isFinite(v)) fail(`affinity.${k} not finite for ${trackId}: ${v}`);
+      else if (v < 0 || v > 100) fail(`affinity.${k}=${v} out of range [0,100] for ${trackId}`);
     }
   }
 
   if (typeof t.statConfidence !== 'number' || t.statConfidence < 0 || t.statConfidence > 1) {
-    fail(`statConfidence out of range [0,1] for ${t.youtubeVideoId}: ${t.statConfidence}`);
+    fail(`statConfidence out of range [0,1] for ${trackId}: ${t.statConfidence}`);
   }
 }
 
@@ -164,41 +180,41 @@ for (const [primary, subs] of Object.entries(taxonomyMod.SUBGENRES_BY_PRIMARY)) 
 }
 
 for (const t of prodTracks) {
-  if (!t.youtubeVideoId) continue;
+  const trackId = t.youtubeVideoId ?? `"${t.artist} — ${t.title}"`;
 
   const requiredGenreFields = ['primaryGenre','subgenre','crossoverGenres','genreConfidence','needsGenreReview','genreReason'];
   const missing = requiredGenreFields.filter(f => t[f] === undefined || t[f] === null);
   if (missing.length > 0) {
-    fail(`production track ${t.youtubeVideoId} missing genre field(s): ${missing.join(', ')}`);
+    fail(`production track ${trackId} missing genre field(s): ${missing.join(', ')}`);
     continue;
   }
 
-  if (!validPrimaries.has(t.primaryGenre)) fail(`unknown primaryGenre "${t.primaryGenre}" for ${t.youtubeVideoId}`);
-  if (!subgenreToPrimary.has(t.subgenre)) fail(`unknown subgenre "${t.subgenre}" for ${t.youtubeVideoId}`);
+  if (!validPrimaries.has(t.primaryGenre)) fail(`unknown primaryGenre "${t.primaryGenre}" for ${trackId}`);
+  if (!subgenreToPrimary.has(t.subgenre)) fail(`unknown subgenre "${t.subgenre}" for ${trackId}`);
   else if (subgenreToPrimary.get(t.subgenre) !== t.primaryGenre) {
-    fail(`subgenre "${t.subgenre}" does not belong to primaryGenre "${t.primaryGenre}" for ${t.youtubeVideoId}`);
+    fail(`subgenre "${t.subgenre}" does not belong to primaryGenre "${t.primaryGenre}" for ${trackId}`);
   }
 
   const seenCrossover = new Set();
   for (const cg of t.crossoverGenres) {
-    if (seenCrossover.has(cg)) fail(`duplicate crossoverGenres entry "${cg}" for ${t.youtubeVideoId}`);
+    if (seenCrossover.has(cg)) fail(`duplicate crossoverGenres entry "${cg}" for ${trackId}`);
     seenCrossover.add(cg);
-    if (cg === t.subgenre) fail(`crossoverGenres entry "${cg}" duplicates own subgenre for ${t.youtubeVideoId}`);
-    if (cg === t.primaryGenre) fail(`crossoverGenres entry "${cg}" duplicates own primaryGenre for ${t.youtubeVideoId}`);
+    if (cg === t.subgenre) fail(`crossoverGenres entry "${cg}" duplicates own subgenre for ${trackId}`);
+    if (cg === t.primaryGenre) fail(`crossoverGenres entry "${cg}" duplicates own primaryGenre for ${trackId}`);
     const cgPrimary = subgenreToPrimary.get(cg);
-    if (!cgPrimary) { fail(`unknown crossoverGenres subgenre "${cg}" for ${t.youtubeVideoId}`); continue; }
+    if (!cgPrimary) { fail(`unknown crossoverGenres subgenre "${cg}" for ${trackId}`); continue; }
     if (cgPrimary === t.primaryGenre) continue;
     const adjacency = taxonomyMod.CROSSOVER_ADJACENCY[t.primaryGenre] || [];
     if (!adjacency.includes(cgPrimary)) {
-      warn(`crossoverGenres "${cg}" (primary "${cgPrimary}") not adjacent to primaryGenre "${t.primaryGenre}" for ${t.youtubeVideoId} — accepted Step 3-1 data`);
+      warn(`crossoverGenres "${cg}" (primary "${cgPrimary}") not adjacent to primaryGenre "${t.primaryGenre}" for ${trackId} — accepted Step 3-1 data`);
     }
   }
 
   if (!Number.isInteger(t.genreConfidence) || t.genreConfidence < 0 || t.genreConfidence > 100) {
-    fail(`genreConfidence must be an integer in [0,100] for ${t.youtubeVideoId}: ${t.genreConfidence}`);
+    fail(`genreConfidence must be an integer in [0,100] for ${trackId}: ${t.genreConfidence}`);
   }
   if (t.needsGenreReview && (!t.genreReason || !t.genreReason.trim())) {
-    fail(`needsGenreReview is true but genreReason is empty for ${t.youtubeVideoId}`);
+    fail(`needsGenreReview is true but genreReason is empty for ${trackId}`);
   }
 }
 
