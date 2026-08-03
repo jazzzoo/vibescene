@@ -1,6 +1,6 @@
 # Stat Matcher Bounded Calibration — Step 2 Closing Pass
 
-> Offline experiment only. No catalog values, production code, or GPT calls were used. Scoring reuses the 12 stored image profiles from `docs/stat-manual-validation.json` and the 673-track season/weather correction candidate catalog (`docs/music-catalog-stats-correction-draft.ts`), re-ranked under four top-level weighting scenarios for the group-scale-imbalance root cause documented in `docs/stat-manual-validation.md` § "Root Cause: Top-Level Contribution Scale Imbalance".
+> Offline experiment only. No catalog values, production code, or GPT calls were used. Scoring used 12 stored image profiles and the 673-track season/weather correction catalog (now in production as `supabase/functions/_shared/musicCatalog.ts`), re-ranked under four top-level weighting scenarios for the group-scale-imbalance root cause (atmosphere+desiredSound's ~14x larger contribution ceiling swamping season/weather under the unnormalized formula).
 
 ## Scenarios
 
@@ -78,7 +78,7 @@ manual-10 (rainy neon hip-hop/electronic) stays on-genre in every scenario — h
 - Keeps atmosphere+desiredSound as the clear majority influence (60%), satisfying condition 4.
 - Does not introduce genre-incoherent recommendations anywhere tested (condition 7); its largest behavioral change (manual-12) is a direct, intended consequence of honoring the image's own desiredSound target rather than a mismatch.
 
-Known residual limitations that persist under D and are **not** resolved by top-level reweighting alone (both already flagged in `docs/stat-manual-validation.md`'s root-cause section as the secondary cause):
+Known residual limitations that persist under D and are **not** resolved by top-level reweighting alone:
 - manual-01/manual-09 remain highly overlapping (4/5) because their underlying atmosphere/desiredSound profiles are genuinely close — this reflects real profile similarity, not a defect.
 - "Stay Alive" persists as a near-universal high-rank pick across acoustic-leaning images because of `ambient-dream`/acoustic track-stat homogeneity in the catalog, not because of matcher weighting.
 
