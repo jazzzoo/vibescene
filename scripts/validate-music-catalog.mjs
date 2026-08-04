@@ -32,7 +32,7 @@ const ROOT = path.resolve(__dirname, '..');
 const PROD_PATH     = path.join(ROOT, 'supabase/functions/_shared/musicCatalog.ts');
 const TAXONOMY_PATH = path.join(ROOT, 'supabase/functions/_shared/musicGenreTaxonomy.ts');
 
-const EXPECTED_CANONICAL_COUNT = 698;
+const EXPECTED_CANONICAL_COUNT = 723;
 const STAT_KEYS    = ['brightness','warmth','openness','motion','intimacy','socialEnergy',
                       'tension','nostalgia','playfulness','dreaminess',
                       'energy','groove','density','acousticness','electronicness',
