@@ -1,0 +1,5525 @@
+{
+  "generatedAt": "2026-08-05T02:13:34.678Z",
+  "catalogCount": 795,
+  "verifiedPoolCount": 795,
+  "scoringWeights": {
+    "atmosphere": 0.3,
+    "desiredSound": 0.3,
+    "season": 0.15,
+    "time": 0.1,
+    "weather": 0.15
+  },
+  "sceneProfiles": [
+    {
+      "key": "bright-warm-summer-day",
+      "label": "PROFILE 1 — BRIGHT WARM SUMMER DAY",
+      "concept": "Bright, warm, open, low-tension, social summer daytime outdoor scene.",
+      "targetStats": {
+        "brightness": 90,
+        "warmth": 88,
+        "openness": 82,
+        "motion": 55,
+        "intimacy": 20,
+        "socialEnergy": 68,
+        "tension": 12,
+        "nostalgia": 25,
+        "playfulness": 62,
+        "dreaminess": 25,
+        "energy": 60,
+        "groove": 58,
+        "density": 50,
+        "acousticness": 55,
+        "electronicness": 35,
+        "vocalPresence": 55,
+        "climaxIntensity": 40
+      },
+      "contextAffinity": {
+        "spring": 30,
+        "summer": 92,
+        "autumn": 8,
+        "winter": 3,
+        "morning": 25,
+        "day": 90,
+        "dusk": 10,
+        "night": 3,
+        "lateNight": 2,
+        "clear": 90,
+        "cloudy": 12,
+        "rain": 3,
+        "snow": 0
+      }
+    },
+    {
+      "key": "rainy-intimate-late-night",
+      "label": "PROFILE 2 — RAINY INTIMATE LATE NIGHT",
+      "concept": "Dim, intimate, enclosed, low-motion, rainy late-night interior.",
+      "targetStats": {
+        "brightness": 12,
+        "warmth": 45,
+        "openness": 15,
+        "motion": 10,
+        "intimacy": 88,
+        "socialEnergy": 12,
+        "tension": 48,
+        "nostalgia": 78,
+        "playfulness": 15,
+        "dreaminess": 80,
+        "energy": 18,
+        "groove": 30,
+        "density": 38,
+        "acousticness": 55,
+        "electronicness": 45,
+        "vocalPresence": 55,
+        "climaxIntensity": 25
+      },
+      "contextAffinity": {
+        "spring": 15,
+        "summer": 8,
+        "autumn": 35,
+        "winter": 30,
+        "morning": 3,
+        "day": 5,
+        "dusk": 15,
+        "night": 85,
+        "lateNight": 92,
+        "clear": 5,
+        "cloudy": 82,
+        "rain": 90,
+        "snow": 8
+      }
+    },
+    {
+      "key": "high-energy-urban-night",
+      "label": "PROFILE 3 — HIGH-ENERGY URBAN NIGHT",
+      "concept": "Fast, bright-neon, dense, social, electronic city nightlife.",
+      "targetStats": {
+        "brightness": 48,
+        "warmth": 32,
+        "openness": 48,
+        "motion": 88,
+        "intimacy": 30,
+        "socialEnergy": 82,
+        "tension": 55,
+        "nostalgia": 15,
+        "playfulness": 50,
+        "dreaminess": 20,
+        "energy": 92,
+        "groove": 88,
+        "density": 82,
+        "acousticness": 12,
+        "electronicness": 88,
+        "vocalPresence": 55,
+        "climaxIntensity": 85
+      },
+      "contextAffinity": {
+        "spring": 15,
+        "summer": 25,
+        "autumn": 20,
+        "winter": 20,
+        "morning": 3,
+        "day": 8,
+        "dusk": 20,
+        "night": 90,
+        "lateNight": 85,
+        "clear": 45,
+        "cloudy": 45,
+        "rain": 12,
+        "snow": 5
+      }
+    },
+    {
+      "key": "dreamy-hazy-dusk",
+      "label": "PROFILE 4 — DREAMY HAZY DUSK",
+      "concept": "Soft, spacious, hazy, ethereal, reflective sunset scene.",
+      "targetStats": {
+        "brightness": 48,
+        "warmth": 78,
+        "openness": 78,
+        "motion": 18,
+        "intimacy": 52,
+        "socialEnergy": 20,
+        "tension": 15,
+        "nostalgia": 80,
+        "playfulness": 45,
+        "dreaminess": 93,
+        "energy": 30,
+        "groove": 22,
+        "density": 25,
+        "acousticness": 55,
+        "electronicness": 48,
+        "vocalPresence": 35,
+        "climaxIntensity": 45
+      },
+      "contextAffinity": {
+        "spring": 30,
+        "summer": 45,
+        "autumn": 48,
+        "winter": 15,
+        "morning": 10,
+        "day": 20,
+        "dusk": 92,
+        "night": 30,
+        "lateNight": 10,
+        "clear": 48,
+        "cloudy": 50,
+        "rain": 15,
+        "snow": 3
+      }
+    },
+    {
+      "key": "calm-acoustic-morning",
+      "label": "PROFILE 5 — CALM ACOUSTIC MORNING",
+      "concept": "Quiet, natural, clean, soft morning space.",
+      "targetStats": {
+        "brightness": 78,
+        "warmth": 78,
+        "openness": 62,
+        "motion": 12,
+        "intimacy": 48,
+        "socialEnergy": 15,
+        "tension": 6,
+        "nostalgia": 45,
+        "playfulness": 22,
+        "dreaminess": 35,
+        "energy": 20,
+        "groove": 18,
+        "density": 22,
+        "acousticness": 92,
+        "electronicness": 8,
+        "vocalPresence": 50,
+        "climaxIntensity": 15
+      },
+      "contextAffinity": {
+        "spring": 88,
+        "summer": 30,
+        "autumn": 30,
+        "winter": 10,
+        "morning": 92,
+        "day": 40,
+        "dusk": 8,
+        "night": 3,
+        "lateNight": 0,
+        "clear": 62,
+        "cloudy": 25,
+        "rain": 8,
+        "snow": 3
+      }
+    },
+    {
+      "key": "cold-open-winter-space",
+      "label": "PROFILE 6 — COLD OPEN WINTER SPACE",
+      "concept": "Wide, cold, empty, restrained winter landscape or architecture.",
+      "targetStats": {
+        "brightness": 48,
+        "warmth": 8,
+        "openness": 92,
+        "motion": 15,
+        "intimacy": 12,
+        "socialEnergy": 6,
+        "tension": 48,
+        "nostalgia": 48,
+        "playfulness": 6,
+        "dreaminess": 50,
+        "energy": 20,
+        "groove": 18,
+        "density": 22,
+        "acousticness": 48,
+        "electronicness": 48,
+        "vocalPresence": 20,
+        "climaxIntensity": 30
+      },
+      "contextAffinity": {
+        "spring": 8,
+        "summer": 3,
+        "autumn": 15,
+        "winter": 92,
+        "morning": 25,
+        "day": 88,
+        "dusk": 20,
+        "night": 8,
+        "lateNight": 3,
+        "clear": 40,
+        "cloudy": 55,
+        "rain": 8,
+        "snow": 90
+      }
+    },
+    {
+      "key": "crowded-festival",
+      "label": "PROFILE 7 — CROWDED FESTIVAL",
+      "concept": "Bright, colorful, moving, communal, celebratory outdoor gathering.",
+      "targetStats": {
+        "brightness": 88,
+        "warmth": 82,
+        "openness": 80,
+        "motion": 92,
+        "intimacy": 15,
+        "socialEnergy": 95,
+        "tension": 25,
+        "nostalgia": 15,
+        "playfulness": 92,
+        "dreaminess": 15,
+        "energy": 95,
+        "groove": 90,
+        "density": 82,
+        "acousticness": 30,
+        "electronicness": 82,
+        "vocalPresence": 80,
+        "climaxIntensity": 85
+      },
+      "contextAffinity": {
+        "spring": 20,
+        "summer": 92,
+        "autumn": 8,
+        "winter": 3,
+        "morning": 10,
+        "day": 88,
+        "dusk": 30,
+        "night": 15,
+        "lateNight": 5,
+        "clear": 90,
+        "cloudy": 12,
+        "rain": 3,
+        "snow": 0
+      }
+    },
+    {
+      "key": "dark-tense-cinematic-scene",
+      "label": "PROFILE 8 — DARK TENSE CINEMATIC SCENE",
+      "concept": "Dark, dense, uneasy, dramatic, suspenseful scene.",
+      "targetStats": {
+        "brightness": 8,
+        "warmth": 22,
+        "openness": 40,
+        "motion": 48,
+        "intimacy": 22,
+        "socialEnergy": 15,
+        "tension": 93,
+        "nostalgia": 48,
+        "playfulness": 5,
+        "dreaminess": 48,
+        "energy": 68,
+        "groove": 35,
+        "density": 80,
+        "acousticness": 18,
+        "electronicness": 78,
+        "vocalPresence": 35,
+        "climaxIntensity": 92
+      },
+      "contextAffinity": {
+        "spring": 8,
+        "summer": 8,
+        "autumn": 25,
+        "winter": 25,
+        "morning": 3,
+        "day": 8,
+        "dusk": 20,
+        "night": 90,
+        "lateNight": 55,
+        "clear": 15,
+        "cloudy": 88,
+        "rain": 48,
+        "snow": 8
+      }
+    }
+  ],
+  "perSceneResults": [
+    {
+      "key": "bright-warm-summer-day",
+      "label": "PROFILE 1 — BRIGHT WARM SUMMER DAY",
+      "concept": "Bright, warm, open, low-tension, social summer daytime outdoor scene.",
+      "top16": [
+        {
+          "rank": 1,
+          "artist": "Couch",
+          "title": "Saturday",
+          "youtubeVideoId": "Cv-pu8ymb-g",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "neo-soul",
+          "totalScore": 82.39392857142857,
+          "atmosphereScore": 86.2,
+          "desiredSoundScore": 91.57142857142857,
+          "seasonScore": 71.25,
+          "timeScore": 63,
+          "weatherScore": 80.5
+        },
+        {
+          "rank": 2,
+          "artist": "Mikayla Geier",
+          "title": "Ring Pop",
+          "youtubeVideoId": "TOuzKcsWZaE",
+          "primaryGenre": "pop",
+          "subgenre": "teen-pop",
+          "totalScore": 81.89392857142857,
+          "atmosphereScore": 86.3,
+          "desiredSoundScore": 88.57142857142857,
+          "seasonScore": 70.75,
+          "timeScore": 71.2,
+          "weatherScore": 78
+        },
+        {
+          "rank": 3,
+          "artist": "Lee Jin Ah",
+          "title": "Rum Pum Pum",
+          "youtubeVideoId": "FmRXxNg3wIc",
+          "primaryGenre": "pop",
+          "subgenre": "soft-pop",
+          "totalScore": 81.74892857142856,
+          "atmosphereScore": 86.2,
+          "desiredSoundScore": 89.57142857142857,
+          "seasonScore": 70.25,
+          "timeScore": 67.8,
+          "weatherScore": 78
+        },
+        {
+          "rank": 4,
+          "artist": "Daybreak",
+          "title": "Flower Road",
+          "youtubeVideoId": "49HfFYsh43Y",
+          "primaryGenre": "pop",
+          "subgenre": "soft-pop",
+          "totalScore": 81.71642857142858,
+          "atmosphereScore": 90.7,
+          "desiredSoundScore": 85.57142857142857,
+          "seasonScore": 66.75,
+          "timeScore": 65.6,
+          "weatherScore": 81.75
+        },
+        {
+          "rank": 5,
+          "artist": "RIIZE",
+          "title": "Get A Guitar",
+          "youtubeVideoId": "iUw3LPM7OBU",
+          "primaryGenre": "pop",
+          "subgenre": "k-pop",
+          "totalScore": 81.44500000000001,
+          "atmosphereScore": 86.9,
+          "desiredSoundScore": 90,
+          "seasonScore": 66.5,
+          "timeScore": 70,
+          "weatherScore": 76
+        },
+        {
+          "rank": 6,
+          "artist": "Anri",
+          "title": "Windy Summer",
+          "youtubeVideoId": "uQ9nsr9YoCQ",
+          "primaryGenre": "pop",
+          "subgenre": "city-pop",
+          "totalScore": 81.19964285714286,
+          "atmosphereScore": 84.8,
+          "desiredSoundScore": 85.85714285714286,
+          "seasonScore": 75.5,
+          "timeScore": 63.4,
+          "weatherScore": 82.25
+        },
+        {
+          "rank": 7,
+          "artist": "박문치",
+          "title": "J U S T F U N (with 죠지)",
+          "youtubeVideoId": "ztlUuIR0Ab0",
+          "primaryGenre": "pop",
+          "subgenre": "city-pop",
+          "totalScore": 81.0975,
+          "atmosphereScore": 86.5,
+          "desiredSoundScore": 89,
+          "seasonScore": 69.25,
+          "timeScore": 66.6,
+          "weatherScore": 76
+        },
+        {
+          "rank": 8,
+          "artist": "BLU-SWING",
+          "title": "満ちていく体温",
+          "youtubeVideoId": "Uv6KzCfRQgU",
+          "primaryGenre": "jazz",
+          "subgenre": "nu-jazz",
+          "totalScore": 80.98964285714285,
+          "atmosphereScore": 86.1,
+          "desiredSoundScore": 89.85714285714286,
+          "seasonScore": 70,
+          "timeScore": 66.4,
+          "weatherScore": 73.75
+        },
+        {
+          "rank": 9,
+          "artist": "Natasha Bedingfield",
+          "title": "Pocketful of Sunshine",
+          "youtubeVideoId": "gte3BoXKwP0",
+          "primaryGenre": "pop",
+          "subgenre": "soft-pop",
+          "totalScore": 80.9117857142857,
+          "atmosphereScore": 89,
+          "desiredSoundScore": 85.71428571428571,
+          "seasonScore": 64.75,
+          "timeScore": 68.6,
+          "weatherScore": 79.5
+        },
+        {
+          "rank": 10,
+          "artist": "LE SSERAFIM",
+          "title": "Smart",
+          "youtubeVideoId": "vPn_c61mW9s",
+          "primaryGenre": "pop",
+          "subgenre": "k-pop",
+          "totalScore": 80.74035714285715,
+          "atmosphereScore": 89.6,
+          "desiredSoundScore": 84.14285714285714,
+          "seasonScore": 69.75,
+          "timeScore": 60.8,
+          "weatherScore": 80.5
+        },
+        {
+          "rank": 11,
+          "artist": "The Temper Trap",
+          "title": "Sweet Disposition",
+          "youtubeVideoId": "jxKjOOR9sPU",
+          "primaryGenre": "pop",
+          "subgenre": "indie-pop",
+          "totalScore": 80.70785714285715,
+          "atmosphereScore": 89.5,
+          "desiredSoundScore": 89.14285714285714,
+          "seasonScore": 63,
+          "timeScore": 63.4,
+          "weatherScore": 75.5
+        },
+        {
+          "rank": 12,
+          "artist": "a!ka",
+          "title": "All Bark No Bite",
+          "youtubeVideoId": "r7cz6RMoMKM",
+          "primaryGenre": "pop",
+          "subgenre": "city-pop",
+          "totalScore": 80.65714285714286,
+          "atmosphereScore": 85.3,
+          "desiredSoundScore": 87.85714285714286,
+          "seasonScore": 71,
+          "timeScore": 66.6,
+          "weatherScore": 76
+        },
+        {
+          "rank": 13,
+          "artist": "Elbow",
+          "title": "One Day Like This",
+          "youtubeVideoId": "0NFV8dHrZYM",
+          "primaryGenre": "rock",
+          "subgenre": "britpop",
+          "totalScore": 80.64928571428571,
+          "atmosphereScore": 87.3,
+          "desiredSoundScore": 86.71428571428571,
+          "seasonScore": 66.25,
+          "timeScore": 69.2,
+          "weatherScore": 77.25
+        },
+        {
+          "rank": 14,
+          "artist": "The Furthermores",
+          "title": "Show Me How",
+          "youtubeVideoId": "4j6kHKqDV1k",
+          "primaryGenre": "pop",
+          "subgenre": "indie-pop",
+          "totalScore": 80.58571428571429,
+          "atmosphereScore": 84.7,
+          "desiredSoundScore": 92.28571428571429,
+          "seasonScore": 65.25,
+          "timeScore": 66.4,
+          "weatherScore": 73.75
+        },
+        {
+          "rank": 15,
+          "artist": "Lauv",
+          "title": "I Like Me Better",
+          "youtubeVideoId": "a7fzkqLozwA",
+          "primaryGenre": "pop",
+          "subgenre": "electropop",
+          "totalScore": 80.57035714285713,
+          "atmosphereScore": 86.3,
+          "desiredSoundScore": 87.14285714285714,
+          "seasonScore": 71.25,
+          "timeScore": 63,
+          "weatherScore": 77
+        },
+        {
+          "rank": 16,
+          "artist": "Calvin Harris feat. Pharrell Williams, Katy Perry & Big Sean",
+          "title": "Feels",
+          "youtubeVideoId": "ozv4q2ov3Mk",
+          "primaryGenre": "pop",
+          "subgenre": "dance-pop",
+          "totalScore": 80.48285714285714,
+          "atmosphereScore": 87.3,
+          "desiredSoundScore": 85.14285714285714,
+          "seasonScore": 66.25,
+          "timeScore": 70,
+          "weatherScore": 78.75
+        }
+      ],
+      "summary": {
+        "topScore": 82.39392857142857,
+        "rank16Score": 80.48285714285714,
+        "scoreSpread": 1.9110714285714323,
+        "meanTop16Score": 81.11189732142856,
+        "medianTop16Score": 80.95071428571427,
+        "stdDevTop16Score": 0.5527333332947939,
+        "meanRank1to10": 81.41371428571429,
+        "meanRank11to16": 80.60886904761905,
+        "rankTierGap": 0.8048452380952398,
+        "uniqueArtists": 16,
+        "uniquePrimaryGenres": 4,
+        "uniqueSubgenres": 10,
+        "maximumTracksByOneArtist": 1,
+        "maximumTracksByOneArtistTop10": 1,
+        "maximumTracksByOnePrimaryGenre": 13,
+        "maximumTracksByOneSubgenre": 3,
+        "primaryGenreDistribution": [
+          [
+            "pop",
+            13
+          ],
+          [
+            "rnb-soul",
+            1
+          ],
+          [
+            "jazz",
+            1
+          ],
+          [
+            "rock",
+            1
+          ]
+        ],
+        "subgenreDistribution": [
+          [
+            "soft-pop",
+            3
+          ],
+          [
+            "city-pop",
+            3
+          ],
+          [
+            "k-pop",
+            2
+          ],
+          [
+            "indie-pop",
+            2
+          ],
+          [
+            "neo-soul",
+            1
+          ],
+          [
+            "teen-pop",
+            1
+          ],
+          [
+            "nu-jazz",
+            1
+          ],
+          [
+            "britpop",
+            1
+          ],
+          [
+            "electropop",
+            1
+          ],
+          [
+            "dance-pop",
+            1
+          ]
+        ],
+        "artistRepetitions": [],
+        "artistRepetitionDetail": []
+      },
+      "componentInfluence": {
+        "meanAtmosphereScore": 87.04374999999999,
+        "meanDesiredSoundScore": 88.00892857142856,
+        "meanSeasonScore": 68.609375,
+        "meanTimeScore": 66.375,
+        "meanWeatherScore": 77.78125,
+        "atmosphereContribution": 26.113124999999997,
+        "desiredSoundContribution": 26.402678571428567,
+        "seasonContribution": 10.29140625,
+        "timeContribution": 6.6375,
+        "weatherContribution": 11.667187499999999
+      },
+      "vectorRedundancy": {
+        "meanPairwiseTrackVectorSimilarity": 90.0223244047619
+      }
+    },
+    {
+      "key": "rainy-intimate-late-night",
+      "label": "PROFILE 2 — RAINY INTIMATE LATE NIGHT",
+      "concept": "Dim, intimate, enclosed, low-motion, rainy late-night interior.",
+      "top16": [
+        {
+          "rank": 1,
+          "artist": "주혜린",
+          "title": "아무것도",
+          "youtubeVideoId": "fzhgg7pD1bI",
+          "primaryGenre": "pop",
+          "subgenre": "soft-pop",
+          "totalScore": 82.60642857142857,
+          "atmosphereScore": 87.3,
+          "desiredSoundScore": 89.57142857142857,
+          "seasonScore": 75.25,
+          "timeScore": 74.2,
+          "weatherScore": 72.25
+        },
+        {
+          "rank": 2,
+          "artist": "GSoul",
+          "title": "Hate Everything",
+          "youtubeVideoId": "AW9jdH56MzM",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "contemporary-rnb",
+          "totalScore": 81.57428571428571,
+          "atmosphereScore": 83.2,
+          "desiredSoundScore": 89.71428571428571,
+          "seasonScore": 73.25,
+          "timeScore": 69,
+          "weatherScore": 78.75
+        },
+        {
+          "rank": 3,
+          "artist": "The Marías",
+          "title": "Cariño",
+          "youtubeVideoId": "QHVp9xiUr9U",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 79.86535714285714,
+          "atmosphereScore": 82.8,
+          "desiredSoundScore": 94.14285714285714,
+          "seasonScore": 63.75,
+          "timeScore": 67.2,
+          "weatherScore": 70
+        },
+        {
+          "rank": 4,
+          "artist": "Beach House",
+          "title": "Space Song",
+          "youtubeVideoId": "GAFwrXOsL68",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 78.98571428571428,
+          "atmosphereScore": 79.3,
+          "desiredSoundScore": 95.28571428571429,
+          "seasonScore": 61.75,
+          "timeScore": 75.6,
+          "weatherScore": 65.25
+        },
+        {
+          "rank": 5,
+          "artist": "Victor Lundberg",
+          "title": "Come Back Again",
+          "youtubeVideoId": "dzoxC8dedXw",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 78.46107142857143,
+          "atmosphereScore": 79.5,
+          "desiredSoundScore": 91.42857142857143,
+          "seasonScore": 73.75,
+          "timeScore": 62.2,
+          "weatherScore": 66
+        },
+        {
+          "rank": 6,
+          "artist": "Mazzy Star",
+          "title": "Into Dust",
+          "youtubeVideoId": "04J0ihSeIuI",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 78.22535714285713,
+          "atmosphereScore": 80.4,
+          "desiredSoundScore": 92.14285714285714,
+          "seasonScore": 72.25,
+          "timeScore": 67,
+          "weatherScore": 59.5
+        },
+        {
+          "rank": 7,
+          "artist": "Mazzy Star",
+          "title": "Fade Into You",
+          "youtubeVideoId": "yfzsBA5dZdE",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 77.88428571428571,
+          "atmosphereScore": 81.8,
+          "desiredSoundScore": 90.71428571428571,
+          "seasonScore": 64,
+          "timeScore": 61.8,
+          "weatherScore": 69
+        },
+        {
+          "rank": 8,
+          "artist": "Etta James",
+          "title": "I'd Rather Go Blind",
+          "youtubeVideoId": "Bcus42ihkTI",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "classic-soul",
+          "totalScore": 77.52,
+          "atmosphereScore": 77,
+          "desiredSoundScore": 87,
+          "seasonScore": 72.5,
+          "timeScore": 73.2,
+          "weatherScore": 67.5
+        },
+        {
+          "rank": 9,
+          "artist": "The xx",
+          "title": "Angels",
+          "youtubeVideoId": "_nW5AF0m9Zw",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 77.45,
+          "atmosphereScore": 80.4,
+          "desiredSoundScore": 91,
+          "seasonScore": 65,
+          "timeScore": 69.8,
+          "weatherScore": 62
+        },
+        {
+          "rank": 10,
+          "artist": "Rinko Nagai",
+          "title": "雨宿らず",
+          "youtubeVideoId": "dWd5mWQ_bpA",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 77.08714285714285,
+          "atmosphereScore": 79.6,
+          "desiredSoundScore": 83.85714285714286,
+          "seasonScore": 65.25,
+          "timeScore": 66,
+          "weatherScore": 77.75
+        },
+        {
+          "rank": 11,
+          "artist": "Childish Gambino",
+          "title": "Redbone",
+          "youtubeVideoId": "k49I5m1J6Is",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "alt-rnb",
+          "totalScore": 76.99285714285713,
+          "atmosphereScore": 77.5,
+          "desiredSoundScore": 84.14285714285714,
+          "seasonScore": 69.25,
+          "timeScore": 72,
+          "weatherScore": 72.75
+        },
+        {
+          "rank": 12,
+          "artist": "Bill Withers",
+          "title": "Ain't No Sunshine",
+          "youtubeVideoId": "YuKfiH0Scao",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "classic-soul",
+          "totalScore": 76.92321428571428,
+          "atmosphereScore": 79.6,
+          "desiredSoundScore": 89.28571428571429,
+          "seasonScore": 68.5,
+          "timeScore": 64.2,
+          "weatherScore": 63.75
+        },
+        {
+          "rank": 13,
+          "artist": "Cigarettes After Sex",
+          "title": "Apocalypse",
+          "youtubeVideoId": "sElE_BfQ67s",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.81,
+          "atmosphereScore": 80.7,
+          "desiredSoundScore": 89,
+          "seasonScore": 59,
+          "timeScore": 73,
+          "weatherScore": 65
+        },
+        {
+          "rank": 14,
+          "artist": "Slowdive",
+          "title": "Alison",
+          "youtubeVideoId": "Ak43tAU5QuA",
+          "primaryGenre": "rock",
+          "subgenre": "shoegaze",
+          "totalScore": 76.78857142857144,
+          "atmosphereScore": 80.7,
+          "desiredSoundScore": 88.42857142857143,
+          "seasonScore": 60.25,
+          "timeScore": 73,
+          "weatherScore": 64.75
+        },
+        {
+          "rank": 15,
+          "artist": "M83",
+          "title": "Wait",
+          "youtubeVideoId": "iQnRCdtECl8",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.57214285714285,
+          "atmosphereScore": 78.9,
+          "desiredSoundScore": 87.85714285714286,
+          "seasonScore": 62.25,
+          "timeScore": 74.2,
+          "weatherScore": 65.25
+        },
+        {
+          "rank": 16,
+          "artist": "Joji",
+          "title": "SLOW DANCING IN THE DARK",
+          "youtubeVideoId": "K3Qzzggn--s",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "alt-rnb",
+          "totalScore": 76.54714285714286,
+          "atmosphereScore": 78.5,
+          "desiredSoundScore": 82.85714285714286,
+          "seasonScore": 74,
+          "timeScore": 71.4,
+          "weatherScore": 66
+        }
+      ],
+      "summary": {
+        "topScore": 82.60642857142857,
+        "rank16Score": 76.54714285714286,
+        "scoreSpread": 6.059285714285707,
+        "meanTop16Score": 78.14334821428572,
+        "medianTop16Score": 77.485,
+        "stdDevTop16Score": 1.7494127060950497,
+        "meanRank1to10": 78.96596428571429,
+        "meanRank11to16": 76.77232142857143,
+        "rankTierGap": 2.193642857142862,
+        "uniqueArtists": 15,
+        "uniquePrimaryGenres": 4,
+        "uniqueSubgenres": 7,
+        "maximumTracksByOneArtist": 2,
+        "maximumTracksByOneArtistTop10": 2,
+        "maximumTracksByOnePrimaryGenre": 8,
+        "maximumTracksByOneSubgenre": 7,
+        "primaryGenreDistribution": [
+          [
+            "rock",
+            8
+          ],
+          [
+            "rnb-soul",
+            5
+          ],
+          [
+            "folk-acoustic",
+            2
+          ],
+          [
+            "pop",
+            1
+          ]
+        ],
+        "subgenreDistribution": [
+          [
+            "dream-pop",
+            7
+          ],
+          [
+            "singer-songwriter",
+            2
+          ],
+          [
+            "classic-soul",
+            2
+          ],
+          [
+            "alt-rnb",
+            2
+          ],
+          [
+            "soft-pop",
+            1
+          ],
+          [
+            "contemporary-rnb",
+            1
+          ],
+          [
+            "shoegaze",
+            1
+          ]
+        ],
+        "artistRepetitions": [
+          {
+            "artist": "mazzy star",
+            "count": 2
+          }
+        ],
+        "artistRepetitionDetail": [
+          {
+            "artist": "mazzy star",
+            "count": 2,
+            "ranks": [
+              6,
+              7
+            ],
+            "adjacent": true,
+            "scoreGap": 0.3410714285714249
+          }
+        ]
+      },
+      "componentInfluence": {
+        "meanAtmosphereScore": 80.45,
+        "meanDesiredSoundScore": 89.15178571428571,
+        "meanSeasonScore": 67.5,
+        "meanTimeScore": 69.61250000000001,
+        "meanWeatherScore": 67.84375,
+        "atmosphereContribution": 24.135,
+        "desiredSoundContribution": 26.74553571428571,
+        "seasonContribution": 10.125,
+        "timeContribution": 6.9612500000000015,
+        "weatherContribution": 10.1765625
+      },
+      "vectorRedundancy": {
+        "meanPairwiseTrackVectorSimilarity": 86.56339285714284
+      }
+    },
+    {
+      "key": "high-energy-urban-night",
+      "label": "PROFILE 3 — HIGH-ENERGY URBAN NIGHT",
+      "concept": "Fast, bright-neon, dense, social, electronic city nightlife.",
+      "top16": [
+        {
+          "rank": 1,
+          "artist": "40",
+          "title": "미치광이 포티",
+          "youtubeVideoId": "xmvkMw2URnc",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "k-rnb",
+          "totalScore": 84.885,
+          "atmosphereScore": 91.8,
+          "desiredSoundScore": 81,
+          "seasonScore": 78.25,
+          "timeScore": 76.2,
+          "weatherScore": 91.25
+        },
+        {
+          "rank": 2,
+          "artist": "ScHoolboy Q",
+          "title": "Numb Numb Juice",
+          "youtubeVideoId": "5_qAwMHhkwQ",
+          "primaryGenre": "hip-hop",
+          "subgenre": "west-coast-hip-hop",
+          "totalScore": 84.80678571428571,
+          "atmosphereScore": 90.7,
+          "desiredSoundScore": 87.71428571428571,
+          "seasonScore": 81.5,
+          "timeScore": 67.2,
+          "weatherScore": 82.25
+        },
+        {
+          "rank": 3,
+          "artist": "Future, Metro Boomin & Kendrick Lamar",
+          "title": "Like That",
+          "youtubeVideoId": "N9bKBAA22Go",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 83.52321428571429,
+          "atmosphereScore": 88.9,
+          "desiredSoundScore": 84.28571428571429,
+          "seasonScore": 81.5,
+          "timeScore": 73.8,
+          "weatherScore": 79.75
+        },
+        {
+          "rank": 4,
+          "artist": "CHANGMO",
+          "title": "METEOR",
+          "youtubeVideoId": "lOrU0MH0bMk",
+          "primaryGenre": "hip-hop",
+          "subgenre": "k-hiphop",
+          "totalScore": 83.31750000000001,
+          "atmosphereScore": 87.9,
+          "desiredSoundScore": 85,
+          "seasonScore": 78.5,
+          "timeScore": 69.6,
+          "weatherScore": 84.75
+        },
+        {
+          "rank": 5,
+          "artist": "Denzel Curry",
+          "title": "Ultimate",
+          "youtubeVideoId": "VR24Pfw7Ykw",
+          "primaryGenre": "hip-hop",
+          "subgenre": "alternative-hip-hop",
+          "totalScore": 83.17464285714286,
+          "atmosphereScore": 88.7,
+          "desiredSoundScore": 84.85714285714286,
+          "seasonScore": 80.25,
+          "timeScore": 69.2,
+          "weatherScore": 81
+        },
+        {
+          "rank": 6,
+          "artist": "JID feat. 21 Savage & Baby Tate",
+          "title": "Surround Sound",
+          "youtubeVideoId": "Y19q-7VN2WI",
+          "primaryGenre": "hip-hop",
+          "subgenre": "mainstream-rap",
+          "totalScore": 83.11678571428571,
+          "atmosphereScore": 90.2,
+          "desiredSoundScore": 82.71428571428572,
+          "seasonScore": 79.5,
+          "timeScore": 66.8,
+          "weatherScore": 84.25
+        },
+        {
+          "rank": 7,
+          "artist": "Future",
+          "title": "Mask Off",
+          "youtubeVideoId": "xvZqHgFz51I",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 82.91,
+          "atmosphereScore": 90,
+          "desiredSoundScore": 85,
+          "seasonScore": 81.5,
+          "timeScore": 68.6,
+          "weatherScore": 75.5
+        },
+        {
+          "rank": 8,
+          "artist": "Denzel Curry",
+          "title": "ULT",
+          "youtubeVideoId": "q8VO4Rm3ulw",
+          "primaryGenre": "hip-hop",
+          "subgenre": "alternative-hip-hop",
+          "totalScore": 82.90107142857143,
+          "atmosphereScore": 84.6,
+          "desiredSoundScore": 89.42857142857143,
+          "seasonScore": 82,
+          "timeScore": 65.8,
+          "weatherScore": 78.75
+        },
+        {
+          "rank": 9,
+          "artist": "Pharoahe Monch",
+          "title": "Simon Says",
+          "youtubeVideoId": "RLElKdtA0AU",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 82.59428571428572,
+          "atmosphereScore": 85.8,
+          "desiredSoundScore": 86.71428571428571,
+          "seasonScore": 80.5,
+          "timeScore": 65.4,
+          "weatherScore": 81.5
+        },
+        {
+          "rank": 10,
+          "artist": "Dragon Ash",
+          "title": "FANTASISTA",
+          "youtubeVideoId": "iCMziP19f2Y",
+          "primaryGenre": "rock",
+          "subgenre": "alternative-rock",
+          "totalScore": 82.54642857142856,
+          "atmosphereScore": 86.3,
+          "desiredSoundScore": 85.57142857142857,
+          "seasonScore": 80.25,
+          "timeScore": 67.6,
+          "weatherScore": 81.25
+        },
+        {
+          "rank": 11,
+          "artist": "Kendrick Lamar",
+          "title": "King Kunta",
+          "youtubeVideoId": "hRK7PVJFbS8",
+          "primaryGenre": "hip-hop",
+          "subgenre": "mainstream-rap",
+          "totalScore": 82.44428571428571,
+          "atmosphereScore": 90.4,
+          "desiredSoundScore": 79.71428571428572,
+          "seasonScore": 84.25,
+          "timeScore": 66.6,
+          "weatherScore": 80.75
+        },
+        {
+          "rank": 12,
+          "artist": "ZICO",
+          "title": "No you can't",
+          "youtubeVideoId": "i4NGLCC9g4Q",
+          "primaryGenre": "hip-hop",
+          "subgenre": "k-hiphop",
+          "totalScore": 82.42107142857142,
+          "atmosphereScore": 91.3,
+          "desiredSoundScore": 79.42857142857143,
+          "seasonScore": 82.25,
+          "timeScore": 69.4,
+          "weatherScore": 79.5
+        },
+        {
+          "rank": 13,
+          "artist": "Travis Scott feat. Drake",
+          "title": "SICKO MODE",
+          "youtubeVideoId": "6ONRf7h3Mdk",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 82.37285714285714,
+          "atmosphereScore": 86.2,
+          "desiredSoundScore": 85.14285714285714,
+          "seasonScore": 80.5,
+          "timeScore": 68.2,
+          "weatherScore": 80.5
+        },
+        {
+          "rank": 14,
+          "artist": "21 Savage & Metro Boomin",
+          "title": "Runnin",
+          "youtubeVideoId": "jbdROU6eJVg",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 82.32607142857142,
+          "atmosphereScore": 89.2,
+          "desiredSoundScore": 82.42857142857143,
+          "seasonScore": 83.25,
+          "timeScore": 68,
+          "weatherScore": 77
+        },
+        {
+          "rank": 15,
+          "artist": "Kroi feat. Incognito",
+          "title": "Kinetic",
+          "youtubeVideoId": "iK725ck2NIk",
+          "primaryGenre": "funk-disco",
+          "subgenre": "disco-funk",
+          "totalScore": 82.16107142857143,
+          "atmosphereScore": 87.1,
+          "desiredSoundScore": 83.42857142857143,
+          "seasonScore": 73.75,
+          "timeScore": 64.4,
+          "weatherScore": 90
+        },
+        {
+          "rank": 16,
+          "artist": "ScHoolboy Q",
+          "title": "Man of the Year",
+          "youtubeVideoId": "rEMsjeq43_U",
+          "primaryGenre": "hip-hop",
+          "subgenre": "west-coast-hip-hop",
+          "totalScore": 82.11428571428571,
+          "atmosphereScore": 91.5,
+          "desiredSoundScore": 79.71428571428572,
+          "seasonScore": 81.75,
+          "timeScore": 66,
+          "weatherScore": 79.25
+        }
+      ],
+      "summary": {
+        "topScore": 84.885,
+        "rank16Score": 82.11428571428571,
+        "scoreSpread": 2.7707142857142912,
+        "meanTop16Score": 82.97595982142856,
+        "medianTop16Score": 82.74767857142857,
+        "stdDevTop16Score": 0.8137538276849506,
+        "meanRank1to10": 83.37757142857143,
+        "meanRank11to16": 82.30660714285713,
+        "rankTierGap": 1.0709642857142967,
+        "uniqueArtists": 14,
+        "uniquePrimaryGenres": 4,
+        "uniqueSubgenres": 8,
+        "maximumTracksByOneArtist": 2,
+        "maximumTracksByOneArtistTop10": 2,
+        "maximumTracksByOnePrimaryGenre": 13,
+        "maximumTracksByOneSubgenre": 5,
+        "primaryGenreDistribution": [
+          [
+            "hip-hop",
+            13
+          ],
+          [
+            "rnb-soul",
+            1
+          ],
+          [
+            "rock",
+            1
+          ],
+          [
+            "funk-disco",
+            1
+          ]
+        ],
+        "subgenreDistribution": [
+          [
+            "trap",
+            5
+          ],
+          [
+            "west-coast-hip-hop",
+            2
+          ],
+          [
+            "k-hiphop",
+            2
+          ],
+          [
+            "alternative-hip-hop",
+            2
+          ],
+          [
+            "mainstream-rap",
+            2
+          ],
+          [
+            "k-rnb",
+            1
+          ],
+          [
+            "alternative-rock",
+            1
+          ],
+          [
+            "disco-funk",
+            1
+          ]
+        ],
+        "artistRepetitions": [
+          {
+            "artist": "denzel curry",
+            "count": 2
+          },
+          {
+            "artist": "schoolboy q",
+            "count": 2
+          }
+        ],
+        "artistRepetitionDetail": [
+          {
+            "artist": "denzel curry",
+            "count": 2,
+            "ranks": [
+              5,
+              8
+            ],
+            "adjacent": false,
+            "scoreGap": 0.27357142857142946
+          },
+          {
+            "artist": "schoolboy q",
+            "count": 2,
+            "ranks": [
+              2,
+              16
+            ],
+            "adjacent": false,
+            "scoreGap": 2.6924999999999955
+          }
+        ]
+      },
+      "componentInfluence": {
+        "meanAtmosphereScore": 88.7875,
+        "meanDesiredSoundScore": 83.88392857142857,
+        "meanSeasonScore": 80.59375,
+        "meanTimeScore": 68.3,
+        "meanWeatherScore": 81.703125,
+        "atmosphereContribution": 26.636249999999997,
+        "desiredSoundContribution": 25.16517857142857,
+        "seasonContribution": 12.089062499999999,
+        "timeContribution": 6.83,
+        "weatherContribution": 12.25546875
+      },
+      "vectorRedundancy": {
+        "meanPairwiseTrackVectorSimilarity": 90.00931845238095
+      }
+    },
+    {
+      "key": "dreamy-hazy-dusk",
+      "label": "PROFILE 4 — DREAMY HAZY DUSK",
+      "concept": "Soft, spacious, hazy, ethereal, reflective sunset scene.",
+      "top16": [
+        {
+          "rank": 1,
+          "artist": "Jane & The Boy",
+          "title": "Starry Eyed",
+          "youtubeVideoId": "bJISoKSkdfs",
+          "primaryGenre": "pop",
+          "subgenre": "indie-pop",
+          "totalScore": 83.04892857142858,
+          "atmosphereScore": 85,
+          "desiredSoundScore": 87.57142857142857,
+          "seasonScore": 80.75,
+          "timeScore": 66.4,
+          "weatherScore": 83.5
+        },
+        {
+          "rank": 2,
+          "artist": "Victor Lundberg",
+          "title": "Come Back Again",
+          "youtubeVideoId": "dzoxC8dedXw",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 82.61785714285715,
+          "atmosphereScore": 81.3,
+          "desiredSoundScore": 87.14285714285714,
+          "seasonScore": 83.75,
+          "timeScore": 72.6,
+          "weatherScore": 81.75
+        },
+        {
+          "rank": 3,
+          "artist": "The Japanese House",
+          "title": "Saw You in a Dream",
+          "youtubeVideoId": "NwnZyZ82UEs",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 81.69071428571428,
+          "atmosphereScore": 86.7,
+          "desiredSoundScore": 92.28571428571429,
+          "seasonScore": 73.25,
+          "timeScore": 72.2,
+          "weatherScore": 65.25
+        },
+        {
+          "rank": 4,
+          "artist": "Angus & Julia Stone",
+          "title": "Big Jet Plane",
+          "youtubeVideoId": "yFTvbcNhEgc",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "indie-folk",
+          "totalScore": 81.56642857142857,
+          "atmosphereScore": 91.2,
+          "desiredSoundScore": 82.57142857142857,
+          "seasonScore": 72.25,
+          "timeScore": 74.6,
+          "weatherScore": 74.25
+        },
+        {
+          "rank": 5,
+          "artist": "offonoff",
+          "title": "Photograph",
+          "youtubeVideoId": "2b1E-zu-QEM",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "alt-rnb",
+          "totalScore": 81.33714285714285,
+          "atmosphereScore": 87.2,
+          "desiredSoundScore": 88.85714285714286,
+          "seasonScore": 72.75,
+          "timeScore": 69.2,
+          "weatherScore": 71.25
+        },
+        {
+          "rank": 6,
+          "artist": "Tycho",
+          "title": "A Walk",
+          "youtubeVideoId": "SDNA934EEVk",
+          "primaryGenre": "ambient-experimental",
+          "subgenre": "ambient-electronic",
+          "totalScore": 81.28607142857142,
+          "atmosphereScore": 86.5,
+          "desiredSoundScore": 89.42857142857143,
+          "seasonScore": 73.25,
+          "timeScore": 73.2,
+          "weatherScore": 68
+        },
+        {
+          "rank": 7,
+          "artist": "Alexi Murdoch",
+          "title": "All My Days",
+          "youtubeVideoId": "5NFkFVe93NM",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 81.23749999999998,
+          "atmosphereScore": 81.5,
+          "desiredSoundScore": 87,
+          "seasonScore": 75.75,
+          "timeScore": 71,
+          "weatherScore": 81.5
+        },
+        {
+          "rank": 8,
+          "artist": "Astels",
+          "title": "We Gotta Let Go",
+          "youtubeVideoId": "1zml-iR5Oww",
+          "primaryGenre": "pop",
+          "subgenre": "indie-pop",
+          "totalScore": 81.16464285714285,
+          "atmosphereScore": 83,
+          "desiredSoundScore": 83.85714285714286,
+          "seasonScore": 83.25,
+          "timeScore": 69.2,
+          "weatherScore": 78
+        },
+        {
+          "rank": 9,
+          "artist": "The Cranberries",
+          "title": "Linger",
+          "youtubeVideoId": "G6Kspj3OO0s",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 81.115,
+          "atmosphereScore": 85.6,
+          "desiredSoundScore": 92,
+          "seasonScore": 73.5,
+          "timeScore": 67.6,
+          "weatherScore": 67
+        },
+        {
+          "rank": 10,
+          "artist": "도하",
+          "title": "Good Night, My Summer",
+          "youtubeVideoId": "x13P6vCIZMo",
+          "primaryGenre": "pop",
+          "subgenre": "indie-pop",
+          "totalScore": 81.07428571428571,
+          "atmosphereScore": 86.5,
+          "desiredSoundScore": 84.71428571428571,
+          "seasonScore": 74.75,
+          "timeScore": 67.6,
+          "weatherScore": 78.25
+        },
+        {
+          "rank": 11,
+          "artist": "장키키",
+          "title": "Tomato Marinade",
+          "youtubeVideoId": "g62esqq-7Ao",
+          "primaryGenre": "pop",
+          "subgenre": "bedroom-pop",
+          "totalScore": 81.06964285714285,
+          "atmosphereScore": 80.3,
+          "desiredSoundScore": 83.85714285714286,
+          "seasonScore": 85,
+          "timeScore": 66.6,
+          "weatherScore": 82.75
+        },
+        {
+          "rank": 12,
+          "artist": "Slowdive",
+          "title": "When the Sun Hits",
+          "youtubeVideoId": "MKYY0IlTMw4",
+          "primaryGenre": "rock",
+          "subgenre": "shoegaze",
+          "totalScore": 80.97214285714286,
+          "atmosphereScore": 86.2,
+          "desiredSoundScore": 88.85714285714286,
+          "seasonScore": 73.5,
+          "timeScore": 67.8,
+          "weatherScore": 71
+        },
+        {
+          "rank": 13,
+          "artist": "Gregory Alan Isakov",
+          "title": "Amsterdam",
+          "youtubeVideoId": "lz2qpnRB5_E",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 80.80785714285715,
+          "atmosphereScore": 87.4,
+          "desiredSoundScore": 83.14285714285714,
+          "seasonScore": 73.25,
+          "timeScore": 75.2,
+          "weatherScore": 74.25
+        },
+        {
+          "rank": 14,
+          "artist": "채옐",
+          "title": "He's Something",
+          "youtubeVideoId": "PjREBqcLHCo",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "k-rnb",
+          "totalScore": 80.77821428571427,
+          "atmosphereScore": 80.2,
+          "desiredSoundScore": 80.28571428571428,
+          "seasonScore": 87.5,
+          "timeScore": 67.2,
+          "weatherScore": 85.25
+        },
+        {
+          "rank": 15,
+          "artist": "M83",
+          "title": "Wait",
+          "youtubeVideoId": "iQnRCdtECl8",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 80.65178571428572,
+          "atmosphereScore": 86.7,
+          "desiredSoundScore": 88.71428571428571,
+          "seasonScore": 74.75,
+          "timeScore": 65.4,
+          "weatherScore": 68.5
+        },
+        {
+          "rank": 16,
+          "artist": "Erykah Badu",
+          "title": "On & On",
+          "youtubeVideoId": "TW28iWV7nxE",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "neo-soul",
+          "totalScore": 80.55785714285715,
+          "atmosphereScore": 86.1,
+          "desiredSoundScore": 81.14285714285714,
+          "seasonScore": 77,
+          "timeScore": 67.6,
+          "weatherScore": 80.5
+        }
+      ],
+      "summary": {
+        "topScore": 83.04892857142858,
+        "rank16Score": 80.55785714285715,
+        "scoreSpread": 2.4910714285714306,
+        "meanTop16Score": 81.31100446428572,
+        "medianTop16Score": 81.13982142857142,
+        "stdDevTop16Score": 0.6505840466088999,
+        "meanRank1to10": 81.61385714285714,
+        "meanRank11to16": 80.80624999999999,
+        "rankTierGap": 0.807607142857151,
+        "uniqueArtists": 16,
+        "uniquePrimaryGenres": 5,
+        "uniqueSubgenres": 10,
+        "maximumTracksByOneArtist": 1,
+        "maximumTracksByOneArtistTop10": 1,
+        "maximumTracksByOnePrimaryGenre": 4,
+        "maximumTracksByOneSubgenre": 3,
+        "primaryGenreDistribution": [
+          [
+            "pop",
+            4
+          ],
+          [
+            "folk-acoustic",
+            4
+          ],
+          [
+            "rock",
+            4
+          ],
+          [
+            "rnb-soul",
+            3
+          ],
+          [
+            "ambient-experimental",
+            1
+          ]
+        ],
+        "subgenreDistribution": [
+          [
+            "indie-pop",
+            3
+          ],
+          [
+            "singer-songwriter",
+            3
+          ],
+          [
+            "dream-pop",
+            3
+          ],
+          [
+            "indie-folk",
+            1
+          ],
+          [
+            "alt-rnb",
+            1
+          ],
+          [
+            "ambient-electronic",
+            1
+          ],
+          [
+            "bedroom-pop",
+            1
+          ],
+          [
+            "shoegaze",
+            1
+          ],
+          [
+            "k-rnb",
+            1
+          ],
+          [
+            "neo-soul",
+            1
+          ]
+        ],
+        "artistRepetitions": [],
+        "artistRepetitionDetail": []
+      },
+      "componentInfluence": {
+        "meanAtmosphereScore": 85.0875,
+        "meanDesiredSoundScore": 86.33928571428571,
+        "meanSeasonScore": 77.140625,
+        "meanTimeScore": 69.5875,
+        "meanWeatherScore": 75.6875,
+        "atmosphereContribution": 25.52625,
+        "desiredSoundContribution": 25.90178571428571,
+        "seasonContribution": 11.57109375,
+        "timeContribution": 6.958750000000001,
+        "weatherContribution": 11.353125
+      },
+      "vectorRedundancy": {
+        "meanPairwiseTrackVectorSimilarity": 86.67287797619045
+      }
+    },
+    {
+      "key": "calm-acoustic-morning",
+      "label": "PROFILE 5 — CALM ACOUSTIC MORNING",
+      "concept": "Quiet, natural, clean, soft morning space.",
+      "top16": [
+        {
+          "rank": 1,
+          "artist": "José González",
+          "title": "Stay Alive",
+          "youtubeVideoId": "NucJk8TxyRg",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 82.63642857142857,
+          "atmosphereScore": 88.4,
+          "desiredSoundScore": 87.57142857142857,
+          "seasonScore": 72.25,
+          "timeScore": 71.2,
+          "weatherScore": 79.25
+        },
+        {
+          "rank": 2,
+          "artist": "Jack Johnson",
+          "title": "Banana Pancakes",
+          "youtubeVideoId": "YdgoG8hTMUw",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 82.46500000000002,
+          "atmosphereScore": 88.4,
+          "desiredSoundScore": 93,
+          "seasonScore": 64.75,
+          "timeScore": 71.2,
+          "weatherScore": 74.75
+        },
+        {
+          "rank": 3,
+          "artist": "Iron & Wine",
+          "title": "Flightless Bird, American Mouth",
+          "youtubeVideoId": "RGVmhrfQqzg",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 82.18214285714285,
+          "atmosphereScore": 87,
+          "desiredSoundScore": 91.85714285714286,
+          "seasonScore": 63.75,
+          "timeScore": 76,
+          "weatherScore": 75.75
+        },
+        {
+          "rank": 4,
+          "artist": "The Head and the Heart",
+          "title": "Rivers and Roads",
+          "youtubeVideoId": "jwC06Izp1a8",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "indie-folk",
+          "totalScore": 81.3367857142857,
+          "atmosphereScore": 86.6,
+          "desiredSoundScore": 89.71428571428571,
+          "seasonScore": 65.75,
+          "timeScore": 74.8,
+          "weatherScore": 74
+        },
+        {
+          "rank": 5,
+          "artist": "The Head and the Heart",
+          "title": "Lost in My Mind",
+          "youtubeVideoId": "is7rrC-jH_A",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "indie-folk",
+          "totalScore": 81.26535714285714,
+          "atmosphereScore": 85.8,
+          "desiredSoundScore": 89.14285714285714,
+          "seasonScore": 67,
+          "timeScore": 66.2,
+          "weatherScore": 80.75
+        },
+        {
+          "rank": 6,
+          "artist": "Iron & Wine",
+          "title": "Naked as We Came",
+          "youtubeVideoId": "Nd-A-iiPoLg",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 81.17535714285714,
+          "atmosphereScore": 89,
+          "desiredSoundScore": 92.14285714285714,
+          "seasonScore": 62.75,
+          "timeScore": 66.2,
+          "weatherScore": 72
+        },
+        {
+          "rank": 7,
+          "artist": "Gregory Alan Isakov",
+          "title": "The Stable Song",
+          "youtubeVideoId": "jGDjO9kuKyY",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 80.86928571428571,
+          "atmosphereScore": 86.1,
+          "desiredSoundScore": 87.71428571428571,
+          "seasonScore": 64.5,
+          "timeScore": 72,
+          "weatherScore": 79
+        },
+        {
+          "rank": 8,
+          "artist": "José González",
+          "title": "Heartbeats",
+          "youtubeVideoId": "ik_BQYbbZ5U",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 80.82035714285713,
+          "atmosphereScore": 89.1,
+          "desiredSoundScore": 91.14285714285714,
+          "seasonScore": 62.75,
+          "timeScore": 64.6,
+          "weatherScore": 72.5
+        },
+        {
+          "rank": 9,
+          "artist": "The Lumineers",
+          "title": "Cleopatra",
+          "youtubeVideoId": "aN5s9N_pTUs",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "folk-pop",
+          "totalScore": 80.75500000000001,
+          "atmosphereScore": 86.7,
+          "desiredSoundScore": 90,
+          "seasonScore": 61.25,
+          "timeScore": 71.2,
+          "weatherScore": 76.25
+        },
+        {
+          "rank": 10,
+          "artist": "Sufjan Stevens",
+          "title": "Mystery of Love",
+          "youtubeVideoId": "4WTt69YO2VI",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "indie-folk",
+          "totalScore": 80.60857142857144,
+          "atmosphereScore": 86.1,
+          "desiredSoundScore": 86.42857142857143,
+          "seasonScore": 68.75,
+          "timeScore": 77,
+          "weatherScore": 72.25
+        },
+        {
+          "rank": 11,
+          "artist": "Alexi Murdoch",
+          "title": "All My Days",
+          "youtubeVideoId": "5NFkFVe93NM",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 80.29035714285713,
+          "atmosphereScore": 86.7,
+          "desiredSoundScore": 89.14285714285714,
+          "seasonScore": 60.75,
+          "timeScore": 68,
+          "weatherScore": 77.5
+        },
+        {
+          "rank": 12,
+          "artist": "Jack Johnson",
+          "title": "Better Together",
+          "youtubeVideoId": "fqxNYjDFJUk",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 80.23428571428572,
+          "atmosphereScore": 82.9,
+          "desiredSoundScore": 89.71428571428571,
+          "seasonScore": 61,
+          "timeScore": 76,
+          "weatherScore": 78
+        },
+        {
+          "rank": 13,
+          "artist": "Jason Mraz feat. Colbie Caillat",
+          "title": "Lucky",
+          "youtubeVideoId": "acvIVA9-FMQ",
+          "primaryGenre": "pop",
+          "subgenre": "soft-pop",
+          "totalScore": 80.10607142857143,
+          "atmosphereScore": 83.6,
+          "desiredSoundScore": 87.42857142857143,
+          "seasonScore": 64.75,
+          "timeScore": 71.6,
+          "weatherScore": 79.5
+        },
+        {
+          "rank": 14,
+          "artist": "Alexi Murdoch",
+          "title": "Orange Sky",
+          "youtubeVideoId": "vy_Em1i9BAA",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 80.05785714285715,
+          "atmosphereScore": 83.1,
+          "desiredSoundScore": 88.14285714285714,
+          "seasonScore": 66.25,
+          "timeScore": 71.6,
+          "weatherScore": 77.25
+        },
+        {
+          "rank": 15,
+          "artist": "Bon Iver",
+          "title": "Holocene",
+          "youtubeVideoId": "MjxA25Tj1Ks",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "indie-folk",
+          "totalScore": 79.91214285714285,
+          "atmosphereScore": 81.9,
+          "desiredSoundScore": 91.85714285714286,
+          "seasonScore": 70.25,
+          "timeScore": 65.6,
+          "weatherScore": 71.25
+        },
+        {
+          "rank": 16,
+          "artist": "Gregory Alan Isakov",
+          "title": "Big Black Car",
+          "youtubeVideoId": "JgumMOMHpns",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "totalScore": 79.45428571428572,
+          "atmosphereScore": 83.8,
+          "desiredSoundScore": 87.71428571428571,
+          "seasonScore": 67.75,
+          "timeScore": 70,
+          "weatherScore": 72.25
+        }
+      ],
+      "summary": {
+        "topScore": 82.63642857142857,
+        "rank16Score": 79.45428571428572,
+        "scoreSpread": 3.18214285714285,
+        "meanTop16Score": 80.88558035714286,
+        "medianTop16Score": 80.78767857142857,
+        "stdDevTop16Score": 0.8957755863318891,
+        "meanRank1to10": 81.41142857142856,
+        "meanRank11to16": 80.00916666666667,
+        "rankTierGap": 1.402261904761886,
+        "uniqueArtists": 10,
+        "uniquePrimaryGenres": 2,
+        "uniqueSubgenres": 4,
+        "maximumTracksByOneArtist": 2,
+        "maximumTracksByOneArtistTop10": 2,
+        "maximumTracksByOnePrimaryGenre": 15,
+        "maximumTracksByOneSubgenre": 10,
+        "primaryGenreDistribution": [
+          [
+            "folk-acoustic",
+            15
+          ],
+          [
+            "pop",
+            1
+          ]
+        ],
+        "subgenreDistribution": [
+          [
+            "singer-songwriter",
+            10
+          ],
+          [
+            "indie-folk",
+            4
+          ],
+          [
+            "folk-pop",
+            1
+          ],
+          [
+            "soft-pop",
+            1
+          ]
+        ],
+        "artistRepetitions": [
+          {
+            "artist": "alexi murdoch",
+            "count": 2
+          },
+          {
+            "artist": "gregory alan isakov",
+            "count": 2
+          },
+          {
+            "artist": "iron & wine",
+            "count": 2
+          },
+          {
+            "artist": "jack johnson",
+            "count": 2
+          },
+          {
+            "artist": "josé gonzález",
+            "count": 2
+          },
+          {
+            "artist": "the head and the heart",
+            "count": 2
+          }
+        ],
+        "artistRepetitionDetail": [
+          {
+            "artist": "alexi murdoch",
+            "count": 2,
+            "ranks": [
+              11,
+              14
+            ],
+            "adjacent": false,
+            "scoreGap": 0.2324999999999875
+          },
+          {
+            "artist": "gregory alan isakov",
+            "count": 2,
+            "ranks": [
+              7,
+              16
+            ],
+            "adjacent": false,
+            "scoreGap": 1.414999999999992
+          },
+          {
+            "artist": "iron & wine",
+            "count": 2,
+            "ranks": [
+              3,
+              6
+            ],
+            "adjacent": false,
+            "scoreGap": 1.0067857142857122
+          },
+          {
+            "artist": "jack johnson",
+            "count": 2,
+            "ranks": [
+              2,
+              12
+            ],
+            "adjacent": false,
+            "scoreGap": 2.230714285714299
+          },
+          {
+            "artist": "josé gonzález",
+            "count": 2,
+            "ranks": [
+              1,
+              8
+            ],
+            "adjacent": false,
+            "scoreGap": 1.8160714285714334
+          },
+          {
+            "artist": "the head and the heart",
+            "count": 2,
+            "ranks": [
+              4,
+              5
+            ],
+            "adjacent": true,
+            "scoreGap": 0.07142857142855519
+          }
+        ]
+      },
+      "componentInfluence": {
+        "meanAtmosphereScore": 85.95,
+        "meanDesiredSoundScore": 89.54464285714285,
+        "meanSeasonScore": 65.265625,
+        "meanTimeScore": 70.825,
+        "meanWeatherScore": 75.765625,
+        "atmosphereContribution": 25.785,
+        "desiredSoundContribution": 26.863392857142852,
+        "seasonContribution": 9.78984375,
+        "timeContribution": 7.0825000000000005,
+        "weatherContribution": 11.36484375
+      },
+      "vectorRedundancy": {
+        "meanPairwiseTrackVectorSimilarity": 90.44916071428572
+      }
+    },
+    {
+      "key": "cold-open-winter-space",
+      "label": "PROFILE 6 — COLD OPEN WINTER SPACE",
+      "concept": "Wide, cold, empty, restrained winter landscape or architecture.",
+      "top16": [
+        {
+          "rank": 1,
+          "artist": "Mazzy Star",
+          "title": "Into Dust",
+          "youtubeVideoId": "04J0ihSeIuI",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 80.75964285714285,
+          "atmosphereScore": 83.4,
+          "desiredSoundScore": 89.85714285714286,
+          "seasonScore": 69.75,
+          "timeScore": 60.2,
+          "weatherScore": 82
+        },
+        {
+          "rank": 2,
+          "artist": "Øneheart & reidenshi",
+          "title": "snowfall",
+          "youtubeVideoId": "OtLcqr3RQJY",
+          "primaryGenre": "ambient-experimental",
+          "subgenre": "ambient-electronic",
+          "totalScore": 80.73714285714286,
+          "atmosphereScore": 81.2,
+          "desiredSoundScore": 91.85714285714286,
+          "seasonScore": 74.75,
+          "timeScore": 60.2,
+          "weatherScore": 77.25
+        },
+        {
+          "rank": 3,
+          "artist": "Tycho",
+          "title": "Awake",
+          "youtubeVideoId": "dm4tkSNKfFI",
+          "primaryGenre": "ambient-experimental",
+          "subgenre": "ambient-electronic",
+          "totalScore": 78.8667857142857,
+          "atmosphereScore": 81.1,
+          "desiredSoundScore": 89.71428571428571,
+          "seasonScore": 68.5,
+          "timeScore": 60.6,
+          "weatherScore": 75.25
+        },
+        {
+          "rank": 4,
+          "artist": "Tycho",
+          "title": "A Walk",
+          "youtubeVideoId": "SDNA934EEVk",
+          "primaryGenre": "ambient-experimental",
+          "subgenre": "ambient-electronic",
+          "totalScore": 78.335,
+          "atmosphereScore": 80.3,
+          "desiredSoundScore": 92,
+          "seasonScore": 65.75,
+          "timeScore": 57.2,
+          "weatherScore": 73.75
+        },
+        {
+          "rank": 5,
+          "artist": "Men I Trust",
+          "title": "Show Me How",
+          "youtubeVideoId": "OZRYzH0Q0pU",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 77.60464285714286,
+          "atmosphereScore": 75.5,
+          "desiredSoundScore": 88.85714285714286,
+          "seasonScore": 72.75,
+          "timeScore": 60.6,
+          "weatherScore": 75.5
+        },
+        {
+          "rank": 6,
+          "artist": "Billie Eilish",
+          "title": "ocean eyes",
+          "youtubeVideoId": "viimfQi_pUw",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 77.5125,
+          "atmosphereScore": 76.8,
+          "desiredSoundScore": 89,
+          "seasonScore": 71.75,
+          "timeScore": 60.6,
+          "weatherScore": 73
+        },
+        {
+          "rank": 7,
+          "artist": "The Marías",
+          "title": "Cariño",
+          "youtubeVideoId": "QHVp9xiUr9U",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.81035714285714,
+          "atmosphereScore": 75.4,
+          "desiredSoundScore": 92.14285714285714,
+          "seasonScore": 67.25,
+          "timeScore": 59.6,
+          "weatherScore": 70
+        },
+        {
+          "rank": 8,
+          "artist": "Slowdive",
+          "title": "When the Sun Hits",
+          "youtubeVideoId": "MKYY0IlTMw4",
+          "primaryGenre": "rock",
+          "subgenre": "shoegaze",
+          "totalScore": 76.70107142857142,
+          "atmosphereScore": 80,
+          "desiredSoundScore": 87.42857142857143,
+          "seasonScore": 61.5,
+          "timeScore": 62.6,
+          "weatherScore": 73.25
+        },
+        {
+          "rank": 9,
+          "artist": "Cigarettes After Sex",
+          "title": "Apocalypse",
+          "youtubeVideoId": "sElE_BfQ67s",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.53071428571428,
+          "atmosphereScore": 72.3,
+          "desiredSoundScore": 97.28571428571429,
+          "seasonScore": 66.5,
+          "timeScore": 57.8,
+          "weatherScore": 66
+        },
+        {
+          "rank": 10,
+          "artist": "The xx",
+          "title": "Intro",
+          "youtubeVideoId": "xMV6l2y67rk",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.27785714285714,
+          "atmosphereScore": 79,
+          "desiredSoundScore": 86.14285714285714,
+          "seasonScore": 66.75,
+          "timeScore": 53.6,
+          "weatherScore": 75.75
+        },
+        {
+          "rank": 11,
+          "artist": "Slowdive",
+          "title": "Sugar for the Pill",
+          "youtubeVideoId": "BxwAPBxc0lU",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.22785714285715,
+          "atmosphereScore": 78,
+          "desiredSoundScore": 86.14285714285714,
+          "seasonScore": 65.5,
+          "timeScore": 57.6,
+          "weatherScore": 76
+        },
+        {
+          "rank": 12,
+          "artist": "The Cranberries",
+          "title": "Linger",
+          "youtubeVideoId": "G6Kspj3OO0s",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.18035714285713,
+          "atmosphereScore": 72.8,
+          "desiredSoundScore": 93.14285714285714,
+          "seasonScore": 68.5,
+          "timeScore": 59.6,
+          "weatherScore": 67.75
+        },
+        {
+          "rank": 13,
+          "artist": "The Cure",
+          "title": "Pictures of You",
+          "youtubeVideoId": "D88J_57QgxY",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.15749999999998,
+          "atmosphereScore": 77.5,
+          "desiredSoundScore": 87,
+          "seasonScore": 64.5,
+          "timeScore": 62.2,
+          "weatherScore": 72.75
+        },
+        {
+          "rank": 14,
+          "artist": "Beach House",
+          "title": "Space Song",
+          "youtubeVideoId": "GAFwrXOsL68",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.07857142857142,
+          "atmosphereScore": 75.1,
+          "desiredSoundScore": 90.42857142857143,
+          "seasonScore": 69.25,
+          "timeScore": 57.2,
+          "weatherScore": 68.75
+        },
+        {
+          "rank": 15,
+          "artist": "The Japanese House",
+          "title": "Saw You in a Dream",
+          "youtubeVideoId": "NwnZyZ82UEs",
+          "primaryGenre": "rock",
+          "subgenre": "dream-pop",
+          "totalScore": 76.01678571428572,
+          "atmosphereScore": 73.1,
+          "desiredSoundScore": 91.71428571428571,
+          "seasonScore": 68.25,
+          "timeScore": 60.6,
+          "weatherScore": 68.5
+        },
+        {
+          "rank": 16,
+          "artist": "Slowdive",
+          "title": "Alison",
+          "youtubeVideoId": "Ak43tAU5QuA",
+          "primaryGenre": "rock",
+          "subgenre": "shoegaze",
+          "totalScore": 75.95214285714286,
+          "atmosphereScore": 77.1,
+          "desiredSoundScore": 89.85714285714286,
+          "seasonScore": 67.75,
+          "timeScore": 49.4,
+          "weatherScore": 71.75
+        }
+      ],
+      "summary": {
+        "topScore": 80.75964285714285,
+        "rank16Score": 75.95214285714286,
+        "scoreSpread": 4.80749999999999,
+        "meanTop16Score": 77.2968080357143,
+        "medianTop16Score": 76.61589285714285,
+        "stdDevTop16Score": 1.5480957457335713,
+        "meanRank1to10": 78.01357142857144,
+        "meanRank11to16": 76.10220238095238,
+        "rankTierGap": 1.9113690476190612,
+        "uniqueArtists": 13,
+        "uniquePrimaryGenres": 2,
+        "uniqueSubgenres": 3,
+        "maximumTracksByOneArtist": 3,
+        "maximumTracksByOneArtistTop10": 2,
+        "maximumTracksByOnePrimaryGenre": 13,
+        "maximumTracksByOneSubgenre": 11,
+        "primaryGenreDistribution": [
+          [
+            "rock",
+            13
+          ],
+          [
+            "ambient-experimental",
+            3
+          ]
+        ],
+        "subgenreDistribution": [
+          [
+            "dream-pop",
+            11
+          ],
+          [
+            "ambient-electronic",
+            3
+          ],
+          [
+            "shoegaze",
+            2
+          ]
+        ],
+        "artistRepetitions": [
+          {
+            "artist": "slowdive",
+            "count": 3
+          },
+          {
+            "artist": "tycho",
+            "count": 2
+          }
+        ],
+        "artistRepetitionDetail": [
+          {
+            "artist": "slowdive",
+            "count": 3,
+            "ranks": [
+              8,
+              11,
+              16
+            ],
+            "adjacent": false,
+            "scoreGap": 0.7489285714285643
+          },
+          {
+            "artist": "tycho",
+            "count": 2,
+            "ranks": [
+              3,
+              4
+            ],
+            "adjacent": true,
+            "scoreGap": 0.5317857142857036
+          }
+        ]
+      },
+      "componentInfluence": {
+        "meanAtmosphereScore": 77.41249999999998,
+        "meanDesiredSoundScore": 90.16071428571429,
+        "meanSeasonScore": 68.0625,
+        "meanTimeScore": 58.725000000000016,
+        "meanWeatherScore": 72.953125,
+        "atmosphereContribution": 23.223749999999992,
+        "desiredSoundContribution": 27.048214285714288,
+        "seasonContribution": 10.209375,
+        "timeContribution": 5.872500000000002,
+        "weatherContribution": 10.94296875
+      },
+      "vectorRedundancy": {
+        "meanPairwiseTrackVectorSimilarity": 89.76933630952381
+      }
+    },
+    {
+      "key": "crowded-festival",
+      "label": "PROFILE 7 — CROWDED FESTIVAL",
+      "concept": "Bright, colorful, moving, communal, celebratory outdoor gathering.",
+      "top16": [
+        {
+          "rank": 1,
+          "artist": "Parcels",
+          "title": "tieduprightnow",
+          "youtubeVideoId": "_2qsU8FGU_E",
+          "primaryGenre": "funk-disco",
+          "subgenre": "disco-funk",
+          "totalScore": 78.09714285714286,
+          "atmosphereScore": 83.3,
+          "desiredSoundScore": 88.85714285714286,
+          "seasonScore": 66.75,
+          "timeScore": 56,
+          "weatherScore": 72.25
+        },
+        {
+          "rank": 2,
+          "artist": "외동아들 김승기",
+          "title": "SNL",
+          "youtubeVideoId": "LSrHTs2gd9Y",
+          "primaryGenre": "pop",
+          "subgenre": "dance-pop",
+          "totalScore": 77.66785714285714,
+          "atmosphereScore": 85.2,
+          "desiredSoundScore": 79.14285714285714,
+          "seasonScore": 67.75,
+          "timeScore": 71.4,
+          "weatherScore": 73.75
+        },
+        {
+          "rank": 3,
+          "artist": "Young Franco",
+          "title": "Lose Control",
+          "youtubeVideoId": "GBYOAk0x7Mg",
+          "primaryGenre": "funk-disco",
+          "subgenre": "nu-disco",
+          "totalScore": 77.63071428571429,
+          "atmosphereScore": 83.5,
+          "desiredSoundScore": 87.28571428571429,
+          "seasonScore": 68.75,
+          "timeScore": 53.2,
+          "weatherScore": 71.75
+        },
+        {
+          "rank": 4,
+          "artist": "Paramore",
+          "title": "Ain't It Fun",
+          "youtubeVideoId": "EFEmTsfFL5A",
+          "primaryGenre": "rock",
+          "subgenre": "alternative-rock",
+          "totalScore": 77.6125,
+          "atmosphereScore": 85,
+          "desiredSoundScore": 83,
+          "seasonScore": 62.75,
+          "timeScore": 70,
+          "weatherScore": 72
+        },
+        {
+          "rank": 5,
+          "artist": "BIBI",
+          "title": "Bam Yang Gang",
+          "youtubeVideoId": "smdmEhkIRVc",
+          "primaryGenre": "rnb-soul",
+          "subgenre": "k-rnb",
+          "totalScore": 77.48857142857142,
+          "atmosphereScore": 81.6,
+          "desiredSoundScore": 80.42857142857143,
+          "seasonScore": 70,
+          "timeScore": 63.8,
+          "weatherScore": 80
+        },
+        {
+          "rank": 6,
+          "artist": "Gavin Turek",
+          "title": "Don't Fight It",
+          "youtubeVideoId": "VT6Oe3B71gk",
+          "primaryGenre": "funk-disco",
+          "subgenre": "disco-funk",
+          "totalScore": 77.41035714285714,
+          "atmosphereScore": 81.1,
+          "desiredSoundScore": 87.14285714285714,
+          "seasonScore": 66.5,
+          "timeScore": 59,
+          "weatherScore": 73.75
+        },
+        {
+          "rank": 7,
+          "artist": "DNCE",
+          "title": "Cake By The Ocean",
+          "youtubeVideoId": "UfM-nM762ec",
+          "primaryGenre": "pop",
+          "subgenre": "dance-pop",
+          "totalScore": 77.23428571428572,
+          "atmosphereScore": 83.9,
+          "desiredSoundScore": 77.71428571428572,
+          "seasonScore": 66.5,
+          "timeScore": 67,
+          "weatherScore": 80.5
+        },
+        {
+          "rank": 8,
+          "artist": "Lake Street Dive",
+          "title": "Hypotheticals",
+          "youtubeVideoId": "pWFaKidyD70",
+          "primaryGenre": "rock",
+          "subgenre": "indie-rock",
+          "totalScore": 77.07035714285715,
+          "atmosphereScore": 85.4,
+          "desiredSoundScore": 82.14285714285714,
+          "seasonScore": 61,
+          "timeScore": 68.2,
+          "weatherScore": 72.25
+        },
+        {
+          "rank": 9,
+          "artist": "Kroi feat. Incognito",
+          "title": "Kinetic",
+          "youtubeVideoId": "iK725ck2NIk",
+          "primaryGenre": "funk-disco",
+          "subgenre": "disco-funk",
+          "totalScore": 76.68285714285715,
+          "atmosphereScore": 79,
+          "desiredSoundScore": 81.14285714285714,
+          "seasonScore": 71,
+          "timeScore": 64.4,
+          "weatherScore": 77
+        },
+        {
+          "rank": 10,
+          "artist": "Cory Wong & Stephen Day",
+          "title": "Tongue Tied",
+          "youtubeVideoId": "rRZ1DFtsy5s",
+          "primaryGenre": "funk-disco",
+          "subgenre": "classic-funk",
+          "totalScore": 76.58571428571427,
+          "atmosphereScore": 81.5,
+          "desiredSoundScore": 80.28571428571428,
+          "seasonScore": 64.75,
+          "timeScore": 69,
+          "weatherScore": 76.25
+        },
+        {
+          "rank": 11,
+          "artist": "Calvin Harris feat. Pharrell Williams, Katy Perry & Big Sean",
+          "title": "Feels",
+          "youtubeVideoId": "ozv4q2ov3Mk",
+          "primaryGenre": "pop",
+          "subgenre": "dance-pop",
+          "totalScore": 76.55357142857143,
+          "atmosphereScore": 78.7,
+          "desiredSoundScore": 80.42857142857143,
+          "seasonScore": 63.75,
+          "timeScore": 74.4,
+          "weatherScore": 78.75
+        },
+        {
+          "rank": 12,
+          "artist": "AKMU",
+          "title": "200%",
+          "youtubeVideoId": "0Oi8jDMvd_w",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "folk-pop",
+          "totalScore": 76.51571428571428,
+          "atmosphereScore": 80.8,
+          "desiredSoundScore": 82.28571428571428,
+          "seasonScore": 60.5,
+          "timeScore": 73.4,
+          "weatherScore": 74.5
+        },
+        {
+          "rank": 13,
+          "artist": "Troye Sivan",
+          "title": "Rush",
+          "youtubeVideoId": "Vih7BTyVcj4",
+          "primaryGenre": "pop",
+          "subgenre": "electropop",
+          "totalScore": 76.51357142857142,
+          "atmosphereScore": 75.9,
+          "desiredSoundScore": 86.42857142857143,
+          "seasonScore": 65.25,
+          "timeScore": 70.4,
+          "weatherScore": 73.25
+        },
+        {
+          "rank": 14,
+          "artist": "Quincy Jones",
+          "title": "I Heard That!",
+          "youtubeVideoId": "pAUij5zMga8",
+          "primaryGenre": "funk-disco",
+          "subgenre": "classic-funk",
+          "totalScore": 76.495,
+          "atmosphereScore": 81.9,
+          "desiredSoundScore": 81,
+          "seasonScore": 65.25,
+          "timeScore": 67,
+          "weatherScore": 74.25
+        },
+        {
+          "rank": 15,
+          "artist": "AKMU",
+          "title": "Give Love",
+          "youtubeVideoId": "x2XX3cNW4K0",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "folk-pop",
+          "totalScore": 76.46464285714286,
+          "atmosphereScore": 78.8,
+          "desiredSoundScore": 79.85714285714286,
+          "seasonScore": 66,
+          "timeScore": 73.8,
+          "weatherScore": 77.25
+        },
+        {
+          "rank": 16,
+          "artist": "LE SSERAFIM",
+          "title": "Smart",
+          "youtubeVideoId": "vPn_c61mW9s",
+          "primaryGenre": "pop",
+          "subgenre": "k-pop",
+          "totalScore": 76.37392857142858,
+          "atmosphereScore": 82.4,
+          "desiredSoundScore": 76.57142857142857,
+          "seasonScore": 67.25,
+          "timeScore": 65.2,
+          "weatherScore": 80.5
+        }
+      ],
+      "summary": {
+        "topScore": 78.09714285714286,
+        "rank16Score": 76.37392857142858,
+        "scoreSpread": 1.7232142857142776,
+        "meanTop16Score": 77.02479910714287,
+        "medianTop16Score": 76.87660714285715,
+        "stdDevTop16Score": 0.5452098917227797,
+        "meanRank1to10": 77.34803571428571,
+        "meanRank11to16": 76.48607142857144,
+        "rankTierGap": 0.8619642857142793,
+        "uniqueArtists": 15,
+        "uniquePrimaryGenres": 5,
+        "uniqueSubgenres": 10,
+        "maximumTracksByOneArtist": 2,
+        "maximumTracksByOneArtistTop10": 1,
+        "maximumTracksByOnePrimaryGenre": 6,
+        "maximumTracksByOneSubgenre": 3,
+        "primaryGenreDistribution": [
+          [
+            "funk-disco",
+            6
+          ],
+          [
+            "pop",
+            5
+          ],
+          [
+            "rock",
+            2
+          ],
+          [
+            "folk-acoustic",
+            2
+          ],
+          [
+            "rnb-soul",
+            1
+          ]
+        ],
+        "subgenreDistribution": [
+          [
+            "disco-funk",
+            3
+          ],
+          [
+            "dance-pop",
+            3
+          ],
+          [
+            "classic-funk",
+            2
+          ],
+          [
+            "folk-pop",
+            2
+          ],
+          [
+            "nu-disco",
+            1
+          ],
+          [
+            "alternative-rock",
+            1
+          ],
+          [
+            "k-rnb",
+            1
+          ],
+          [
+            "indie-rock",
+            1
+          ],
+          [
+            "electropop",
+            1
+          ],
+          [
+            "k-pop",
+            1
+          ]
+        ],
+        "artistRepetitions": [
+          {
+            "artist": "akmu",
+            "count": 2
+          }
+        ],
+        "artistRepetitionDetail": [
+          {
+            "artist": "akmu",
+            "count": 2,
+            "ranks": [
+              12,
+              15
+            ],
+            "adjacent": false,
+            "scoreGap": 0.051071428571418664
+          }
+        ]
+      },
+      "componentInfluence": {
+        "meanAtmosphereScore": 81.75000000000001,
+        "meanDesiredSoundScore": 82.10714285714286,
+        "meanSeasonScore": 65.859375,
+        "meanTimeScore": 66.63749999999999,
+        "meanWeatherScore": 75.5,
+        "atmosphereContribution": 24.525000000000002,
+        "desiredSoundContribution": 24.632142857142856,
+        "seasonContribution": 9.87890625,
+        "timeContribution": 6.663749999999999,
+        "weatherContribution": 11.325
+      },
+      "vectorRedundancy": {
+        "meanPairwiseTrackVectorSimilarity": 87.98474107142849
+      }
+    },
+    {
+      "key": "dark-tense-cinematic-scene",
+      "label": "PROFILE 8 — DARK TENSE CINEMATIC SCENE",
+      "concept": "Dark, dense, uneasy, dramatic, suspenseful scene.",
+      "top16": [
+        {
+          "rank": 1,
+          "artist": "Metro Boomin, Travis Scott & 21 Savage",
+          "title": "Niagara Falls",
+          "youtubeVideoId": "Z8vDU6vUTj4",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 80.06607142857143,
+          "atmosphereScore": 80.4,
+          "desiredSoundScore": 82.42857142857143,
+          "seasonScore": 76.75,
+          "timeScore": 77.8,
+          "weatherScore": 79.5
+        },
+        {
+          "rank": 2,
+          "artist": "21 Savage",
+          "title": "redrum",
+          "youtubeVideoId": "ukbiRcyzrpc",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 79.45428571428572,
+          "atmosphereScore": 85.6,
+          "desiredSoundScore": 75.71428571428572,
+          "seasonScore": 84.75,
+          "timeScore": 73.6,
+          "weatherScore": 73.25
+        },
+        {
+          "rank": 3,
+          "artist": "Pop Smoke",
+          "title": "Welcome To The Party",
+          "youtubeVideoId": "usu0XY4QNB0",
+          "primaryGenre": "hip-hop",
+          "subgenre": "drill",
+          "totalScore": 79.20642857142857,
+          "atmosphereScore": 83.4,
+          "desiredSoundScore": 79.57142857142857,
+          "seasonScore": 78.5,
+          "timeScore": 68.4,
+          "weatherScore": 78
+        },
+        {
+          "rank": 4,
+          "artist": "Travis Scott feat. Kendrick Lamar",
+          "title": "goosebumps",
+          "youtubeVideoId": "Dst9gZkq1a8",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 78.44857142857143,
+          "atmosphereScore": 79.6,
+          "desiredSoundScore": 76.42857142857143,
+          "seasonScore": 82.25,
+          "timeScore": 79.4,
+          "weatherScore": 75.75
+        },
+        {
+          "rank": 5,
+          "artist": "Future feat. The Weeknd",
+          "title": "Low Life",
+          "youtubeVideoId": "K_9tX4eHztY",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 78.38535714285715,
+          "atmosphereScore": 80.5,
+          "desiredSoundScore": 77.14285714285714,
+          "seasonScore": 81.25,
+          "timeScore": 78.8,
+          "weatherScore": 73.5
+        },
+        {
+          "rank": 6,
+          "artist": "Pop Smoke",
+          "title": "Dior",
+          "youtubeVideoId": "goYgHnsQdtY",
+          "primaryGenre": "hip-hop",
+          "subgenre": "drill",
+          "totalScore": 78.30142857142857,
+          "atmosphereScore": 77.9,
+          "desiredSoundScore": 78.57142857142857,
+          "seasonScore": 78.75,
+          "timeScore": 79.6,
+          "weatherScore": 77.25
+        },
+        {
+          "rank": 7,
+          "artist": "Metro Boomin, Future & Chris Brown",
+          "title": "Superhero",
+          "youtubeVideoId": "QkaWdvv-jKg",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 78.04071428571427,
+          "atmosphereScore": 76.8,
+          "desiredSoundScore": 81.28571428571428,
+          "seasonScore": 78,
+          "timeScore": 77.4,
+          "weatherScore": 74.5
+        },
+        {
+          "rank": 8,
+          "artist": "Kanye West",
+          "title": "Praise God",
+          "youtubeVideoId": "9sJZOGxRxwM",
+          "primaryGenre": "hip-hop",
+          "subgenre": "mainstream-rap",
+          "totalScore": 78.0025,
+          "atmosphereScore": 78.4,
+          "desiredSoundScore": 79,
+          "seasonScore": 78,
+          "timeScore": 77.2,
+          "weatherScore": 75.75
+        },
+        {
+          "rank": 9,
+          "artist": "Tyler, The Creator feat. A$AP Rocky",
+          "title": "Who Dat Boy",
+          "youtubeVideoId": "FUXX55WqYZs",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 77.8717857142857,
+          "atmosphereScore": 80.4,
+          "desiredSoundScore": 76.71428571428572,
+          "seasonScore": 81.75,
+          "timeScore": 73,
+          "weatherScore": 74.5
+        },
+        {
+          "rank": 10,
+          "artist": "Kanye West feat. Pusha T",
+          "title": "Runaway",
+          "youtubeVideoId": "cv1naUa3_3g",
+          "primaryGenre": "hip-hop",
+          "subgenre": "alternative-hip-hop",
+          "totalScore": 77.84857142857143,
+          "atmosphereScore": 79.8,
+          "desiredSoundScore": 83.42857142857143,
+          "seasonScore": 75.5,
+          "timeScore": 72.8,
+          "weatherScore": 68.5
+        },
+        {
+          "rank": 11,
+          "artist": "Denzel Curry",
+          "title": "ULT",
+          "youtubeVideoId": "q8VO4Rm3ulw",
+          "primaryGenre": "hip-hop",
+          "subgenre": "alternative-hip-hop",
+          "totalScore": 77.76249999999999,
+          "atmosphereScore": 80.9,
+          "desiredSoundScore": 82,
+          "seasonScore": 76,
+          "timeScore": 71.8,
+          "weatherScore": 68.75
+        },
+        {
+          "rank": 12,
+          "artist": "Skepta",
+          "title": "Shutdown",
+          "youtubeVideoId": "MQOG5BkY2Bc",
+          "primaryGenre": "hip-hop",
+          "subgenre": "alternative-hip-hop",
+          "totalScore": 77.66714285714286,
+          "atmosphereScore": 79.7,
+          "desiredSoundScore": 79.85714285714286,
+          "seasonScore": 83.25,
+          "timeScore": 73,
+          "weatherScore": 66.75
+        },
+        {
+          "rank": 13,
+          "artist": "Kavinsky",
+          "title": "Nightcall",
+          "youtubeVideoId": "46qo_V1zcOM",
+          "primaryGenre": "electronic",
+          "subgenre": "synthwave",
+          "totalScore": 77.56428571428572,
+          "atmosphereScore": 75.7,
+          "desiredSoundScore": 89.71428571428571,
+          "seasonScore": 72.25,
+          "timeScore": 78.4,
+          "weatherScore": 61.75
+        },
+        {
+          "rank": 14,
+          "artist": "Nas",
+          "title": "N.Y. State of Mind",
+          "youtubeVideoId": "hI8A14Qcv68",
+          "primaryGenre": "hip-hop",
+          "subgenre": "east-coast-hip-hop",
+          "totalScore": 77.50571428571428,
+          "atmosphereScore": 81.4,
+          "desiredSoundScore": 74.28571428571428,
+          "seasonScore": 78.5,
+          "timeScore": 77,
+          "weatherScore": 75.5
+        },
+        {
+          "rank": 15,
+          "artist": "Travis Scott feat. Playboi Carti",
+          "title": "FE!N",
+          "youtubeVideoId": "U-l4ya3ejko",
+          "primaryGenre": "hip-hop",
+          "subgenre": "trap",
+          "totalScore": 77.46714285714286,
+          "atmosphereScore": 83.1,
+          "desiredSoundScore": 75.85714285714286,
+          "seasonScore": 77.25,
+          "timeScore": 69.8,
+          "weatherScore": 74.75
+        },
+        {
+          "rank": 16,
+          "artist": "CAMO feat. JMIN",
+          "title": "Life is Wet",
+          "youtubeVideoId": "vadat46yfwg",
+          "primaryGenre": "hip-hop",
+          "subgenre": "k-hiphop",
+          "totalScore": 77.46249999999999,
+          "atmosphereScore": 77,
+          "desiredSoundScore": 80,
+          "seasonScore": 77.25,
+          "timeScore": 73,
+          "weatherScore": 76.5
+        }
+      ],
+      "summary": {
+        "topScore": 80.06607142857143,
+        "rank16Score": 77.46249999999999,
+        "scoreSpread": 2.603571428571442,
+        "meanTop16Score": 78.19093749999999,
+        "medianTop16Score": 77.93714285714285,
+        "stdDevTop16Score": 0.7463063796409175,
+        "meanRank1to10": 78.56257142857143,
+        "meanRank11to16": 77.5715476190476,
+        "rankTierGap": 0.9910238095238242,
+        "uniqueArtists": 15,
+        "uniquePrimaryGenres": 2,
+        "uniqueSubgenres": 7,
+        "maximumTracksByOneArtist": 2,
+        "maximumTracksByOneArtistTop10": 2,
+        "maximumTracksByOnePrimaryGenre": 15,
+        "maximumTracksByOneSubgenre": 7,
+        "primaryGenreDistribution": [
+          [
+            "hip-hop",
+            15
+          ],
+          [
+            "electronic",
+            1
+          ]
+        ],
+        "subgenreDistribution": [
+          [
+            "trap",
+            7
+          ],
+          [
+            "alternative-hip-hop",
+            3
+          ],
+          [
+            "drill",
+            2
+          ],
+          [
+            "mainstream-rap",
+            1
+          ],
+          [
+            "synthwave",
+            1
+          ],
+          [
+            "east-coast-hip-hop",
+            1
+          ],
+          [
+            "k-hiphop",
+            1
+          ]
+        ],
+        "artistRepetitions": [
+          {
+            "artist": "pop smoke",
+            "count": 2
+          }
+        ],
+        "artistRepetitionDetail": [
+          {
+            "artist": "pop smoke",
+            "count": 2,
+            "ranks": [
+              3,
+              6
+            ],
+            "adjacent": false,
+            "scoreGap": 0.9050000000000011
+          }
+        ]
+      },
+      "componentInfluence": {
+        "meanAtmosphereScore": 80.0375,
+        "meanDesiredSoundScore": 79.5,
+        "meanSeasonScore": 78.75,
+        "meanTimeScore": 75.06249999999999,
+        "meanWeatherScore": 73.40625,
+        "atmosphereContribution": 24.011249999999997,
+        "desiredSoundContribution": 23.849999999999998,
+        "seasonContribution": 11.8125,
+        "timeContribution": 7.506249999999999,
+        "weatherContribution": 11.010937499999999
+      },
+      "vectorRedundancy": {
+        "meanPairwiseTrackVectorSimilarity": 88.2875833333333
+      }
+    }
+  ],
+  "pairwiseOverlap": {
+    "pairs": [
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "rainy-intimate-late-night",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "high-energy-urban-night",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "dreamy-hazy-dusk",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "calm-acoustic-morning",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "crowded-festival",
+        "top16OverlapCount": 2,
+        "top16Jaccard": 0.06666666666666667,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "high-energy-urban-night",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "dreamy-hazy-dusk",
+        "top16OverlapCount": 2,
+        "top16Jaccard": 0.06666666666666667,
+        "top10OverlapCount": 1,
+        "top10Jaccard": 0.05263157894736842,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "calm-acoustic-morning",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 5,
+        "top16Jaccard": 0.18518518518518517,
+        "top10OverlapCount": 2,
+        "top10Jaccard": 0.1111111111111111,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "crowded-festival",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "high-energy-urban-night",
+        "sceneB": "dreamy-hazy-dusk",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "high-energy-urban-night",
+        "sceneB": "calm-acoustic-morning",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "high-energy-urban-night",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "high-energy-urban-night",
+        "sceneB": "crowded-festival",
+        "top16OverlapCount": 1,
+        "top16Jaccard": 0.03225806451612903,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "high-energy-urban-night",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 1,
+        "top16Jaccard": 0.03225806451612903,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "dreamy-hazy-dusk",
+        "sceneB": "calm-acoustic-morning",
+        "top16OverlapCount": 1,
+        "top16Jaccard": 0.03225806451612903,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "dreamy-hazy-dusk",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 4,
+        "top16Jaccard": 0.14285714285714285,
+        "top10OverlapCount": 1,
+        "top10Jaccard": 0.05263157894736842,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "dreamy-hazy-dusk",
+        "sceneB": "crowded-festival",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "dreamy-hazy-dusk",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "calm-acoustic-morning",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "calm-acoustic-morning",
+        "sceneB": "crowded-festival",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "calm-acoustic-morning",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "cold-open-winter-space",
+        "sceneB": "crowded-festival",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "cold-open-winter-space",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "crowded-festival",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      }
+    ],
+    "top16OverlapMatrix": {
+      "bright-warm-summer-day": {
+        "bright-warm-summer-day": 16,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 2,
+        "dark-tense-cinematic-scene": 0
+      },
+      "rainy-intimate-late-night": {
+        "rainy-intimate-late-night": 16,
+        "bright-warm-summer-day": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 2,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 5,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "high-energy-urban-night": {
+        "high-energy-urban-night": 16,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 1,
+        "dark-tense-cinematic-scene": 1
+      },
+      "dreamy-hazy-dusk": {
+        "dreamy-hazy-dusk": 16,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 2,
+        "high-energy-urban-night": 0,
+        "calm-acoustic-morning": 1,
+        "cold-open-winter-space": 4,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "calm-acoustic-morning": {
+        "calm-acoustic-morning": 16,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 1,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "cold-open-winter-space": {
+        "cold-open-winter-space": 16,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 5,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 4,
+        "calm-acoustic-morning": 0,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "crowded-festival": {
+        "crowded-festival": 16,
+        "bright-warm-summer-day": 2,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 1,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "dark-tense-cinematic-scene": {
+        "dark-tense-cinematic-scene": 16,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 1,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0
+      }
+    },
+    "top16JaccardMatrix": {
+      "bright-warm-summer-day": {
+        "bright-warm-summer-day": 1,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0.06666666666666667,
+        "dark-tense-cinematic-scene": 0
+      },
+      "rainy-intimate-late-night": {
+        "rainy-intimate-late-night": 1,
+        "bright-warm-summer-day": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0.06666666666666667,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0.18518518518518517,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "high-energy-urban-night": {
+        "high-energy-urban-night": 1,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0.03225806451612903,
+        "dark-tense-cinematic-scene": 0.03225806451612903
+      },
+      "dreamy-hazy-dusk": {
+        "dreamy-hazy-dusk": 1,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0.06666666666666667,
+        "high-energy-urban-night": 0,
+        "calm-acoustic-morning": 0.03225806451612903,
+        "cold-open-winter-space": 0.14285714285714285,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "calm-acoustic-morning": {
+        "calm-acoustic-morning": 1,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0.03225806451612903,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "cold-open-winter-space": {
+        "cold-open-winter-space": 1,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0.18518518518518517,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0.14285714285714285,
+        "calm-acoustic-morning": 0,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "crowded-festival": {
+        "crowded-festival": 1,
+        "bright-warm-summer-day": 0.06666666666666667,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0.03225806451612903,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "dark-tense-cinematic-scene": {
+        "dark-tense-cinematic-scene": 1,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0.03225806451612903,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0
+      }
+    },
+    "top10OverlapMatrix": {
+      "bright-warm-summer-day": {
+        "bright-warm-summer-day": 10,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "rainy-intimate-late-night": {
+        "rainy-intimate-late-night": 10,
+        "bright-warm-summer-day": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 1,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 2,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "high-energy-urban-night": {
+        "high-energy-urban-night": 10,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "dreamy-hazy-dusk": {
+        "dreamy-hazy-dusk": 10,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 1,
+        "high-energy-urban-night": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 1,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "calm-acoustic-morning": {
+        "calm-acoustic-morning": 10,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "cold-open-winter-space": {
+        "cold-open-winter-space": 10,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 2,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 1,
+        "calm-acoustic-morning": 0,
+        "crowded-festival": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "crowded-festival": {
+        "crowded-festival": 10,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "dark-tense-cinematic-scene": 0
+      },
+      "dark-tense-cinematic-scene": {
+        "dark-tense-cinematic-scene": 10,
+        "bright-warm-summer-day": 0,
+        "rainy-intimate-late-night": 0,
+        "high-energy-urban-night": 0,
+        "dreamy-hazy-dusk": 0,
+        "calm-acoustic-morning": 0,
+        "cold-open-winter-space": 0,
+        "crowded-festival": 0
+      }
+    },
+    "highestOverlapPairs": [
+      {
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 5,
+        "top16Jaccard": 0.18518518518518517,
+        "top10OverlapCount": 2,
+        "top10Jaccard": 0.1111111111111111,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "dreamy-hazy-dusk",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 4,
+        "top16Jaccard": 0.14285714285714285,
+        "top10OverlapCount": 1,
+        "top10Jaccard": 0.05263157894736842,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "crowded-festival",
+        "top16OverlapCount": 2,
+        "top16Jaccard": 0.06666666666666667,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "dreamy-hazy-dusk",
+        "top16OverlapCount": 2,
+        "top16Jaccard": 0.06666666666666667,
+        "top10OverlapCount": 1,
+        "top10Jaccard": 0.05263157894736842,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "dreamy-hazy-dusk",
+        "sceneB": "calm-acoustic-morning",
+        "top16OverlapCount": 1,
+        "top16Jaccard": 0.03225806451612903,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      }
+    ],
+    "lowestOverlapPairs": [
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "calm-acoustic-morning",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "dreamy-hazy-dusk",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "high-energy-urban-night",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      }
+    ],
+    "namedOppositePairs": [
+      {
+        "name": "bright warm summer day vs dark tense cinematic scene",
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "dark-tense-cinematic-scene",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "name": "calm acoustic morning vs high-energy urban night",
+        "sceneA": "high-energy-urban-night",
+        "sceneB": "calm-acoustic-morning",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "name": "crowded festival vs rainy intimate late night",
+        "sceneA": "rainy-intimate-late-night",
+        "sceneB": "crowded-festival",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      },
+      {
+        "name": "cold open winter space vs bright warm summer day",
+        "sceneA": "bright-warm-summer-day",
+        "sceneB": "cold-open-winter-space",
+        "top16OverlapCount": 0,
+        "top16Jaccard": 0,
+        "top10OverlapCount": 0,
+        "top10Jaccard": 0,
+        "sameNumberOne": false
+      }
+    ]
+  },
+  "globalTrackRecurrence": {
+    "tracksInMoreThanOneScene": 16,
+    "tracksInAtLeastFourScenes": 0,
+    "tracksInAllEightScenes": 0,
+    "top20RecurringTracks": [
+      {
+        "artist": "Alexi Murdoch",
+        "title": "All My Days",
+        "youtubeVideoId": "5NFkFVe93NM",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "calm-acoustic-morning"
+        ],
+        "averageRank": 9,
+        "averageTotalScore": 80.76392857142855
+      },
+      {
+        "artist": "Victor Lundberg",
+        "title": "Come Back Again",
+        "youtubeVideoId": "dzoxC8dedXw",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "dreamy-hazy-dusk"
+        ],
+        "averageRank": 3.5,
+        "averageTotalScore": 80.53946428571429
+      },
+      {
+        "artist": "Denzel Curry",
+        "title": "ULT",
+        "youtubeVideoId": "q8VO4Rm3ulw",
+        "sceneCount": 2,
+        "scenes": [
+          "high-energy-urban-night",
+          "dark-tense-cinematic-scene"
+        ],
+        "averageRank": 9.5,
+        "averageTotalScore": 80.3317857142857
+      },
+      {
+        "artist": "Tycho",
+        "title": "A Walk",
+        "youtubeVideoId": "SDNA934EEVk",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 5,
+        "averageTotalScore": 79.8105357142857
+      },
+      {
+        "artist": "Mazzy Star",
+        "title": "Into Dust",
+        "youtubeVideoId": "04J0ihSeIuI",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 3.5,
+        "averageTotalScore": 79.49249999999999
+      },
+      {
+        "artist": "Kroi feat. Incognito",
+        "title": "Kinetic",
+        "youtubeVideoId": "iK725ck2NIk",
+        "sceneCount": 2,
+        "scenes": [
+          "high-energy-urban-night",
+          "crowded-festival"
+        ],
+        "averageRank": 12,
+        "averageTotalScore": 79.4219642857143
+      },
+      {
+        "artist": "The Japanese House",
+        "title": "Saw You in a Dream",
+        "youtubeVideoId": "NwnZyZ82UEs",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 9,
+        "averageTotalScore": 78.85374999999999
+      },
+      {
+        "artist": "Slowdive",
+        "title": "When the Sun Hits",
+        "youtubeVideoId": "MKYY0IlTMw4",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 10,
+        "averageTotalScore": 78.83660714285713
+      },
+      {
+        "artist": "The Cranberries",
+        "title": "Linger",
+        "youtubeVideoId": "G6Kspj3OO0s",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 10.5,
+        "averageTotalScore": 78.64767857142857
+      },
+      {
+        "artist": "M83",
+        "title": "Wait",
+        "youtubeVideoId": "iQnRCdtECl8",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "dreamy-hazy-dusk"
+        ],
+        "averageRank": 15,
+        "averageTotalScore": 78.6119642857143
+      },
+      {
+        "artist": "LE SSERAFIM",
+        "title": "Smart",
+        "youtubeVideoId": "vPn_c61mW9s",
+        "sceneCount": 2,
+        "scenes": [
+          "bright-warm-summer-day",
+          "crowded-festival"
+        ],
+        "averageRank": 13,
+        "averageTotalScore": 78.55714285714286
+      },
+      {
+        "artist": "Calvin Harris feat. Pharrell Williams, Katy Perry & Big Sean",
+        "title": "Feels",
+        "youtubeVideoId": "ozv4q2ov3Mk",
+        "sceneCount": 2,
+        "scenes": [
+          "bright-warm-summer-day",
+          "crowded-festival"
+        ],
+        "averageRank": 13.5,
+        "averageTotalScore": 78.5182142857143
+      },
+      {
+        "artist": "The Marías",
+        "title": "Cariño",
+        "youtubeVideoId": "QHVp9xiUr9U",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 5,
+        "averageTotalScore": 78.33785714285713
+      },
+      {
+        "artist": "Beach House",
+        "title": "Space Song",
+        "youtubeVideoId": "GAFwrXOsL68",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 9,
+        "averageTotalScore": 77.53214285714284
+      },
+      {
+        "artist": "Cigarettes After Sex",
+        "title": "Apocalypse",
+        "youtubeVideoId": "sElE_BfQ67s",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 11,
+        "averageTotalScore": 76.67035714285714
+      },
+      {
+        "artist": "Slowdive",
+        "title": "Alison",
+        "youtubeVideoId": "Ak43tAU5QuA",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ],
+        "averageRank": 15,
+        "averageTotalScore": 76.37035714285716
+      },
+      {
+        "artist": "40",
+        "title": "미치광이 포티",
+        "youtubeVideoId": "xmvkMw2URnc",
+        "sceneCount": 1,
+        "scenes": [
+          "high-energy-urban-night"
+        ],
+        "averageRank": 1,
+        "averageTotalScore": 84.885
+      },
+      {
+        "artist": "ScHoolboy Q",
+        "title": "Numb Numb Juice",
+        "youtubeVideoId": "5_qAwMHhkwQ",
+        "sceneCount": 1,
+        "scenes": [
+          "high-energy-urban-night"
+        ],
+        "averageRank": 2,
+        "averageTotalScore": 84.80678571428571
+      },
+      {
+        "artist": "Future, Metro Boomin & Kendrick Lamar",
+        "title": "Like That",
+        "youtubeVideoId": "N9bKBAA22Go",
+        "sceneCount": 1,
+        "scenes": [
+          "high-energy-urban-night"
+        ],
+        "averageRank": 3,
+        "averageTotalScore": 83.52321428571429
+      },
+      {
+        "artist": "CHANGMO",
+        "title": "METEOR",
+        "youtubeVideoId": "lOrU0MH0bMk",
+        "sceneCount": 1,
+        "scenes": [
+          "high-energy-urban-night"
+        ],
+        "averageRank": 4,
+        "averageTotalScore": 83.31750000000001
+      }
+    ],
+    "artistsInMultipleScenes": 17,
+    "top15RecurringArtists": [
+      {
+        "artist": "slowdive",
+        "sceneCount": 3,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "dreamy-hazy-dusk",
+          "cold-open-winter-space"
+        ]
+      },
+      {
+        "artist": "alexi murdoch",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "calm-acoustic-morning"
+        ]
+      },
+      {
+        "artist": "beach house",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ]
+      },
+      {
+        "artist": "calvin harris feat. pharrell williams, katy perry & big sean",
+        "sceneCount": 2,
+        "scenes": [
+          "bright-warm-summer-day",
+          "crowded-festival"
+        ]
+      },
+      {
+        "artist": "cigarettes after sex",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ]
+      },
+      {
+        "artist": "denzel curry",
+        "sceneCount": 2,
+        "scenes": [
+          "high-energy-urban-night",
+          "dark-tense-cinematic-scene"
+        ]
+      },
+      {
+        "artist": "gregory alan isakov",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "calm-acoustic-morning"
+        ]
+      },
+      {
+        "artist": "kroi feat. incognito",
+        "sceneCount": 2,
+        "scenes": [
+          "high-energy-urban-night",
+          "crowded-festival"
+        ]
+      },
+      {
+        "artist": "le sserafim",
+        "sceneCount": 2,
+        "scenes": [
+          "bright-warm-summer-day",
+          "crowded-festival"
+        ]
+      },
+      {
+        "artist": "m83",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "dreamy-hazy-dusk"
+        ]
+      },
+      {
+        "artist": "mazzy star",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ]
+      },
+      {
+        "artist": "the cranberries",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "cold-open-winter-space"
+        ]
+      },
+      {
+        "artist": "the japanese house",
+        "sceneCount": 2,
+        "scenes": [
+          "dreamy-hazy-dusk",
+          "cold-open-winter-space"
+        ]
+      },
+      {
+        "artist": "the marías",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ]
+      },
+      {
+        "artist": "the xx",
+        "sceneCount": 2,
+        "scenes": [
+          "rainy-intimate-late-night",
+          "cold-open-winter-space"
+        ]
+      }
+    ],
+    "genresInAllScenes": [],
+    "subgenresInAllScenes": []
+  },
+  "genreAnalysis": {
+    "perScenePrimaryGenreShare": [
+      {
+        "scene": "bright-warm-summer-day",
+        "shareOfMostCommonPrimaryGenre": 0.8125,
+        "shareOfMostCommonSubgenre": 0.1875,
+        "primaryGenresRepresented": 4,
+        "subgenresRepresented": 10
+      },
+      {
+        "scene": "rainy-intimate-late-night",
+        "shareOfMostCommonPrimaryGenre": 0.5,
+        "shareOfMostCommonSubgenre": 0.4375,
+        "primaryGenresRepresented": 4,
+        "subgenresRepresented": 7
+      },
+      {
+        "scene": "high-energy-urban-night",
+        "shareOfMostCommonPrimaryGenre": 0.8125,
+        "shareOfMostCommonSubgenre": 0.3125,
+        "primaryGenresRepresented": 4,
+        "subgenresRepresented": 8
+      },
+      {
+        "scene": "dreamy-hazy-dusk",
+        "shareOfMostCommonPrimaryGenre": 0.25,
+        "shareOfMostCommonSubgenre": 0.1875,
+        "primaryGenresRepresented": 5,
+        "subgenresRepresented": 10
+      },
+      {
+        "scene": "calm-acoustic-morning",
+        "shareOfMostCommonPrimaryGenre": 0.9375,
+        "shareOfMostCommonSubgenre": 0.625,
+        "primaryGenresRepresented": 2,
+        "subgenresRepresented": 4
+      },
+      {
+        "scene": "cold-open-winter-space",
+        "shareOfMostCommonPrimaryGenre": 0.8125,
+        "shareOfMostCommonSubgenre": 0.6875,
+        "primaryGenresRepresented": 2,
+        "subgenresRepresented": 3
+      },
+      {
+        "scene": "crowded-festival",
+        "shareOfMostCommonPrimaryGenre": 0.375,
+        "shareOfMostCommonSubgenre": 0.1875,
+        "primaryGenresRepresented": 5,
+        "subgenresRepresented": 10
+      },
+      {
+        "scene": "dark-tense-cinematic-scene",
+        "shareOfMostCommonPrimaryGenre": 0.9375,
+        "shareOfMostCommonSubgenre": 0.4375,
+        "primaryGenresRepresented": 2,
+        "subgenresRepresented": 7
+      }
+    ],
+    "mostFrequentRank1PrimaryGenre": {
+      "genre": "rnb-soul",
+      "sceneCount": 2
+    },
+    "mostTotalSlotsPrimaryGenre": {
+      "genre": "rock",
+      "slotCount": 29
+    },
+    "mostTotalSlotsSubgenre": {
+      "subgenre": "dream-pop",
+      "slotCount": 21
+    },
+    "primaryGenreConcentrationClassification": "scene-specific concentration",
+    "topDominantGenre": "pop",
+    "topDominantGenreSceneCount": 2,
+    "scenesDominatedByTopGenre": [
+      "bright-warm-summer-day",
+      "dreamy-hazy-dusk"
+    ],
+    "subgenreConcentrationClassification": "scene-specific concentration",
+    "topDominantSubgenre": "dream-pop",
+    "topDominantSubgenreSceneCount": 2,
+    "scenesDominatedByTopSubgenre": [
+      "rainy-intimate-late-night",
+      "cold-open-winter-space"
+    ],
+    "genrePresenceCounts": [
+      {
+        "primaryGenre": "rock",
+        "sceneCount": 6
+      },
+      {
+        "primaryGenre": "pop",
+        "sceneCount": 5
+      },
+      {
+        "primaryGenre": "rnb-soul",
+        "sceneCount": 5
+      },
+      {
+        "primaryGenre": "folk-acoustic",
+        "sceneCount": 4
+      },
+      {
+        "primaryGenre": "ambient-experimental",
+        "sceneCount": 2
+      },
+      {
+        "primaryGenre": "funk-disco",
+        "sceneCount": 2
+      },
+      {
+        "primaryGenre": "hip-hop",
+        "sceneCount": 2
+      },
+      {
+        "primaryGenre": "electronic",
+        "sceneCount": 1
+      },
+      {
+        "primaryGenre": "jazz",
+        "sceneCount": 1
+      }
+    ],
+    "top20RecurringSubgenres": [
+      {
+        "subgenre": "dream-pop",
+        "sceneCount": 3
+      },
+      {
+        "subgenre": "k-rnb",
+        "sceneCount": 3
+      },
+      {
+        "subgenre": "shoegaze",
+        "sceneCount": 3
+      },
+      {
+        "subgenre": "singer-songwriter",
+        "sceneCount": 3
+      },
+      {
+        "subgenre": "soft-pop",
+        "sceneCount": 3
+      },
+      {
+        "subgenre": "alt-rnb",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "alternative-hip-hop",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "alternative-rock",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "ambient-electronic",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "dance-pop",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "disco-funk",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "electropop",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "folk-pop",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "indie-folk",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "indie-pop",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "k-hiphop",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "k-pop",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "mainstream-rap",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "neo-soul",
+        "sceneCount": 2
+      },
+      {
+        "subgenre": "trap",
+        "sceneCount": 2
+      }
+    ]
+  },
+  "artistAnalysis": {
+    "maxArtistCountAnyTop16": 3,
+    "maxArtistCountAnyTop10": 2,
+    "maxArtistSceneRecurrence": 3,
+    "artistsWithCrossSceneRecurrenceAtLeast4": [],
+    "artistRepetitionClassification": "frequent within individual scenes",
+    "perSceneArtistRepetitionDetail": [
+      {
+        "scene": "bright-warm-summer-day",
+        "artistRepetitionDetail": []
+      },
+      {
+        "scene": "rainy-intimate-late-night",
+        "artistRepetitionDetail": [
+          {
+            "artist": "mazzy star",
+            "count": 2,
+            "ranks": [
+              6,
+              7
+            ],
+            "adjacent": true,
+            "scoreGap": 0.3410714285714249
+          }
+        ]
+      },
+      {
+        "scene": "high-energy-urban-night",
+        "artistRepetitionDetail": [
+          {
+            "artist": "denzel curry",
+            "count": 2,
+            "ranks": [
+              5,
+              8
+            ],
+            "adjacent": false,
+            "scoreGap": 0.27357142857142946
+          },
+          {
+            "artist": "schoolboy q",
+            "count": 2,
+            "ranks": [
+              2,
+              16
+            ],
+            "adjacent": false,
+            "scoreGap": 2.6924999999999955
+          }
+        ]
+      },
+      {
+        "scene": "dreamy-hazy-dusk",
+        "artistRepetitionDetail": []
+      },
+      {
+        "scene": "calm-acoustic-morning",
+        "artistRepetitionDetail": [
+          {
+            "artist": "alexi murdoch",
+            "count": 2,
+            "ranks": [
+              11,
+              14
+            ],
+            "adjacent": false,
+            "scoreGap": 0.2324999999999875
+          },
+          {
+            "artist": "gregory alan isakov",
+            "count": 2,
+            "ranks": [
+              7,
+              16
+            ],
+            "adjacent": false,
+            "scoreGap": 1.414999999999992
+          },
+          {
+            "artist": "iron & wine",
+            "count": 2,
+            "ranks": [
+              3,
+              6
+            ],
+            "adjacent": false,
+            "scoreGap": 1.0067857142857122
+          },
+          {
+            "artist": "jack johnson",
+            "count": 2,
+            "ranks": [
+              2,
+              12
+            ],
+            "adjacent": false,
+            "scoreGap": 2.230714285714299
+          },
+          {
+            "artist": "josé gonzález",
+            "count": 2,
+            "ranks": [
+              1,
+              8
+            ],
+            "adjacent": false,
+            "scoreGap": 1.8160714285714334
+          },
+          {
+            "artist": "the head and the heart",
+            "count": 2,
+            "ranks": [
+              4,
+              5
+            ],
+            "adjacent": true,
+            "scoreGap": 0.07142857142855519
+          }
+        ]
+      },
+      {
+        "scene": "cold-open-winter-space",
+        "artistRepetitionDetail": [
+          {
+            "artist": "slowdive",
+            "count": 3,
+            "ranks": [
+              8,
+              11,
+              16
+            ],
+            "adjacent": false,
+            "scoreGap": 0.7489285714285643
+          },
+          {
+            "artist": "tycho",
+            "count": 2,
+            "ranks": [
+              3,
+              4
+            ],
+            "adjacent": true,
+            "scoreGap": 0.5317857142857036
+          }
+        ]
+      },
+      {
+        "scene": "crowded-festival",
+        "artistRepetitionDetail": [
+          {
+            "artist": "akmu",
+            "count": 2,
+            "ranks": [
+              12,
+              15
+            ],
+            "adjacent": false,
+            "scoreGap": 0.051071428571418664
+          }
+        ]
+      },
+      {
+        "scene": "dark-tense-cinematic-scene",
+        "artistRepetitionDetail": [
+          {
+            "artist": "pop smoke",
+            "count": 2,
+            "ranks": [
+              3,
+              6
+            ],
+            "adjacent": false,
+            "scoreGap": 0.9050000000000011
+          }
+        ]
+      }
+    ]
+  },
+  "sensitivityChecks": [
+    {
+      "name": "A: same targetStats, summer vs winter affinity",
+      "top16OverlapCount": 6,
+      "top10OverlapCount": 4,
+      "sharedTrackSetSize": 26,
+      "rankOrderCorrelation": -0.2825816795880906,
+      "meanScoreChange": -1.0067307692307692,
+      "upMovers": [
+        {
+          "youtubeVideoId": "VF-FGf_ZZiI",
+          "artist": "Steve Lacy",
+          "title": "Bad Habit",
+          "scoreA": 83.23714285714286,
+          "scoreB": 83.76214285714285,
+          "delta": 0.5249999999999915
+        },
+        {
+          "youtubeVideoId": "nqYF0TSZhZQ",
+          "artist": "Guru feat. Donald Byrd",
+          "title": "Loungin'",
+          "scoreA": 83.72214285714287,
+          "scoreB": 84.09714285714287,
+          "delta": 0.375
+        },
+        {
+          "youtubeVideoId": "5JxgDJvqGmM",
+          "artist": "Mike Perry feat. Shy Martin",
+          "title": "The Ocean",
+          "scoreA": 84.2625,
+          "scoreB": 84.3375,
+          "delta": 0.07500000000000284
+        },
+        {
+          "youtubeVideoId": "Kr4EQDVETuA",
+          "artist": "Michael Jackson",
+          "title": "Billie Jean",
+          "scoreA": 84.34678571428572,
+          "scoreB": 84.34678571428572,
+          "delta": 0
+        },
+        {
+          "youtubeVideoId": "XrY2m5rdlQQ",
+          "artist": "Alfa Mist",
+          "title": "Keep On",
+          "scoreA": 84.00107142857142,
+          "scoreB": 84.00107142857142,
+          "delta": 0
+        },
+        {
+          "youtubeVideoId": "SIuF37EWaLU",
+          "artist": "Vaundy",
+          "title": "Tokyo Flash",
+          "scoreA": 83.94428571428573,
+          "scoreB": 83.94428571428573,
+          "delta": 0
+        },
+        {
+          "youtubeVideoId": "t6B6nS5ljzU",
+          "artist": "Tate McRae",
+          "title": "Chaotic",
+          "scoreA": 84.87285714285714,
+          "scoreB": 84.79785714285715,
+          "delta": -0.07499999999998863
+        },
+        {
+          "youtubeVideoId": "51r5f5OdIY0",
+          "artist": "Chic",
+          "title": "Good Times",
+          "scoreA": 84.02285714285712,
+          "scoreB": 83.94785714285712,
+          "delta": -0.07500000000000284
+        },
+        {
+          "youtubeVideoId": "oIIxlgcuQRU",
+          "artist": "Yeah Yeah Yeahs",
+          "title": "Maps",
+          "scoreA": 84.28535714285715,
+          "scoreB": 84.21035714285713,
+          "delta": -0.07500000000001705
+        },
+        {
+          "youtubeVideoId": "Bt0A59LsU4E",
+          "artist": "딕펑스",
+          "title": "평행성 (feat. Jukjae)",
+          "scoreA": 84.67035714285713,
+          "scoreB": 84.44535714285713,
+          "delta": -0.22499999999999432
+        }
+      ],
+      "downMovers": [
+        {
+          "youtubeVideoId": "TOuzKcsWZaE",
+          "artist": "Mikayla Geier",
+          "title": "Ring Pop",
+          "scoreA": 85.14857142857143,
+          "scoreB": 81.99857142857144,
+          "delta": -3.1499999999999915
+        },
+        {
+          "youtubeVideoId": "OoPHItnUFkw",
+          "artist": "Weezer",
+          "title": "Say It Ain't So",
+          "scoreA": 84.85071428571429,
+          "scoreB": 82.07571428571428,
+          "delta": -2.7750000000000057
+        },
+        {
+          "youtubeVideoId": "r7cz6RMoMKM",
+          "artist": "a!ka",
+          "title": "All Bark No Bite",
+          "scoreA": 84.76607142857142,
+          "scoreB": 82.14107142857142,
+          "delta": -2.625
+        },
+        {
+          "youtubeVideoId": "kVo0tv9am7U",
+          "artist": "WhiteUsedSocks",
+          "title": "How I Wish!",
+          "scoreA": 85.18392857142857,
+          "scoreB": 82.93392857142857,
+          "delta": -2.25
+        },
+        {
+          "youtubeVideoId": "CTAud5O7Qqk",
+          "artist": "Modest Mouse",
+          "title": "Float On",
+          "scoreA": 85.58107142857143,
+          "scoreB": 83.48107142857143,
+          "delta": -2.1000000000000085
+        },
+        {
+          "youtubeVideoId": "oyInMEY3Daw",
+          "artist": "DORI",
+          "title": "Thursday Taco Man",
+          "scoreA": 87.60607142857144,
+          "scoreB": 85.65607142857144,
+          "delta": -1.9500000000000028
+        },
+        {
+          "youtubeVideoId": "EkHTsc9PU2A",
+          "artist": "Jason Mraz",
+          "title": "I'm Yours",
+          "scoreA": 84.86928571428571,
+          "scoreB": 82.99428571428571,
+          "delta": -1.875
+        },
+        {
+          "youtubeVideoId": "UppBA4u9pyQ",
+          "artist": "LANY",
+          "title": "you!",
+          "scoreA": 84.66428571428573,
+          "scoreB": 82.78928571428573,
+          "delta": -1.875
+        },
+        {
+          "youtubeVideoId": "PXatLOWjr-k",
+          "artist": "Travis",
+          "title": "Why Does It Always Rain On Me?",
+          "scoreA": 85.45071428571428,
+          "scoreB": 83.65071428571429,
+          "delta": -1.7999999999999972
+        },
+        {
+          "youtubeVideoId": "OTUtF7ZxRN8",
+          "artist": "Mrs. GREEN APPLE",
+          "title": "StaRt",
+          "scoreA": 84.81357142857142,
+          "scoreB": 83.08857142857143,
+          "delta": -1.7249999999999943
+        }
+      ]
+    },
+    {
+      "name": "B: same targetStats, morning vs lateNight affinity",
+      "top16OverlapCount": 10,
+      "top10OverlapCount": 5,
+      "sharedTrackSetSize": 22,
+      "rankOrderCorrelation": -0.06486403377904623,
+      "meanScoreChange": 0.22363636363636308,
+      "upMovers": [
+        {
+          "youtubeVideoId": "Rf-ctwR7P-M",
+          "artist": "Colde",
+          "title": "Control Me",
+          "scoreA": 82.71392857142857,
+          "scoreB": 84.47392857142856,
+          "delta": 1.759999999999991
+        },
+        {
+          "youtubeVideoId": "tqUEbsyl_4Q",
+          "artist": "40",
+          "title": "CHANEL",
+          "scoreA": 83.55892857142857,
+          "scoreB": 85.27892857142857,
+          "delta": 1.7199999999999989
+        },
+        {
+          "youtubeVideoId": "nqYF0TSZhZQ",
+          "artist": "Guru feat. Donald Byrd",
+          "title": "Loungin'",
+          "scoreA": 84.18464285714286,
+          "scoreB": 85.70464285714287,
+          "delta": 1.5200000000000102
+        },
+        {
+          "youtubeVideoId": "PXatLOWjr-k",
+          "artist": "Travis",
+          "title": "Why Does It Always Rain On Me?",
+          "scoreA": 84.0382142857143,
+          "scoreB": 85.0382142857143,
+          "delta": 1
+        },
+        {
+          "youtubeVideoId": "UWIIPX_5rbM",
+          "artist": "BADBADNOTGOOD feat. Samuel T. Herring",
+          "title": "Time Moves Slow",
+          "scoreA": 83.87642857142856,
+          "scoreB": 84.87642857142856,
+          "delta": 1
+        },
+        {
+          "youtubeVideoId": "5NPBIwQyPWE",
+          "artist": "Avril Lavigne",
+          "title": "Complicated",
+          "scoreA": 84.54321428571428,
+          "scoreB": 85.42321428571428,
+          "delta": 0.8799999999999955
+        },
+        {
+          "youtubeVideoId": "Kr4EQDVETuA",
+          "artist": "Michael Jackson",
+          "title": "Billie Jean",
+          "scoreA": 84.16428571428573,
+          "scoreB": 84.80428571428573,
+          "delta": 0.6400000000000006
+        },
+        {
+          "youtubeVideoId": "Bt0A59LsU4E",
+          "artist": "딕펑스",
+          "title": "평행성 (feat. Jukjae)",
+          "scoreA": 84.93285714285713,
+          "scoreB": 85.45285714285713,
+          "delta": 0.519999999999996
+        },
+        {
+          "youtubeVideoId": "CTAud5O7Qqk",
+          "artist": "Modest Mouse",
+          "title": "Float On",
+          "scoreA": 84.46857142857142,
+          "scoreB": 84.90857142857142,
+          "delta": 0.4399999999999977
+        },
+        {
+          "youtubeVideoId": "kGpAMPS_t8U",
+          "artist": "The Shins",
+          "title": "New Slang",
+          "scoreA": 84.3132142857143,
+          "scoreB": 84.4332142857143,
+          "delta": 0.12000000000000455
+        }
+      ],
+      "downMovers": [
+        {
+          "youtubeVideoId": "NwYKAsbx8SU",
+          "artist": "Interpol",
+          "title": "Obstacle 1",
+          "scoreA": 86.02785714285713,
+          "scoreB": 85.14785714285713,
+          "delta": -0.8799999999999955
+        },
+        {
+          "youtubeVideoId": "m34DPnRUfMU",
+          "artist": "Mrs. GREEN APPLE",
+          "title": "Ao to Natsu",
+          "scoreA": 84.5592857142857,
+          "scoreB": 83.75928571428571,
+          "delta": -0.7999999999999972
+        },
+        {
+          "youtubeVideoId": "bx1Bh8ZvH84",
+          "artist": "Oasis",
+          "title": "Wonderwall",
+          "scoreA": 84.41785714285714,
+          "scoreB": 83.77785714285714,
+          "delta": -0.6400000000000006
+        },
+        {
+          "youtubeVideoId": "oyInMEY3Daw",
+          "artist": "DORI",
+          "title": "Thursday Taco Man",
+          "scoreA": 87.09357142857144,
+          "scoreB": 86.49357142857143,
+          "delta": -0.6000000000000085
+        },
+        {
+          "youtubeVideoId": "t6B6nS5ljzU",
+          "artist": "Tate McRae",
+          "title": "Chaotic",
+          "scoreA": 84.91535714285715,
+          "scoreB": 84.39535714285715,
+          "delta": -0.519999999999996
+        },
+        {
+          "youtubeVideoId": "OTUtF7ZxRN8",
+          "artist": "Mrs. GREEN APPLE",
+          "title": "StaRt",
+          "scoreA": 84.89107142857144,
+          "scoreB": 84.41107142857143,
+          "delta": -0.480000000000004
+        },
+        {
+          "youtubeVideoId": "mhzO0YLO5QQ",
+          "artist": "외동아들 김승기",
+          "title": "여튼",
+          "scoreA": 85.99714285714286,
+          "scoreB": 85.71714285714286,
+          "delta": -0.28000000000000114
+        },
+        {
+          "youtubeVideoId": "a3ErfnRuT6Q",
+          "artist": "Meaningful Stone",
+          "title": "Dancing in the rain",
+          "scoreA": 84.61428571428571,
+          "scoreB": 84.3742857142857,
+          "delta": -0.2400000000000091
+        },
+        {
+          "youtubeVideoId": "a_426RiwST8",
+          "artist": "The Black Keys",
+          "title": "Lonely Boy",
+          "scoreA": 84.53678571428571,
+          "scoreB": 84.29678571428572,
+          "delta": -0.23999999999999488
+        },
+        {
+          "youtubeVideoId": "Oextk-If8HQ",
+          "artist": "Keane",
+          "title": "Somewhere Only We Know",
+          "scoreA": 84.43178571428572,
+          "scoreB": 84.23178571428572,
+          "delta": -0.20000000000000284
+        }
+      ]
+    },
+    {
+      "name": "C: same targetStats, clear vs rain affinity",
+      "top16OverlapCount": 7,
+      "top10OverlapCount": 5,
+      "sharedTrackSetSize": 25,
+      "rankOrderCorrelation": -0.28368452578858294,
+      "meanScoreChange": -0.3450000000000006,
+      "upMovers": [
+        {
+          "youtubeVideoId": "Rf-ctwR7P-M",
+          "artist": "Colde",
+          "title": "Control Me",
+          "scoreA": 82.62392857142856,
+          "scoreB": 84.34892857142856,
+          "delta": 1.7249999999999943
+        },
+        {
+          "youtubeVideoId": "CGFFbJpfZQQ",
+          "artist": "Robert Glasper Experiment feat. Lupe Fiasco & Bilal",
+          "title": "Always Shine",
+          "scoreA": 82.56857142857143,
+          "scoreB": 84.14357142857142,
+          "delta": 1.5749999999999886
+        },
+        {
+          "youtubeVideoId": "j7oQEPfe-O8",
+          "artist": "R.E.M.",
+          "title": "The One I Love",
+          "scoreA": 82.88035714285714,
+          "scoreB": 84.38035714285714,
+          "delta": 1.5
+        },
+        {
+          "youtubeVideoId": "oIIxlgcuQRU",
+          "artist": "Yeah Yeah Yeahs",
+          "title": "Maps",
+          "scoreA": 84.24785714285713,
+          "scoreB": 85.67285714285714,
+          "delta": 1.4250000000000114
+        },
+        {
+          "youtubeVideoId": "yeuIQFF7z6E",
+          "artist": "Wilco",
+          "title": "Heavy Metal Drummer",
+          "scoreA": 82.85107142857143,
+          "scoreB": 84.12607142857144,
+          "delta": 1.2750000000000057
+        },
+        {
+          "youtubeVideoId": "a_426RiwST8",
+          "artist": "The Black Keys",
+          "title": "Lonely Boy",
+          "scoreA": 83.72678571428571,
+          "scoreB": 84.70178571428572,
+          "delta": 0.9750000000000085
+        },
+        {
+          "youtubeVideoId": "PXatLOWjr-k",
+          "artist": "Travis",
+          "title": "Why Does It Always Rain On Me?",
+          "scoreA": 83.98821428571429,
+          "scoreB": 84.81321428571428,
+          "delta": 0.8249999999999886
+        },
+        {
+          "youtubeVideoId": "g5cVE-i5wHI",
+          "artist": "NELL",
+          "title": "지구가 태양을 네 번",
+          "scoreA": 83.53500000000001,
+          "scoreB": 84.21000000000001,
+          "delta": 0.6749999999999972
+        },
+        {
+          "youtubeVideoId": "NwYKAsbx8SU",
+          "artist": "Interpol",
+          "title": "Obstacle 1",
+          "scoreA": 85.29785714285713,
+          "scoreB": 85.82285714285713,
+          "delta": 0.5250000000000057
+        },
+        {
+          "youtubeVideoId": "Bt0A59LsU4E",
+          "artist": "딕펑스",
+          "title": "평행성 (feat. Jukjae)",
+          "scoreA": 84.48285714285713,
+          "scoreB": 85.00785714285713,
+          "delta": 0.5250000000000057
+        }
+      ],
+      "downMovers": [
+        {
+          "youtubeVideoId": "iUw3LPM7OBU",
+          "artist": "RIIZE",
+          "title": "Get A Guitar",
+          "scoreA": 84.34214285714286,
+          "scoreB": 81.11714285714285,
+          "delta": -3.2250000000000085
+        },
+        {
+          "youtubeVideoId": "TOuzKcsWZaE",
+          "artist": "Mikayla Geier",
+          "title": "Ring Pop",
+          "scoreA": 84.43607142857144,
+          "scoreB": 81.81107142857144,
+          "delta": -2.625
+        },
+        {
+          "youtubeVideoId": "ECVA6FvhdEE",
+          "artist": "Sabrina Carpenter",
+          "title": "Nonsense",
+          "scoreA": 84.79285714285714,
+          "scoreB": 82.31785714285714,
+          "delta": -2.4750000000000085
+        },
+        {
+          "youtubeVideoId": "p50JG49loH8",
+          "artist": "Spoon",
+          "title": "The Underdog",
+          "scoreA": 84.94392857142857,
+          "scoreB": 82.84392857142858,
+          "delta": -2.0999999999999943
+        },
+        {
+          "youtubeVideoId": "OTUtF7ZxRN8",
+          "artist": "Mrs. GREEN APPLE",
+          "title": "StaRt",
+          "scoreA": 84.92607142857143,
+          "scoreB": 83.12607142857144,
+          "delta": -1.7999999999999972
+        },
+        {
+          "youtubeVideoId": "Y36b8_WFejI",
+          "artist": "KIRINJI feat. YonYon",
+          "title": "Killer Tune Kills Me",
+          "scoreA": 84.24642857142857,
+          "scoreB": 82.44642857142857,
+          "delta": -1.7999999999999972
+        },
+        {
+          "youtubeVideoId": "kVo0tv9am7U",
+          "artist": "WhiteUsedSocks",
+          "title": "How I Wish!",
+          "scoreA": 84.47142857142858,
+          "scoreB": 82.82142857142857,
+          "delta": -1.6500000000000057
+        },
+        {
+          "youtubeVideoId": "51r5f5OdIY0",
+          "artist": "Chic",
+          "title": "Good Times",
+          "scoreA": 84.28535714285712,
+          "scoreB": 82.86035714285713,
+          "delta": -1.4249999999999972
+        },
+        {
+          "youtubeVideoId": "oyInMEY3Daw",
+          "artist": "DORI",
+          "title": "Thursday Taco Man",
+          "scoreA": 86.81857142857143,
+          "scoreB": 85.54357142857143,
+          "delta": -1.2750000000000057
+        },
+        {
+          "youtubeVideoId": "CTAud5O7Qqk",
+          "artist": "Modest Mouse",
+          "title": "Float On",
+          "scoreA": 84.49357142857143,
+          "scoreB": 83.51857142857143,
+          "delta": -0.9749999999999943
+        }
+      ]
+    },
+    {
+      "name": "D: same contextAffinity, low vs high energy targetStats",
+      "top16OverlapCount": 3,
+      "top10OverlapCount": 3,
+      "sharedTrackSetSize": 29,
+      "rankOrderCorrelation": -0.35434101781747096,
+      "meanScoreChange": 0.5039408866995074,
+      "upMovers": [
+        {
+          "youtubeVideoId": "U1o8NS3LNRw",
+          "artist": "Chatmonchy",
+          "title": "Shangri-La",
+          "scoreA": 83.2192857142857,
+          "scoreB": 86.43357142857143,
+          "delta": 3.2142857142857224
+        },
+        {
+          "youtubeVideoId": "LIlZCmETvsY",
+          "artist": "Sakanaction",
+          "title": "Shin Takarajima",
+          "scoreA": 82.80714285714286,
+          "scoreB": 86.02142857142857,
+          "delta": 3.214285714285708
+        },
+        {
+          "youtubeVideoId": "qQYpF2pCkLI",
+          "artist": "Young the Giant",
+          "title": "My Body",
+          "scoreA": 82.97392857142856,
+          "scoreB": 86.10249999999999,
+          "delta": 3.1285714285714334
+        },
+        {
+          "youtubeVideoId": "RIrG6xBW5Wk",
+          "artist": "Beck",
+          "title": "E-Pro",
+          "scoreA": 83.44321428571428,
+          "scoreB": 86.48607142857144,
+          "delta": 3.0428571428571587
+        },
+        {
+          "youtubeVideoId": "NGAW-DGkXuM",
+          "artist": "Tate McRae",
+          "title": "Run for the Hills",
+          "scoreA": 82.99071428571429,
+          "scoreB": 85.94785714285715,
+          "delta": 2.9571428571428555
+        },
+        {
+          "youtubeVideoId": "TDe1DqxwJoc",
+          "artist": "Oasis",
+          "title": "Live Forever",
+          "scoreA": 83.38821428571428,
+          "scoreB": 86.0025,
+          "delta": 2.614285714285714
+        },
+        {
+          "youtubeVideoId": "uANAsqHkMDs",
+          "artist": "10-FEET",
+          "title": "RIVER",
+          "scoreA": 83.56607142857143,
+          "scoreB": 85.92321428571428,
+          "delta": 2.357142857142847
+        },
+        {
+          "youtubeVideoId": "TIy3n2b7V9k",
+          "artist": "Avril Lavigne",
+          "title": "Sk8er Boi",
+          "scoreA": 84.45,
+          "scoreB": 86.63571428571429,
+          "delta": 2.1857142857142833
+        },
+        {
+          "youtubeVideoId": "pQkFEmCYE-I",
+          "artist": "KANA-BOON",
+          "title": "Naimononedari",
+          "scoreA": 84.09214285714286,
+          "scoreB": 86.19214285714285,
+          "delta": 2.0999999999999943
+        },
+        {
+          "youtubeVideoId": "m34DPnRUfMU",
+          "artist": "Mrs. GREEN APPLE",
+          "title": "Ao to Natsu",
+          "scoreA": 84.17928571428571,
+          "scoreB": 85.93642857142858,
+          "delta": 1.7571428571428669
+        }
+      ],
+      "downMovers": [
+        {
+          "youtubeVideoId": "xvmwqB4fjQ4",
+          "artist": "Broccoli, you too",
+          "title": "앵콜요청금지",
+          "scoreA": 85.46964285714286,
+          "scoreB": 82.25535714285714,
+          "delta": -3.2142857142857224
+        },
+        {
+          "youtubeVideoId": "eQ03W8emhuY",
+          "artist": "Jinsang",
+          "title": "egyptian pools",
+          "scoreA": 85.10464285714285,
+          "scoreB": 81.89035714285713,
+          "delta": -3.2142857142857224
+        },
+        {
+          "youtubeVideoId": "UWIIPX_5rbM",
+          "artist": "BADBADNOTGOOD feat. Samuel T. Herring",
+          "title": "Time Moves Slow",
+          "scoreA": 86.17071428571428,
+          "scoreB": 83.64214285714286,
+          "delta": -2.528571428571425
+        },
+        {
+          "youtubeVideoId": "gjQwwWjxPaQ",
+          "artist": "The Black Skirts",
+          "title": "Ling Ling",
+          "scoreA": 85.00999999999999,
+          "scoreB": 82.48142857142857,
+          "delta": -2.528571428571425
+        },
+        {
+          "youtubeVideoId": "450p7goxZqg",
+          "artist": "John Legend",
+          "title": "All of Me",
+          "scoreA": 84.81535714285714,
+          "scoreB": 82.54392857142857,
+          "delta": -2.2714285714285722
+        },
+        {
+          "youtubeVideoId": "kGpAMPS_t8U",
+          "artist": "The Shins",
+          "title": "New Slang",
+          "scoreA": 86.11607142857143,
+          "scoreB": 84.35892857142858,
+          "delta": -1.7571428571428527
+        },
+        {
+          "youtubeVideoId": "L9HYJbe9Y18",
+          "artist": "Clairo",
+          "title": "Bags",
+          "scoreA": 84.92428571428572,
+          "scoreB": 83.33857142857143,
+          "delta": -1.585714285714289
+        },
+        {
+          "youtubeVideoId": "PXatLOWjr-k",
+          "artist": "Travis",
+          "title": "Why Does It Always Rain On Me?",
+          "scoreA": 85.50964285714286,
+          "scoreB": 84.52392857142857,
+          "delta": -0.9857142857142946
+        },
+        {
+          "youtubeVideoId": "mhzO0YLO5QQ",
+          "artist": "외동아들 김승기",
+          "title": "여튼",
+          "scoreA": 86.38857142857144,
+          "scoreB": 86.00285714285714,
+          "delta": -0.38571428571430033
+        },
+        {
+          "youtubeVideoId": "oyInMEY3Daw",
+          "artist": "DORI",
+          "title": "Thursday Taco Man",
+          "scoreA": 87.365,
+          "scoreB": 86.97928571428571,
+          "delta": -0.3857142857142861
+        }
+      ]
+    },
+    {
+      "name": "E: same contextAffinity, low-acoustic/high-electronic vs high-acoustic/low-electronic targetStats",
+      "top16OverlapCount": 3,
+      "top10OverlapCount": 2,
+      "sharedTrackSetSize": 29,
+      "rankOrderCorrelation": -0.49610230498321745,
+      "meanScoreChange": -1.0640394088669942,
+      "upMovers": [
+        {
+          "youtubeVideoId": "oN0tFgLcp4g",
+          "artist": "Robert Glasper Experiment feat. Musiq Soulchild & Chrisette Michele",
+          "title": "Ah Yeah",
+          "scoreA": 80.08214285714286,
+          "scoreB": 84.36785714285713,
+          "delta": 4.285714285714278
+        },
+        {
+          "youtubeVideoId": "NmefFcRJbXE",
+          "artist": "Local Natives",
+          "title": "Wide Eyes",
+          "scoreA": 80.6225,
+          "scoreB": 84.2225,
+          "delta": 3.5999999999999943
+        },
+        {
+          "youtubeVideoId": "B1tqsYYiY9Q",
+          "artist": "Harrison & Jaleel Shaw",
+          "title": "You Hate Jazz?",
+          "scoreA": 81.8075,
+          "scoreB": 84.8932142857143,
+          "delta": 3.085714285714289
+        },
+        {
+          "youtubeVideoId": "cMFWFhTFohk",
+          "artist": "Band of Horses",
+          "title": "The Funeral",
+          "scoreA": 81.88071428571428,
+          "scoreB": 84.70928571428571,
+          "delta": 2.8285714285714363
+        },
+        {
+          "youtubeVideoId": "p50JG49loH8",
+          "artist": "Spoon",
+          "title": "The Underdog",
+          "scoreA": 82.70464285714286,
+          "scoreB": 85.27607142857143,
+          "delta": 2.5714285714285694
+        },
+        {
+          "youtubeVideoId": "XrY2m5rdlQQ",
+          "artist": "Alfa Mist",
+          "title": "Keep On",
+          "scoreA": 82.02428571428572,
+          "scoreB": 84.5957142857143,
+          "delta": 2.5714285714285694
+        },
+        {
+          "youtubeVideoId": "9sfYpolGCu8",
+          "artist": "Phoebe Bridgers",
+          "title": "Motion Sickness",
+          "scoreA": 82.07464285714285,
+          "scoreB": 84.30321428571429,
+          "delta": 2.228571428571442
+        },
+        {
+          "youtubeVideoId": "nqYF0TSZhZQ",
+          "artist": "Guru feat. Donald Byrd",
+          "title": "Loungin'",
+          "scoreA": 82.57035714285715,
+          "scoreB": 84.62750000000001,
+          "delta": 2.057142857142864
+        },
+        {
+          "youtubeVideoId": "U__iezKkEPg",
+          "artist": "SUPER BEAVER",
+          "title": "Aoi Haru",
+          "scoreA": 82.42142857142858,
+          "scoreB": 84.39285714285715,
+          "delta": 1.971428571428575
+        },
+        {
+          "youtubeVideoId": "CTAud5O7Qqk",
+          "artist": "Modest Mouse",
+          "title": "Float On",
+          "scoreA": 83.4542857142857,
+          "scoreB": 85.08285714285714,
+          "delta": 1.6285714285714334
+        }
+      ],
+      "downMovers": [
+        {
+          "youtubeVideoId": "FQlAEiCb8m0",
+          "artist": "Stardust",
+          "title": "Music Sounds Better With You",
+          "scoreA": 86.33892857142858,
+          "scoreB": 79.91035714285714,
+          "delta": -6.428571428571445
+        },
+        {
+          "youtubeVideoId": "rdKfuwy6LUM",
+          "artist": "MGMT",
+          "title": "Kids",
+          "scoreA": 85.19678571428571,
+          "scoreB": 78.76821428571428,
+          "delta": -6.428571428571431
+        },
+        {
+          "youtubeVideoId": "eQ03W8emhuY",
+          "artist": "Jinsang",
+          "title": "egyptian pools",
+          "scoreA": 85.27607142857143,
+          "scoreB": 80.39035714285713,
+          "delta": -4.8857142857143
+        },
+        {
+          "youtubeVideoId": "mLCsbacHxA8",
+          "artist": "BE'O feat. Beenzino",
+          "title": "Counting Stars",
+          "scoreA": 85.61642857142856,
+          "scoreB": 80.81642857142856,
+          "delta": -4.799999999999997
+        },
+        {
+          "youtubeVideoId": "l9CZykYZkOQ",
+          "artist": "KATSEYE",
+          "title": "Touch",
+          "scoreA": 85.64035714285716,
+          "scoreB": 80.92607142857143,
+          "delta": -4.714285714285722
+        },
+        {
+          "youtubeVideoId": "u9n7Cw-4_HQ",
+          "artist": "Swedish House Mafia & The Weeknd",
+          "title": "Moth To A Flame",
+          "scoreA": 86.22071428571428,
+          "scoreB": 81.50642857142857,
+          "delta": -4.714285714285708
+        },
+        {
+          "youtubeVideoId": "h--P8HzYZ74",
+          "artist": "Zedd & Alessia Cara",
+          "title": "Stay",
+          "scoreA": 86.02142857142857,
+          "scoreB": 81.56428571428572,
+          "delta": -4.4571428571428555
+        },
+        {
+          "youtubeVideoId": "3eKFF4cCBaY",
+          "artist": "BE'O feat. MINO",
+          "title": "Limousine",
+          "scoreA": 85.30392857142857,
+          "scoreB": 81.10392857142858,
+          "delta": -4.199999999999989
+        },
+        {
+          "youtubeVideoId": "VjGqTT0drP8",
+          "artist": "Maisie Peters",
+          "title": "Not Another Rockstar",
+          "scoreA": 85.48285714285713,
+          "scoreB": 81.36857142857143,
+          "delta": -4.1142857142857
+        },
+        {
+          "youtubeVideoId": "ggG9ySCChYw",
+          "artist": "The Neighbourhood",
+          "title": "Softcore",
+          "scoreA": 85.90214285714283,
+          "scoreB": 81.87357142857142,
+          "delta": -4.028571428571411
+        }
+      ]
+    }
+  ],
+  "summaryClassification": {
+    "q1_differentScenesDifferentRankings": {
+      "answer": "Mean pairwise top16 Jaccard across all 28 scene pairs = 0.02 (range 0-0.19). Rankings differ substantially across scenes.",
+      "meanTop16Jaccard": 0.019933923390144586,
+      "minTop16Jaccard": 0,
+      "maxTop16Jaccard": 0.18518518518518517
+    },
+    "q2_oppositeScenesShareTooManyTracks": {
+      "answer": "Overlap counts for the four requested opposite pairs (see namedOppositePairs) are reported without an imposed pass/fail threshold, per instructions.",
+      "namedOppositePairs": [
+        {
+          "name": "bright warm summer day vs dark tense cinematic scene",
+          "top16OverlapCount": 0,
+          "top16Jaccard": 0
+        },
+        {
+          "name": "calm acoustic morning vs high-energy urban night",
+          "top16OverlapCount": 0,
+          "top16Jaccard": 0
+        },
+        {
+          "name": "crowded festival vs rainy intimate late night",
+          "top16OverlapCount": 0,
+          "top16Jaccard": 0
+        },
+        {
+          "name": "cold open winter space vs bright warm summer day",
+          "top16OverlapCount": 0,
+          "top16Jaccard": 0
+        }
+      ]
+    },
+    "q3_oneTrackDominatesManyScenes": {
+      "answer": "0 track(s) appear in all 8 scenes; 0 track(s) appear in at least 4 of 8 scenes; 16 track(s) appear in more than 1 scene.",
+      "tracksInAllEightScenes": 0,
+      "tracksInAtLeastFourScenes": 0,
+      "tracksInMoreThanOneScene": 16
+    },
+    "q4_oneArtistDominatesManyScenes": {
+      "answer": "Maximum scene-recurrence for a single artist across the 8 scene top-16 sets = 3 of 8 scenes (0 artist(s) recur in >=4 scenes).",
+      "maxArtistSceneRecurrence": 3,
+      "artistsWithCrossSceneRecurrenceAtLeast4Count": 0
+    },
+    "q5_onePrimaryGenreDominatesMostScenes": {
+      "answer": "\"pop\" is the per-scene modal primaryGenre in 2 of 8 scenes (bright-warm-summer-day, dreamy-hazy-dusk) -> classified as \"scene-specific concentration\".",
+      "topDominantGenre": "pop",
+      "topDominantGenreSceneCount": 2,
+      "scenesDominatedByTopGenre": [
+        "bright-warm-summer-day",
+        "dreamy-hazy-dusk"
+      ],
+      "classification": "scene-specific concentration"
+    },
+    "q6_oneSubgenreDominatesMostScenes": {
+      "answer": "\"dream-pop\" is the per-scene modal subgenre in 2 of 8 scenes (rainy-intimate-late-night, cold-open-winter-space) -> classified as \"scene-specific concentration\".",
+      "topDominantSubgenre": "dream-pop",
+      "topDominantSubgenreSceneCount": 2,
+      "scenesDominatedByTopSubgenre": [
+        "rainy-intimate-late-night",
+        "cold-open-winter-space"
+      ],
+      "classification": "scene-specific concentration"
+    },
+    "q7_seasonMateriallyAffectsRanking": {
+      "answer": "A: same targetStats, summer vs winter affinity: top16 overlap 6/16, top10 overlap 4/10, rank-order correlation -0.28, mean score change -1.01.",
+      "top16OverlapCount": 6,
+      "top10OverlapCount": 4,
+      "rankOrderCorrelation": -0.2825816795880906,
+      "meanScoreChange": -1.0067307692307692
+    },
+    "q8_timeMateriallyAffectsRanking": {
+      "answer": "B: same targetStats, morning vs lateNight affinity: top16 overlap 10/16, top10 overlap 5/10, rank-order correlation -0.06, mean score change 0.22.",
+      "top16OverlapCount": 10,
+      "top10OverlapCount": 5,
+      "rankOrderCorrelation": -0.06486403377904623,
+      "meanScoreChange": 0.22363636363636308
+    },
+    "q9_weatherMateriallyAffectsRanking": {
+      "answer": "C: same targetStats, clear vs rain affinity: top16 overlap 7/16, top10 overlap 5/10, rank-order correlation -0.28, mean score change -0.35.",
+      "top16OverlapCount": 7,
+      "top10OverlapCount": 5,
+      "rankOrderCorrelation": -0.28368452578858294,
+      "meanScoreChange": -0.3450000000000006
+    },
+    "q10_desiredSoundMateriallyAffectsRanking": {
+      "answer": "Energy check (D): 3/16 overlap, mean score change 0.5. Acoustic/electronic check (E): 3/16 overlap, mean score change -1.06.",
+      "checkD": {
+        "answer": "D: same contextAffinity, low vs high energy targetStats: top16 overlap 3/16, top10 overlap 3/10, rank-order correlation -0.35, mean score change 0.5.",
+        "top16OverlapCount": 3,
+        "top10OverlapCount": 3,
+        "rankOrderCorrelation": -0.35434101781747096,
+        "meanScoreChange": 0.5039408866995074
+      },
+      "checkE": {
+        "answer": "E: same contextAffinity, low-acoustic/high-electronic vs high-acoustic/low-electronic targetStats: top16 overlap 3/16, top10 overlap 2/10, rank-order correlation -0.5, mean score change -1.06.",
+        "top16OverlapCount": 3,
+        "top10OverlapCount": 2,
+        "rankOrderCorrelation": -0.49610230498321745,
+        "meanScoreChange": -1.0640394088669942
+      }
+    },
+    "q11_scoreSpreadWideEnough": {
+      "answer": "Mean top16 scoreSpread (topScore - rank16Score) across the 8 scenes = 3.19 points.",
+      "meanScoreSpread": 3.1935714285714276,
+      "perScene": [
+        {
+          "scene": "bright-warm-summer-day",
+          "scoreSpread": 1.91
+        },
+        {
+          "scene": "rainy-intimate-late-night",
+          "scoreSpread": 6.06
+        },
+        {
+          "scene": "high-energy-urban-night",
+          "scoreSpread": 2.77
+        },
+        {
+          "scene": "dreamy-hazy-dusk",
+          "scoreSpread": 2.49
+        },
+        {
+          "scene": "calm-acoustic-morning",
+          "scoreSpread": 3.18
+        },
+        {
+          "scene": "cold-open-winter-space",
+          "scoreSpread": 4.81
+        },
+        {
+          "scene": "crowded-festival",
+          "scoreSpread": 1.72
+        },
+        {
+          "scene": "dark-tense-cinematic-scene",
+          "scoreSpread": 2.6
+        }
+      ]
+    },
+    "q12_ranks11to16WeakerThan1to10": {
+      "answer": "Mean (rank1-10 avg minus rank11-16 avg) totalScore gap across the 8 scenes = 1.26 points.",
+      "meanRankTierGap": 1.255459821428575,
+      "perScene": [
+        {
+          "scene": "bright-warm-summer-day",
+          "rankTierGap": 0.8
+        },
+        {
+          "scene": "rainy-intimate-late-night",
+          "rankTierGap": 2.19
+        },
+        {
+          "scene": "high-energy-urban-night",
+          "rankTierGap": 1.07
+        },
+        {
+          "scene": "dreamy-hazy-dusk",
+          "rankTierGap": 0.81
+        },
+        {
+          "scene": "calm-acoustic-morning",
+          "rankTierGap": 1.4
+        },
+        {
+          "scene": "cold-open-winter-space",
+          "rankTierGap": 1.91
+        },
+        {
+          "scene": "crowded-festival",
+          "rankTierGap": 0.86
+        },
+        {
+          "scene": "dark-tense-cinematic-scene",
+          "rankTierGap": 0.99
+        }
+      ]
+    },
+    "q13_hardGenreCapEvidence": {
+      "answer": "NOT SUPPORTED BY CURRENT EVIDENCE",
+      "supportingClassification": "scene-specific concentration",
+      "supportingCounts": {
+        "topDominantGenre": "pop",
+        "topDominantGenreSceneCount": 2,
+        "scenesDominatedByTopGenre": [
+          "bright-warm-summer-day",
+          "dreamy-hazy-dusk"
+        ]
+      }
+    },
+    "q14_hardArtistCapEvidence": {
+      "answer": "NOT SUPPORTED BY CURRENT EVIDENCE",
+      "supportingClassification": "frequent within individual scenes",
+      "supportingCounts": {
+        "maxArtistSceneRecurrence": 3,
+        "maxArtistCountAnyTop16": 3,
+        "maxArtistCountAnyTop10": 2
+      }
+    },
+    "q15_vectorSimilarityRedundancyEvidence": {
+      "answer": "Genre-label overlap and actual 30-dim track-vector similarity are measured separately. Mean pairwise track-to-track vector similarity within top-16 sets (production scoreCatalogTrack formula, applied track-vs-track) averages 88.72/100 across the 8 scenes. This is independent of whether tracks share a genre label — see vectorRedundancy per scene for detail.",
+      "meanVectorRedundancy": 88.71984188988093,
+      "perScene": [
+        {
+          "scene": "bright-warm-summer-day",
+          "meanPairwiseTrackVectorSimilarity": 90.02
+        },
+        {
+          "scene": "rainy-intimate-late-night",
+          "meanPairwiseTrackVectorSimilarity": 86.56
+        },
+        {
+          "scene": "high-energy-urban-night",
+          "meanPairwiseTrackVectorSimilarity": 90.01
+        },
+        {
+          "scene": "dreamy-hazy-dusk",
+          "meanPairwiseTrackVectorSimilarity": 86.67
+        },
+        {
+          "scene": "calm-acoustic-morning",
+          "meanPairwiseTrackVectorSimilarity": 90.45
+        },
+        {
+          "scene": "cold-open-winter-space",
+          "meanPairwiseTrackVectorSimilarity": 89.77
+        },
+        {
+          "scene": "crowded-festival",
+          "meanPairwiseTrackVectorSimilarity": 87.98
+        },
+        {
+          "scene": "dark-tense-cinematic-scene",
+          "meanPairwiseTrackVectorSimilarity": 88.29
+        }
+      ],
+      "note": "genre label identity is NOT used as a proxy for this metric; it is computed purely from stats/affinity vectors via the real scoring formula."
+    },
+    "q16_weightsOrStatsCalibrationEvidence": {
+      "answer": "Component means vary across scenes (see perSceneResults[].componentInfluence), and total-score spreads/tier-gaps are nonzero and vary by scene concept — this diagnostic alone does not establish a calibration defect; it only documents the current distribution for future comparison."
+    }
+  }
+}
