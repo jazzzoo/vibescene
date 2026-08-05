@@ -14,10 +14,12 @@ import {
 } from "./services/db.ts";
 import { checkRateLimit, getClientIp } from "./services/rateLimit.ts";
 import { sequenceCatalogTracks } from "./services/sequencing.ts";
+import { rankCatalogTracks, selectTopScoredTracks } from "./services/scoring.ts";
 import {
   type CatalogTrack,
+  hasYoutubeVideoId,
+  MUSIC_CATALOG,
   selectFlatCatalogTracks,
-  selectVerifiedFlatCatalogTracks,
 } from "../_shared/musicCatalog.ts";
 
 // verified(youtubeVideoId 보유) catalog track을 YoutubeTrack DB insert 형식으로 변환.
@@ -205,22 +207,56 @@ Deno.serve(async (req) => {
       primaryLaneId: gptResult.primary_lane_id,
     });
 
-    // ── 7-1. verified(youtubeVideoId 보유) catalog track 우선 확인 ──────────────
-    // 전체 673-track flat 카탈로그에서 seeded shuffle로 후보를 선택한다.
-    // laneId는 더 이상 후보 풀을 좁히는 데 사용되지 않는다 (Phase 6, catalog-genre-reclassification).
-    const verifiedCatalogTracks = selectVerifiedFlatCatalogTracks({
-      seed: playlistId,
-      count: CATALOG_CANDIDATE_POOL_SIZE,
+    // ── 7-1. verified(youtubeVideoId 보유) catalog track을 이미지 벡터로 스코어링 ──────────────
+    // Step 5-A: content-blind seeded shuffle을 이미지-트랙 유사도 스코어링으로 대체.
+    // gptResult.targetStats/contextAffinity와 각 트랙의 stats/affinity 간 가중 유사도로 순위를 매기고
+    // 상위 CATALOG_CANDIDATE_POOL_SIZE개를 후보로 선택한다.
+    // playlistId/시드/lane/장르/mood tag/GPT 추천 곡 제목/coarse energy는 스코어링에 전혀 사용하지 않는다.
+    const verifiedCatalogPool = MUSIC_CATALOG.filter(hasYoutubeVideoId);
+    const { ranked: rankedCatalogTracks, skipped: skippedCatalogTracks } = rankCatalogTracks(
+      { targetStats: gptResult.targetStats, contextAffinity: gptResult.contextAffinity },
+      verifiedCatalogPool,
+    );
+    const topScoredTracks = selectTopScoredTracks(rankedCatalogTracks, CATALOG_CANDIDATE_POOL_SIZE);
+
+    // 진단용 스코어링 요약 로그 — 이미지, signed URL, 전체 GPT 응답, 전체 벡터, 795개 전체 점수는 절대 남기지 않는다.
+    console.log("[analyze-and-search] catalog_scoring_complete", {
+      eligibleTracks: rankedCatalogTracks.length,
+      skippedTracks: skippedCatalogTracks.length,
+      selectedCandidates: topScoredTracks.length,
+      topScore: rankedCatalogTracks[0]?.totalScore ?? null,
+      lowestCandidateScore:
+        rankedCatalogTracks[Math.min(CATALOG_CANDIDATE_POOL_SIZE, rankedCatalogTracks.length) - 1]?.totalScore ??
+          null,
+      topCandidates: rankedCatalogTracks.slice(0, 3).map((entry) => ({
+        artist: entry.track.artist,
+        title: entry.track.title,
+        totalScore: entry.totalScore,
+        atmosphereScore: entry.atmosphereScore,
+        desiredSoundScore: entry.desiredSoundScore,
+        seasonScore: entry.seasonScore,
+        timeScore: entry.timeScore,
+        weatherScore: entry.weatherScore,
+      })),
     });
+
+    // 개별 부적격 트랙 진단 — {artist, title, reason}만 남기고 전체 track 객체는 남기지 않는다.
+    // 카탈로그가 정상이면(validate-music-catalog.mjs 기준 795/795 통과) 사실상 발생하지 않는다.
+    if (skippedCatalogTracks.length > 0) {
+      console.warn("[analyze-and-search] catalog_scoring_skipped_tracks", {
+        skippedTracks: skippedCatalogTracks,
+      });
+    }
+
     setStage("catalog_verified_check_completed");
 
-    if (verifiedCatalogTracks.length >= MIN_CATALOG_TRACKS) {
+    if (topScoredTracks.length >= MIN_CATALOG_TRACKS) {
       await updatePlaylistAnalysis(supabaseAdmin, playlistId, gptResult, "catalog");
 
       // 트랙 정체성은 그대로 두고 순서만 energy arc로 재배치한다.
       // Lane 기반 anchor 로직은 제거됨 (Phase 7). 실패 시 원본 순서로 fallback.
       const sequencedVerifiedTracks = sequenceCatalogTracks(
-        verifiedCatalogTracks,
+        topScoredTracks,
         FINAL_TRACK_COUNT,
       );
 
