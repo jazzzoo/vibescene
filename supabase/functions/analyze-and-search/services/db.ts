@@ -137,7 +137,7 @@ export async function updatePlaylistAnalysis(
       secondary_genre: gpt.music_profile.subgenres[0] ?? null,
       energy_score: gpt.music_profile.energy_score,
       primary_lane_id: gpt.primary_lane_id,
-      primary_lane_name: getCurationLaneName(gpt.primary_lane_id),
+      primary_lane_name: gpt.primary_lane_id ? getCurationLaneName(gpt.primary_lane_id) : null,
       track_source: trackSource,
     })
     .eq("id", playlistId);

@@ -651,7 +651,13 @@ export type GptResponse = {
   playlist: GptPlaylistItem[];
   playlist_concept: string;
   playlist_subtitle: string;
-  primary_lane_id: string;
+  // Step 6 genre-first 아키텍처에서 lane은 더 이상 catalog eligibility/scoring/candidate
+  // selection/sequencing에 쓰이지 않는다 — 호환/DB 저장/분석(usage tracking) 용도로만 남아있다.
+  // 그래서 유효하지 않은 lane 하나 때문에 targetStats/contextAffinity/primaryGenres/subgenres가
+  // 멀쩡한 응답 전체를 실패시키지 않는다: 무효/누락 시 null로 저장한다 (아래
+  // applyCompatibilityValidation 참고). playlists.primary_lane_id/primary_lane_name 컬럼은
+  // 이미 nullable이다(기존 row도 전부 null이었음, 20260625120000 마이그레이션 참고).
+  primary_lane_id: string | null;
 };
 
 // CURATION_LANES에 정의된 lane id만 허용 — GPT가 존재하지 않는 lane id를 만들어내는 것을 방지
@@ -1012,18 +1018,22 @@ export function parseGptJson(content: string): GptResponse {
   }
 }
 
-// playlist_subtitle/primary_lane_id 호환 필드 검증 — 기존 동작 그대로 유지 (Step 4-A에서 변경 없음).
+// playlist_subtitle/primary_lane_id 호환 필드 검증.
 export function applyCompatibilityValidation(parsed: GptResponse): void {
   // playlist_subtitle이 누락되었거나(구버전 응답 등) 형식이 이상해도 전체 분석을 실패시키지 않고
   // 프리미엄한 기본 문구로 대체 — 빈 문자열로 두면 ResultScreen에서 조용히 사라져 버리므로 항상 값이 있도록 보장한다.
   const rawSubtitle = typeof parsed.playlist_subtitle === "string" ? parsed.playlist_subtitle.trim() : "";
   parsed.playlist_subtitle = rawSubtitle.length >= 10 ? rawSubtitle : FALLBACK_PLAYLIST_SUBTITLE;
 
-  // primary_lane_id가 없거나 CURATION_LANES에 없는 값이면 lane usage tracking이 깨지므로
-  // fallback default 없이 SafeError로 명확히 실패시킨다 (요구사항: GPT가 반드시 유효한 id를 내도록 강제).
+  // primary_lane_id는 genre-first 아키텍처에서 호환/DB 저장/분석 용도로만 쓰이고 catalog
+  // eligibility/scoring/candidate selection/sequencing에는 전혀 관여하지 않는다 — 그래서 lane 하나가
+  // 무효/누락이라고 해서 targetStats/contextAffinity/primaryGenres/subgenres가 유효한 응답 전체를
+  // 실패시키지 않는다. 무효/누락/malformed면 null로 정규화만 하고(추측으로 다른 lane을 대신 고르거나
+  // primaryGenre로부터 lane을 유추하지 않음), 이 필드 때문에 재요청도 하지 않는다 — 아래는 그대로
+  // 진단 로그만 남긴다.
   if (typeof parsed.primary_lane_id !== "string" || !VALID_LANE_IDS.has(parsed.primary_lane_id)) {
     console.error("[gpt] invalid_primary_lane_id", { primaryLaneId: parsed.primary_lane_id });
-    throw new SafeError("이미지 분석 결과를 처리하지 못했습니다.");
+    parsed.primary_lane_id = null;
   }
 }
 

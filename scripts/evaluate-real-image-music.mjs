@@ -260,6 +260,20 @@ if (!SUPABASE_PROJECT_URL || !VIBESCENE_EVALUATION_TOKEN) {
   process.exit(1);
 }
 
+// Attaches retryAfterMs (from a Retry-After response header, if the endpoint ever sends one) to
+// the thrown error so callers can honor it. The temporary evaluate-real-image function does not
+// currently forward OpenAI's own Retry-After (its SafeError abstraction intentionally discards
+// upstream response details) — this is checked anyway in case that ever changes, at zero cost.
+function parseRetryAfterMs(response) {
+  const header = response.headers.get('retry-after');
+  if (!header) return null;
+  const asSeconds = Number(header);
+  if (Number.isFinite(asSeconds)) return Math.max(0, asSeconds * 1000);
+  const asDate = Date.parse(header);
+  if (!Number.isNaN(asDate)) return Math.max(0, asDate - Date.now());
+  return null;
+}
+
 async function callRemoteAnalyzeImage(filename, imageDataUrl) {
   const response = await fetch(EVALUATE_ENDPOINT, {
     method: 'POST',
@@ -274,27 +288,58 @@ async function callRemoteAnalyzeImage(filename, imageDataUrl) {
   try {
     payload = await response.json();
   } catch {
-    throw new Error(`이미지 분석 결과를 받지 못했습니다. (remote endpoint returned non-JSON, status ${response.status})`);
+    const err = new Error(`이미지 분석 결과를 받지 못했습니다. (remote endpoint returned non-JSON, status ${response.status})`);
+    err.retryAfterMs = parseRetryAfterMs(response);
+    throw err;
   }
 
   if (!response.ok) {
-    throw new Error(payload && payload.error ? payload.error : `remote evaluation request failed with status ${response.status}`);
+    const err = new Error(payload && payload.error ? payload.error : `remote evaluation request failed with status ${response.status}`);
+    err.retryAfterMs = parseRetryAfterMs(response);
+    err.diagnostics = payload && payload.diagnostics ? payload.diagnostics : null;
+    throw err;
   }
   return payload;
 }
 
 // ── Error classification (no credentials, no stack traces ever included) ────────────
+// `retryable` reflects PHASE 4's retryable/non-retryable split:
+//   - openai_request_failed / openai_empty_response: the dominant real-world cause is a transient
+//     OpenAI-side failure (429 rate limit, 5xx, or the fetch()/response itself failing) — the
+//     temporary Edge Function collapses OpenAI's actual status code into a generic SafeError, so
+//     these two categories are the closest observable proxy for "429 / 5xx / transient" from here.
+//   - unknown_error: an error that matched none of gpt.ts's known SafeError strings — typically a
+//     network-level fetch failure or a non-JSON envelope from the endpoint itself; also transient.
+//   - missing_api_key_or_config / json_parse_failed / vector_validation_failed_after_retry:
+//     non-retryable per this task's own examples (config issue; persistent parser/schema failure;
+//     canonical genre coverage or vector failure that already survived gpt.ts's own one-time
+//     internal correction retry) — retrying the same image again is not expected to help.
+//   - json_parse_failed can now ONLY mean parseGptJson() itself threw on malformed/non-JSON GPT
+//     content — an invalid/missing primary_lane_id no longer throws here at all (gpt.ts normalizes
+//     it to null and continues; see applyCompatibilityValidation), so this category was renamed
+//     from the old "json_parse_or_lane_invalid" once lane stopped being a possible cause.
 const KNOWN_SAFE_ERROR_CATEGORIES = [
-  { match: '이미지 분석 서비스가 설정되지 않았습니다.', category: 'missing_api_key_or_config' },
-  { match: '이미지 분석 중 오류가 발생했습니다.', category: 'openai_request_failed' },
-  { match: '이미지 분석 결과를 받지 못했습니다.', category: 'openai_empty_response' },
-  { match: '이미지 분석 결과를 처리하지 못했습니다.', category: 'json_parse_or_lane_invalid' },
-  { match: '이미지의 확장 사운드 분석 값을 확인하지 못했습니다', category: 'vector_validation_failed_after_retry' },
+  { match: '이미지 분석 서비스가 설정되지 않았습니다.', category: 'missing_api_key_or_config', retryable: false },
+  { match: '이미지 분석 중 오류가 발생했습니다.', category: 'openai_request_failed', retryable: true },
+  { match: '이미지 분석 결과를 받지 못했습니다.', category: 'openai_empty_response', retryable: true },
+  { match: '이미지 분석 결과를 처리하지 못했습니다.', category: 'json_parse_failed', retryable: false },
+  { match: '이미지의 확장 사운드 분석 값을 확인하지 못했습니다', category: 'vector_validation_failed_after_retry', retryable: false },
 ];
 function classifyError(err) {
   const message = err instanceof Error ? err.message : String(err);
   const found = KNOWN_SAFE_ERROR_CATEGORIES.find((c) => message.includes(c.match));
-  return { category: found ? found.category : 'unknown_error', message };
+  return {
+    category: found ? found.category : 'unknown_error',
+    message,
+    retryable: found ? found.retryable : true,
+    retryAfterMs: err && typeof err.retryAfterMs === 'number' ? err.retryAfterMs : null,
+    // Forwarded from the temporary evaluate-real-image function's own response body — safe,
+    // structured detail (retry/lane/field-issue booleans and short issue strings) that gpt.ts was
+    // already logging; see supabase/functions/evaluate-real-image/index.ts for exactly what this
+    // can and cannot contain (OpenAI's own HTTP status/error.type/error.code/request id are NOT
+    // recoverable this way — gpt.ts discards the fetch Response before ever throwing).
+    diagnostics: err && err.diagnostics ? err.diagnostics : null,
+  };
 }
 
 // ── PHASE 5/6: per-image processing (sequential, real analyzeImage + real scoring/sequencing) ──
@@ -309,17 +354,31 @@ async function processImage(filename) {
   const startedAtMs = Date.now();
   let gptResult = null;
   let errorInfo = null;
-  try {
-    gptResult = await callRemoteAnalyzeImage(filename, dataUrl);
-  } catch (err) {
-    errorInfo = classifyError(err);
+  // PHASE 4: at most 2 fresh calls to this endpoint per image this run (1 original + 1 retry),
+  // only for a RETRYABLE failure (classifyError().retryable — 429/5xx/network/empty-response
+  // proxies). Non-retryable failures (config, parser/schema, or post-internal-retry vector/genre
+  // failures) stop after the first attempt. This is fully separate from gpt.ts's own internal
+  // one-time vector/genre correction retry, which happens inside a single HTTP call and stays
+  // invisible to this script either way.
+  const MAX_REQUEST_ATTEMPTS = 2;
+  let requestAttemptCount = 0;
+  for (let attempt = 1; attempt <= MAX_REQUEST_ATTEMPTS; attempt += 1) {
+    requestAttemptCount = attempt;
+    try {
+      gptResult = await callRemoteAnalyzeImage(filename, dataUrl);
+      errorInfo = null;
+      break;
+    } catch (err) {
+      errorInfo = classifyError(err);
+      const canRetry = errorInfo.retryable && attempt < MAX_REQUEST_ATTEMPTS;
+      if (!canRetry) break;
+      const waitMs = Math.max(errorInfo.retryAfterMs ?? 0, INTER_REQUEST_DELAY_MS);
+      console.log(`  [retry] ${filename}: attempt ${attempt} failed (${errorInfo.category}) — retrying once after ${waitMs}ms${errorInfo.retryAfterMs ? ' (honoring Retry-After)' : ''}`);
+      // eslint-disable-next-line no-await-in-loop
+      await sleep(waitMs);
+    }
   }
   const durationMs = Date.now() - startedAtMs;
-  // Per-image request-attempt count (1 vs 2 on internal retry) is not observable through the
-  // remote evaluation endpoint's response schema (Phase 4 deliberately limits the response to
-  // parsed GptResponse fields plus an optional `normalized` flag) — only the aggregate call count
-  // across all images (12-24) is knowable, from the temporary function's own OpenAI usage.
-  const requestAttemptCount = null;
   const normalizationOccurred = gptResult && typeof gptResult.normalized === 'boolean' ? gptResult.normalized : null;
 
   const base = {
@@ -334,7 +393,16 @@ async function processImage(filename) {
   };
 
   if (errorInfo) {
+    if (errorInfo.diagnostics) {
+      console.log(`  [diagnostics] ${filename}: ${JSON.stringify(errorInfo.diagnostics)}`);
+    }
     return { ...base, success: false, error: errorInfo };
+  }
+
+  // Even on success, surface whether gpt.ts's internal correction retry fired for this image —
+  // useful context for interpreting a *different* image's failure at the same stage.
+  if (gptResult.diagnostics && gptResult.diagnostics.correctionRetryOccurred) {
+    console.log(`  [diagnostics] ${filename}: succeeded, but gpt.ts's internal correction retry fired first (vectorIssues/genreIssues present on first response)`);
   }
 
   const scene = { targetStats: gptResult.targetStats, contextAffinity: gptResult.contextAffinity };
@@ -408,7 +476,19 @@ async function processImage(filename) {
       primaryGenre: track.primaryGenre,
       subgenre: track.subgenre,
       totalScore: scoreEntry ? scoreEntry.totalScore : null,
+      // Score breakdown was already computed by scoring.ts for every candidate-pool row
+      // (top16Rows/scoreEntry above) — copied here rather than recalculated, so final10 rows
+      // carry the same five components the diagnostic candidate-pool table already shows.
+      atmosphereScore: scoreEntry ? scoreEntry.atmosphereScore : null,
+      desiredSoundScore: scoreEntry ? scoreEntry.desiredSoundScore : null,
+      seasonScore: scoreEntry ? scoreEntry.seasonScore : null,
+      timeScore: scoreEntry ? scoreEntry.timeScore : null,
+      weatherScore: scoreEntry ? scoreEntry.weatherScore : null,
       coarseEnergy: track.energy,
+      // The track's own 17 catalog stats (musicCatalog.ts), included so this review can validate
+      // image-stats <-> music-stats matching — not the scoring output, just the existing per-track
+      // metadata already attached to `track` (a CatalogTrack) at this point in the pipeline.
+      stats: track.stats,
     };
   });
 
@@ -554,14 +634,17 @@ async function main() {
 
   const successResults = results.filter((r) => r.success);
   const failedResults = results.filter((r) => !r.success);
-  // Per-image attempt count isn't observable through the remote endpoint's response (see
-  // callRemoteAnalyzeImage/processImage) — only the aggregate expected range is reportable.
-  const totalRequests = null;
+  // This script's own retry attempts (PHASE 4, max 2 per image) ARE tracked per-image via
+  // requestAttemptCount. This total does NOT include gpt.ts's separate, internal one-time
+  // vector/genre correction retry, which happens inside a single HTTP call to this endpoint and
+  // stays invisible here — so the true OpenAI call count can still be up to 2x this figure.
+  const totalRequests = results.reduce((sum, r) => sum + (r.requestAttemptCount || 0), 0);
+  const imagesRetriedAtThisScriptLevel = results.filter((r) => r.requestAttemptCount > 1).length;
 
   console.log(`\n=== Execution summary ===`);
   console.log(`Images processed: ${results.length}/${preRunInventory.length}`);
   console.log(`Succeeded: ${successResults.length} | Failed: ${failedResults.length}`);
-  console.log(`Requests: not individually observable via the remote endpoint; expected range ${preRunInventory.length}-${preRunInventory.length * 2} hosted OpenAI calls (min = 1 per image, max = 2 per image if every image triggered the one-time retry).`);
+  console.log(`This-script-level requests made: ${totalRequests} (${imagesRetriedAtThisScriptLevel} image(s) needed a script-level retry). Each still may have triggered up to 1 additional hidden OpenAI call via gpt.ts's own internal correction retry.`);
   if (failedResults.length > 0) {
     console.log('Run is INCOMPLETE — not all 12 images completed successfully:');
     for (const f of failedResults) console.log(`  ${f.filename}: ${f.error.category}`);
@@ -856,10 +939,11 @@ async function main() {
       imagesSucceeded: successResults.length,
       imagesFailed: failedResults.length,
       totalRequests,
-      totalRequestsNote: 'Per-image/aggregate request count is not observable through the remote evaluation endpoint response; only the structural min/max range below is known.',
+      imagesRetriedAtThisScriptLevel,
+      totalRequestsNote: 'totalRequests counts this script\'s own PHASE-4 retry attempts (max 2/image) — it does not include gpt.ts\'s separate internal one-time vector/genre correction retry, which happens inside a single HTTP call and stays invisible here. True OpenAI call count may be up to 2x totalRequests.',
       minExpectedRequests: preRunInventory.length,
-      maxExpectedRequests: preRunInventory.length * 2,
-      failedImages: failedResults.map((f) => ({ filename: f.filename, category: f.error.category })),
+      maxExpectedRequests: preRunInventory.length * 4,
+      failedImages: failedResults.map((f) => ({ filename: f.filename, category: f.error.category, diagnostics: f.error.diagnostics })),
     },
     perImageResults: successResults.map((r) => ({
       filename: r.filename,
@@ -909,7 +993,7 @@ async function main() {
   md.push(`Generated: ${diagnosticJson.generatedAt}  \nRepository HEAD: ${repositoryHead}  \nModel: ${MODEL_NAME}\n`);
   md.push(`## Execution summary\n`);
   md.push(`- Images attempted: ${results.length} | succeeded: ${successResults.length} | failed: ${failedResults.length}`);
-  md.push(`- Total requests: not individually observable via the remote endpoint; expected ${preRunInventory.length}-${preRunInventory.length * 2} hosted OpenAI calls\n`);
+  md.push(`- This-script-level requests made: ${totalRequests} (${imagesRetriedAtThisScriptLevel} image(s) needed a script-level retry); true OpenAI call count may be up to 2x this if gpt.ts's own internal correction retry also fired\n`);
 
   md.push('## Source image inventory\n');
   md.push('| filename | bytes | dimensions | sha256 (prefix) |');
@@ -927,10 +1011,10 @@ async function main() {
     md.push('| rank | artist | title | youtubeVideoId | primaryGenre | subgenre | total | atmo | sound | season | time | weather |');
     md.push('|---|---|---|---|---|---|---|---|---|---|---|---|');
     for (const row of r.top16) md.push(`| ${row.rank} | ${row.artist} | ${row.title} | ${row.youtubeVideoId} | ${row.primaryGenre} | ${row.subgenre} | ${round2(row.totalScore)} | ${round2(row.atmosphereScore)} | ${round2(row.desiredSoundScore)} | ${round2(row.seasonScore)} | ${round2(row.timeScore)} | ${round2(row.weatherScore)} |`);
-    md.push('\n**Final 10 sequenced**\n');
-    md.push('| final pos | scored rank | artist | title | youtubeVideoId | energy |');
-    md.push('|---|---|---|---|---|---|');
-    for (const row of r.final10) md.push(`| ${row.finalPosition} | ${row.originalScoredRank} | ${row.artist} | ${row.title} | ${row.youtubeVideoId} | ${row.coarseEnergy} |`);
+    md.push('\n**Final 20 sequenced**\n');
+    md.push('| final pos | scored rank | artist | title | youtubeVideoId | total | atmo | sound | season | time | weather | energy |');
+    md.push('|---|---|---|---|---|---|---|---|---|---|---|---|');
+    for (const row of r.final10) md.push(`| ${row.finalPosition} | ${row.originalScoredRank} | ${row.artist} | ${row.title} | ${row.youtubeVideoId} | ${round2(row.totalScore)} | ${round2(row.atmosphereScore)} | ${round2(row.desiredSoundScore)} | ${round2(row.seasonScore)} | ${round2(row.timeScore)} | ${round2(row.weatherScore)} | ${row.coarseEnergy} |`);
     md.push('\n**Human review (blank — manual)**\n');
     for (const [k, v] of Object.entries(r.humanReview)) md.push(`- ${k}: ${v}`);
   }

@@ -475,6 +475,94 @@ function fullGptPayload({ primaryGenres, subgenres }) {
   check('[27] thrown error is a SafeError (explicit failure, not a silent fallback)', errorName === 'SafeError');
 }
 
+// ── primary_lane_id: invalid/missing lane must null-out, not fail the whole analysis ───────
+// (genre-first architecture: lane no longer drives catalog eligibility/scoring/candidate
+// selection/sequencing — it's compatibility/persistence/analytics only.)
+
+// 28. a valid primary_lane_id is preserved unchanged.
+{
+  const parsed = fullGptPayload({ primaryGenres: ['pop'], subgenres: ['city-pop'] });
+  applyCompatibilityValidation(parsed);
+  check('[28] valid primary_lane_id is preserved unchanged', parsed.primary_lane_id === TEST_LANE_ID);
+}
+
+// 29. an invalid (unknown) primary_lane_id does not throw and is normalized to null.
+{
+  const parsed = fullGptPayload({ primaryGenres: ['pop'], subgenres: ['city-pop'] });
+  parsed.primary_lane_id = 'not-a-real-lane-id';
+  let threw = false;
+  try {
+    applyCompatibilityValidation(parsed);
+  } catch {
+    threw = true;
+  }
+  check('[29] invalid primary_lane_id does not throw', threw === false);
+  check('[29] invalid primary_lane_id is normalized to null', parsed.primary_lane_id === null);
+}
+
+// 30. a missing primary_lane_id (field absent) does not throw and is normalized to null.
+{
+  const parsed = fullGptPayload({ primaryGenres: ['pop'], subgenres: ['city-pop'] });
+  delete parsed.primary_lane_id;
+  let threw = false;
+  try {
+    applyCompatibilityValidation(parsed);
+  } catch {
+    threw = true;
+  }
+  check('[30] missing primary_lane_id does not throw', threw === false);
+  check('[30] missing primary_lane_id is normalized to null', parsed.primary_lane_id === null);
+}
+
+// 31. end-to-end: an invalid lane on the FIRST (and only) response, with otherwise fully valid
+// vectors/genres, succeeds WITHOUT triggering the one-time correction retry (call count stays 1)
+// and returns primary_lane_id: null alongside the still-valid recommendation data.
+{
+  const payload = fullGptPayload({ primaryGenres: ['pop'], subgenres: ['city-pop', 'dance-pop'] });
+  payload.primary_lane_id = 'totally-invalid-lane-id';
+  let fetchCallCount = 0;
+  const fetchMock = async () => {
+    fetchCallCount += 1;
+    return { ok: true, json: async () => ({ choices: [{ message: { content: JSON.stringify(payload) } }] }) };
+  };
+  const { analyzeImage } = transpileToSandbox(GPT_PATH, {
+    require: fakeRequire,
+    Deno: { env: { get: (key) => (key === 'OPENAI_API_KEY' ? 'fake-test-key' : undefined) } },
+    fetch: fetchMock,
+  });
+  const result = await analyzeImage('https://example.com/fake-signed-url.jpg');
+  check('[31] invalid-lane-but-otherwise-valid response does NOT trigger a correction retry (exactly 1 fetch call)', fetchCallCount === 1);
+  check('[31] result.primary_lane_id is null', result.primary_lane_id === null);
+  check(
+    '[31] the rest of the valid response is preserved (lane failure does not block a good result)',
+    result.music_profile.primaryGenres.includes('pop') && result.targetStats.brightness === 50,
+  );
+}
+
+// 32. end-to-end: genre-invalid first response still triggers the existing one-time correction
+// retry exactly as before, unaffected by the lane-validation change (valid lane throughout).
+{
+  const responses = [
+    JSON.stringify(fullGptPayload({ primaryGenres: ['not-a-real-genre'], subgenres: ['city-pop'] })),
+    JSON.stringify(fullGptPayload({ primaryGenres: ['pop'], subgenres: ['city-pop', 'dance-pop'] })),
+  ];
+  const { analyzeImage } = loadGptModuleWithMockFetch(responses);
+  const result = await analyzeImage('https://example.com/fake-signed-url.jpg');
+  check('[32] invalid genre on first response is still corrected via the existing one-time retry', result.music_profile.primaryGenres.includes('pop'));
+  check('[32] primary_lane_id is untouched by genre correction (still the valid test lane)', result.primary_lane_id === TEST_LANE_ID);
+}
+
+// 33. malformed JSON still fails parseGptJson exactly as before (lane change does not touch this).
+{
+  let threw = false;
+  try {
+    parseGptJson('this is not { valid json at all');
+  } catch {
+    threw = true;
+  }
+  check('[33] malformed JSON still throws from parseGptJson', threw === true);
+}
+
 console.log(`\nChecks run: ${totalChecks}, passed ${totalChecks - failures.length}, failed ${failures.length}`);
 if (failures.length > 0) {
   console.error('\nFAILED:');
