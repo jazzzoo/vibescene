@@ -54,13 +54,16 @@ const CATALOG_PATH = path.join(ROOT, 'supabase/functions/_shared/musicCatalog.ts
 const SEQUENCING_PATH = path.join(ROOT, 'supabase/functions/analyze-and-search/services/sequencing.ts');
 const IMAGES_DIR = path.join(ROOT, 'test-assets/stat-manual-validation');
 const DIAGNOSTICS_DIR = path.join(ROOT, 'diagnostics');
-// Step 6 genre-first re-run: the original Step 5-C files (real-image-music-evaluation.json/.md)
-// are historical and are never overwritten again — this script now writes to new, dedicated
-// genre-filter-real-image-evaluation.{json,md} paths so a fresh real-GPT run (with canonical
-// primaryGenres/subgenres) never collides with, or gets "resumed" from, the old free-text-genre
-// cached results.
-const JSON_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'genre-filter-real-image-evaluation.json');
-const MD_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'genre-filter-real-image-evaluation.md');
+// diagnostics/ is WRITE-ONLY for this script: every run reads only the original image bytes
+// under IMAGES_DIR and the current runtime modules (gpt.ts/scoring.ts/sequencing.ts/musicCatalog.ts),
+// performs a fresh GPT analysis for every image (see main() — there is no resume/cache lookup),
+// and only ever writes results here at the end. Nothing under diagnostics/ or docs/ is read as
+// input anywhere in this file. Historical diagnostics files (including the old
+// genre-filter-real-image-evaluation.{json,md} and real-image-music-evaluation.{json,md}) are
+// left untouched — this run always writes to its own new, dedicated "current" output paths below
+// so a fresh run never collides with, and cannot be silently resumed from, prior results.
+const JSON_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'current-20-track-real-image-evaluation.json');
+const MD_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'current-20-track-real-image-evaluation.md');
 
 const EXPECTED_IMAGE_COUNT = 12;
 // Step 6 genre-first catalog filter + 20-track expansion: kept in sync with the production
@@ -295,7 +298,8 @@ function classifyError(err) {
 }
 
 // ── PHASE 5/6: per-image processing (sequential, real analyzeImage + real scoring/sequencing) ──
-async function processImage(filename, reusedGptResult) {
+// Always performs a fresh remote analyzeImage() call — no cache/resume lookup of any kind.
+async function processImage(filename) {
   const fullPath = path.join(IMAGES_DIR, filename);
   const buffer = readFileSync(fullPath);
   const dims = getJpegDimensions(buffer);
@@ -305,16 +309,12 @@ async function processImage(filename, reusedGptResult) {
   const startedAtMs = Date.now();
   let gptResult = null;
   let errorInfo = null;
-  if (reusedGptResult) {
-    gptResult = reusedGptResult;
-  } else {
-    try {
-      gptResult = await callRemoteAnalyzeImage(filename, dataUrl);
-    } catch (err) {
-      errorInfo = classifyError(err);
-    }
+  try {
+    gptResult = await callRemoteAnalyzeImage(filename, dataUrl);
+  } catch (err) {
+    errorInfo = classifyError(err);
   }
-  const durationMs = reusedGptResult ? 0 : Date.now() - startedAtMs;
+  const durationMs = Date.now() - startedAtMs;
   // Per-image request-attempt count (1 vs 2 on internal retry) is not observable through the
   // remote evaluation endpoint's response schema (Phase 4 deliberately limits the response to
   // parsed GptResponse fields plus an optional `normalized` flag) — only the aggregate call count
@@ -339,12 +339,12 @@ async function processImage(filename, reusedGptResult) {
 
   const scene = { targetStats: gptResult.targetStats, contextAffinity: gptResult.contextAffinity };
 
-  // Step 6 genre-first catalog filter: gptResult.music_profile.primaryGenres/subgenres only exist
-  // on responses produced by the NEW canonical-taxonomy prompt/parser. Cached responses captured
-  // before this change (e.g. diagnostics/real-image-music-evaluation.json) only have the OLD
-  // free-text primary_genre/secondary_genre fields — those are never fabricated into canonical
-  // arrays here. When the canonical arrays are absent, the genre filter is skipped explicitly and
-  // logged, and scoring runs over the full verified pool exactly as it did before this task.
+  // Step 6 genre-first catalog filter: gptResult.music_profile.primaryGenres/subgenres are expected
+  // on every fresh response from the current canonical-taxonomy prompt/parser (this script no
+  // longer reads or reuses any previous/cached gptResult — every gptResult here comes straight from
+  // this run's own callRemoteAnalyzeImage() call above). This check is kept purely as a defensive
+  // guard against a malformed live response; canonical genres are never fabricated when absent —
+  // the genre filter is skipped explicitly and logged, and scoring runs over the full verified pool.
   const hasCanonicalGenres =
     Array.isArray(gptResult.music_profile?.primaryGenres) &&
     Array.isArray(gptResult.music_profile?.subgenres) &&
@@ -524,32 +524,15 @@ function sleep(ms) {
 // sequential loop comfortably under a low requests-per-minute ceiling. Configurable for reruns.
 const INTER_REQUEST_DELAY_MS = process.env.EVAL_REQUEST_DELAY_MS ? Number(process.env.EVAL_REQUEST_DELAY_MS) : 20000;
 
-// Resume support: if a prior run already wrote diagnostics/real-image-music-evaluation.json,
-// reuse its successful analyzeImage() results (matched by filename + sha256, so a changed image
-// is never silently reused) instead of re-spending on images that already succeeded — only the
-// images missing/failed last time make a new remote request this run.
-function loadPreviousGptResults() {
-  const map = new Map();
-  try {
-    const prev = JSON.parse(readFileSync(JSON_OUT_PATH, 'utf-8'));
-    for (const r of prev.perImageResults || []) {
-      if (r.filename && r.sha256 && r.gptResult) map.set(`${r.filename}::${r.sha256}`, r.gptResult);
-    }
-  } catch {
-    // no prior run, or unreadable — process everything fresh
-  }
-  return map;
-}
-
 async function main() {
-  const previousGptResults = loadPreviousGptResults();
+  // No previous-result cache/resume: every image below always gets a brand-new
+  // callRemoteAnalyzeImage() request (see processImage()) — diagnostics/ is never read here.
   const results = [];
   let lastRealCallAt = null;
   for (let i = 0; i < preRunInventory.length; i += 1) {
     const filename = preRunInventory[i].filename;
-    const reused = previousGptResults.get(`${filename}::${preRunInventory[i].sha256}`) || null;
-    console.log(`\n[${i + 1}/${preRunInventory.length}] Analyzing ${filename} ...${reused ? ' (reusing prior successful result — no new request)' : ''}`);
-    if (!reused && lastRealCallAt !== null) {
+    console.log(`\n[${i + 1}/${preRunInventory.length}] Analyzing ${filename} ...`);
+    if (lastRealCallAt !== null) {
       const elapsed = Date.now() - lastRealCallAt;
       const remaining = INTER_REQUEST_DELAY_MS - elapsed;
       if (remaining > 0) {
@@ -559,8 +542,8 @@ async function main() {
       }
     }
     // eslint-disable-next-line no-await-in-loop
-    const result = await processImage(filename, reused);
-    if (!reused) lastRealCallAt = Date.now();
+    const result = await processImage(filename);
+    lastRealCallAt = Date.now();
     if (result.success) {
       console.log(`  OK in ${result.analysisDurationMs}ms, normalized=${result.vectorNormalizationOccurred}, lane=${result.gptResult.primary_lane_id}`);
     } else {
