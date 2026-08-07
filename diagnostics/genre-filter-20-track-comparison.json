@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T05:27:38.859Z",
+  "generatedAt": "2026-08-07T02:16:12.935Z",
   "mode": "fixture-only — no OpenAI calls, declared canonical genre selections",
   "finalTrackCount": 20,
   "catalogCandidatePoolSize": 30,
@@ -228,6 +228,14 @@
           "energy": "medium"
         },
         {
+          "artist": "Victor Lundberg",
+          "title": "Come Back Again",
+          "youtubeVideoId": "dzoxC8dedXw",
+          "primaryGenre": "folk-acoustic",
+          "subgenre": "singer-songwriter",
+          "energy": "medium"
+        },
+        {
           "artist": "Jason Mraz",
           "title": "I'm Yours",
           "youtubeVideoId": "EkHTsc9PU2A",
@@ -303,14 +311,6 @@
           "artist": "Finn Askew",
           "title": "Aftertaste",
           "youtubeVideoId": "HFQyMYzEoNo",
-          "primaryGenre": "folk-acoustic",
-          "subgenre": "singer-songwriter",
-          "energy": "low"
-        },
-        {
-          "artist": "Victor Lundberg",
-          "title": "Come Back Again",
-          "youtubeVideoId": "dzoxC8dedXw",
           "primaryGenre": "folk-acoustic",
           "subgenre": "singer-songwriter",
           "energy": "low"
@@ -729,7 +729,7 @@
         "jazz-rap",
         "lofi-hiphop"
       ],
-      "genreEligibleCount": 121,
+      "genreEligibleCount": 120,
       "candidatePoolCount": 30,
       "finalTrackCount": 20,
       "reachedFullTwentyTracks": true,
@@ -823,12 +823,12 @@
           "energy": "medium"
         },
         {
-          "artist": "potsu",
-          "title": "just friends",
-          "youtubeVideoId": "qOif_ni_9zc",
+          "artist": "Central Cee",
+          "title": "Loading",
+          "youtubeVideoId": "1Ok-i3uGXkM",
           "primaryGenre": "hip-hop",
-          "subgenre": "lofi-hiphop",
-          "energy": "low"
+          "subgenre": "drill",
+          "energy": "medium"
         },
         {
           "artist": "Joey Pecoraro",
@@ -906,7 +906,7 @@
         "jazz-hop",
         "nu-jazz"
       ],
-      "genreEligibleCount": 50,
+      "genreEligibleCount": 51,
       "candidatePoolCount": 30,
       "finalTrackCount": 20,
       "reachedFullTwentyTracks": true,
@@ -1024,14 +1024,6 @@
           "energy": "medium"
         },
         {
-          "artist": "Uyama Hiroto",
-          "title": "Stratus",
-          "youtubeVideoId": "Gk42KfiBUVI",
-          "primaryGenre": "jazz",
-          "subgenre": "jazz-hop",
-          "energy": "medium"
-        },
-        {
           "artist": "BADBADNOTGOOD feat. Samuel T. Herring",
           "title": "Time Moves Slow",
           "youtubeVideoId": "UWIIPX_5rbM",
@@ -1043,6 +1035,14 @@
           "artist": "Uyama Hiroto",
           "title": "Departure",
           "youtubeVideoId": "lZKCM2FD2Gw",
+          "primaryGenre": "jazz",
+          "subgenre": "jazz-hop",
+          "energy": "low"
+        },
+        {
+          "artist": "potsu",
+          "title": "just friends",
+          "youtubeVideoId": "qOif_ni_9zc",
           "primaryGenre": "jazz",
           "subgenre": "jazz-hop",
           "energy": "low"
@@ -1616,7 +1616,7 @@
         "jazz-hop",
         "nu-jazz"
       ],
-      "genreEligibleCount": 50,
+      "genreEligibleCount": 51,
       "candidatePoolCount": 30,
       "finalTrackCount": 20,
       "reachedFullTwentyTracks": true,
@@ -1734,14 +1734,6 @@
           "energy": "medium"
         },
         {
-          "artist": "Uyama Hiroto",
-          "title": "Stratus",
-          "youtubeVideoId": "Gk42KfiBUVI",
-          "primaryGenre": "jazz",
-          "subgenre": "jazz-hop",
-          "energy": "medium"
-        },
-        {
           "artist": "BADBADNOTGOOD feat. Samuel T. Herring",
           "title": "Time Moves Slow",
           "youtubeVideoId": "UWIIPX_5rbM",
@@ -1753,6 +1745,14 @@
           "artist": "Uyama Hiroto",
           "title": "Departure",
           "youtubeVideoId": "lZKCM2FD2Gw",
+          "primaryGenre": "jazz",
+          "subgenre": "jazz-hop",
+          "energy": "low"
+        },
+        {
+          "artist": "potsu",
+          "title": "just friends",
+          "youtubeVideoId": "qOif_ni_9zc",
           "primaryGenre": "jazz",
           "subgenre": "jazz-hop",
           "energy": "low"
@@ -1820,7 +1820,7 @@
       },
       {
         "selection": "hip-hop",
-        "count": 121,
+        "count": 120,
         "meetsMinimum": true
       },
       {
@@ -1835,7 +1835,7 @@
       },
       {
         "selection": "jazz",
-        "count": 50,
+        "count": 51,
         "meetsMinimum": true
       },
       {

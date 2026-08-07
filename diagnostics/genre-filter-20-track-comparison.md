@@ -1,6 +1,6 @@
 # Genre-First Catalog Filter + 20-Track Expansion — Fixture Comparison
 
-Generated: 2026-08-06T05:27:38.859Z
+Generated: 2026-08-07T02:16:12.935Z
 
 **Mode: fixture-only.** No OpenAI calls were made. Every `primaryGenres`/`subgenres` selection below is a
 manually declared, real canonical id from `musicGenreTaxonomy.ts` — not derived from any GPT response.
@@ -21,12 +21,12 @@ Checks: 134 run, 134 passed, 0 failed.
 | folk-acoustic + singer-songwriter | folk-acoustic | singer-songwriter, indie-folk | 47 | 30 | 20 | yes |
 | rock + indie-rock + alternative-rock † | rock | indie-rock, alternative-rock | 161 | 30 | 20 | yes |
 | rnb-soul + k-rnb + alt-rnb | rnb-soul | k-rnb, alt-rnb | 127 | 30 | 20 | yes |
-| hip-hop + jazz-rap + lofi-hiphop | hip-hop | jazz-rap, lofi-hiphop | 121 | 30 | 20 | yes |
-| jazz + jazz-hop + nu-jazz | jazz | jazz-hop, nu-jazz | 50 | 30 | 20 | yes |
+| hip-hop + jazz-rap + lofi-hiphop | hip-hop | jazz-rap, lofi-hiphop | 120 | 30 | 20 | yes |
+| jazz + jazz-hop + nu-jazz | jazz | jazz-hop, nu-jazz | 51 | 30 | 20 | yes |
 | pop + city-pop | pop | city-pop | 226 | 30 | 20 | yes |
 | pop + bright-feeling subgenres † | pop | teen-pop, dance-pop | 226 | 30 | 20 | yes |
 | mixed K-R&B + hip-hop + jazz | rnb-soul, hip-hop, jazz | k-rnb, jazz-rap, nu-jazz | 298 | 30 | 20 | yes |
-| narrow-but-adequate single primary genre near minimum eligible count † | jazz | jazz-hop, nu-jazz | 50 | 30 | 20 | yes |
+| narrow-but-adequate single primary genre near minimum eligible count † | jazz | jazz-hop, nu-jazz | 51 | 30 | 20 | yes |
 
 † Notes:
 - **rock + indie-rock + alternative-rock**: requested "folk-rock" is not a real taxonomy subgenre id — substituted with alternative-rock (both under rock)
@@ -54,10 +54,10 @@ and it collapses to the primary-alone count since a lone primary's subgenre trac
 | primaryGenre | eligible tracks | meets FINAL_TRACK_COUNT |
 |---|---|---|
 | pop | 226 | yes |
-| hip-hop | 121 | yes |
+| hip-hop | 120 | yes |
 | rnb-soul | 127 | yes |
 | rock | 161 | yes |
-| jazz | 50 | yes |
+| jazz | 51 | yes |
 | electronic | 18 | no |
 | folk-acoustic | 47 | yes |
 | funk-disco | 42 | yes |
