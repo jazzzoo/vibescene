@@ -42,6 +42,9 @@ const {
   rankCatalogTracks,
   selectTopScoredTracks,
   checkTrackEligibility,
+  filterEligibleByGenre,
+  checkGenreSelectionCoverage,
+  FINAL_TRACK_COUNT,
 } = transpileToSandbox(SCORING_PATH);
 
 let cachedCatalog = null;
@@ -428,6 +431,164 @@ function makeTrack(overrides = {}) {
     distinctTopScores.size > 1,
     results.map((r) => `${r.name}: ${r.topScore}`),
   );
+}
+
+// ── Step 6 genre-first catalog filter (Phase 13) ────────────────────────────────────────────
+// filterEligibleByGenre never touches score/weights/tie-break — it's a pure pre-scoring filter.
+
+// [21] Matching primaryGenre admits a track.
+{
+  const track = makeTrack({ primaryGenre: 'pop', subgenre: 'city-pop' });
+  const result = filterEligibleByGenre([track], ['pop'], ['dance-pop']);
+  check('[21] track with matching primaryGenre is admitted', result.length, 1);
+}
+
+// [22] Matching subgenre (even with a different primaryGenre selection) admits a track.
+{
+  const track = makeTrack({ primaryGenre: 'rock', subgenre: 'dream-pop' });
+  const result = filterEligibleByGenre([track], ['jazz'], ['dream-pop']);
+  check('[22] track with matching subgenre is admitted (OR rule)', result.length, 1);
+}
+
+// [23] A nonmatching track is excluded even with a perfect stats/affinity fit.
+{
+  const scene = { targetStats: uniformStats(50), contextAffinity: uniformAffinity(50) };
+  const perfectButWrongGenre = makeTrack({
+    stats: uniformStats(50), affinity: uniformAffinity(50),
+    primaryGenre: 'jazz', subgenre: 'nu-jazz',
+  });
+  const filtered = filterEligibleByGenre([perfectButWrongGenre], ['pop'], ['city-pop']);
+  check('[23] nonmatching track excluded despite perfect stats fit', filtered.length, 0);
+
+  const { ranked } = rankCatalogTracks(scene, filtered);
+  check('[23] excluded track never reaches rankCatalogTracks output', ranked.length, 0);
+}
+
+// [24] Filtering happens before scoring: rankCatalogTracks only ever sees the genre-filtered pool.
+{
+  const scene = { targetStats: uniformStats(50), contextAffinity: uniformAffinity(50) };
+  const inGenre = makeTrack({ youtubeVideoId: 'in-genre', primaryGenre: 'pop', subgenre: 'city-pop', stats: uniformStats(50), affinity: uniformAffinity(50) });
+  const outOfGenre = makeTrack({ youtubeVideoId: 'out-of-genre', primaryGenre: 'rock', subgenre: 'shoegaze', stats: uniformStats(50), affinity: uniformAffinity(50) });
+  const eligiblePool = filterEligibleByGenre([inGenre, outOfGenre], ['pop'], ['city-pop']);
+  const { ranked } = rankCatalogTracks(scene, eligiblePool);
+  check('[24] genre filter runs before scoring — only genre-eligible tracks are scored', ranked.length, 1);
+  check('[24] the scored track is the genre-eligible one', ranked[0].track.youtubeVideoId, 'in-genre');
+}
+
+// [25] A weaker-fit matching track still ranks below a stronger-fit matching track (formula untouched by genre filter).
+{
+  const scene = { targetStats: uniformStats(80), contextAffinity: uniformAffinity(80) };
+  const strongMatch = makeTrack({ youtubeVideoId: 'strong', primaryGenre: 'pop', subgenre: 'city-pop', stats: uniformStats(80), affinity: uniformAffinity(80) });
+  const weakMatch = makeTrack({ youtubeVideoId: 'weak', primaryGenre: 'pop', subgenre: 'city-pop', stats: uniformStats(20), affinity: uniformAffinity(20) });
+  const eligiblePool = filterEligibleByGenre([weakMatch, strongMatch], ['pop'], ['city-pop']);
+  const { ranked } = rankCatalogTracks(scene, eligiblePool);
+  assertTrue('[25] stronger-fit matching track ranks above weaker-fit matching track', ranked[0].track.youtubeVideoId === 'strong', ranked.map((r) => r.track.youtubeVideoId));
+}
+
+// [26] filterEligibleByGenre does not mutate its input array or track objects.
+{
+  const track = makeTrack({ primaryGenre: 'pop', subgenre: 'city-pop' });
+  const tracks = [track];
+  filterEligibleByGenre(tracks, ['jazz'], ['nu-jazz']); // deliberately non-matching
+  check('[26] input array length unchanged', tracks.length, 1);
+  check('[26] input track object unchanged', tracks[0], track);
+}
+
+// [27]-[29] Production-catalog genre filter: no excluded track can ever enter the candidate pool.
+{
+  const { MUSIC_CATALOG } = loadMusicCatalog();
+  const verifiedPool = MUSIC_CATALOG.filter((t) => typeof t.youtubeVideoId === 'string' && t.youtubeVideoId.trim().length > 0);
+  const scene = { targetStats: uniformStats(50), contextAffinity: uniformAffinity(50) };
+
+  const selectedPrimary = ['pop'];
+  const selectedSubgenres = ['city-pop', 'dance-pop'];
+  const genreEligible = filterEligibleByGenre(verifiedPool, selectedPrimary, selectedSubgenres);
+
+  assertTrue(
+    '[27] every genre-eligible production track matches the selection',
+    genreEligible.every((t) => selectedPrimary.includes(t.primaryGenre) || selectedSubgenres.includes(t.subgenre)),
+  );
+  assertTrue(
+    '[27] genre-eligible pool is a strict subset of the verified pool',
+    genreEligible.length > 0 && genreEligible.length < verifiedPool.length,
+    genreEligible.length,
+  );
+
+  const { ranked } = rankCatalogTracks(scene, genreEligible);
+  const candidatePool = selectTopScoredTracks(ranked, 30);
+  assertTrue(
+    '[28] no track outside the selected genres ever enters the candidate pool',
+    candidatePool.every((t) => selectedPrimary.includes(t.primaryGenre) || selectedSubgenres.includes(t.subgenre)),
+  );
+  check('[28] candidate pool size respects the requested count (<= 30)', candidatePool.length <= 30, true);
+
+  // Deliberately-excluded genre (e.g. jazz) never appears when pop/city-pop/dance-pop was selected.
+  assertTrue(
+    '[29] an explicitly excluded primaryGenre never appears in the candidate pool',
+    !candidatePool.some((t) => t.primaryGenre === 'jazz'),
+  );
+}
+
+// [30] Insufficient eligible catalog is explicit and observable (no silent unrelated-genre expansion).
+{
+  const { MUSIC_CATALOG } = loadMusicCatalog();
+  const verifiedPool = MUSIC_CATALOG.filter((t) => typeof t.youtubeVideoId === 'string' && t.youtubeVideoId.trim().length > 0);
+  // ambient-experimental alone is a real, measured narrow case (see diagnostics/genre-filter-20-track-comparison.md)
+  const narrowEligible = filterEligibleByGenre(verifiedPool, ['ambient-experimental'], ['ambient-electronic']);
+  assertTrue(
+    '[30] narrow genre selection (ambient-experimental) produces a small, explicit, non-expanded pool',
+    narrowEligible.length > 0 && narrowEligible.length < 20,
+    narrowEligible.length,
+  );
+  assertTrue(
+    '[30] every track in the narrow pool still genuinely matches the narrow selection (no expansion)',
+    narrowEligible.every((t) => t.primaryGenre === 'ambient-experimental' || t.subgenre === 'ambient-electronic'),
+  );
+}
+
+// ── Step 6 genre-selection adequacy (coverage requirement) ──────────────────────────────────
+// checkGenreSelectionCoverage reuses filterEligibleByGenre's exact rule — no separate coverage logic.
+
+// [31] Exactly FINAL_TRACK_COUNT eligible tracks meets the minimum (boundary case).
+{
+  const tracks = Array.from({ length: FINAL_TRACK_COUNT }, () => makeTrack({ primaryGenre: 'pop', subgenre: 'city-pop' }));
+  const r = checkGenreSelectionCoverage(tracks, ['pop'], ['city-pop']);
+  check('[31] eligibleCount equals FINAL_TRACK_COUNT', r.eligibleCount, FINAL_TRACK_COUNT);
+  check('[31] exactly FINAL_TRACK_COUNT meets the minimum', r.meetsMinimum, true);
+}
+
+// [32] More than FINAL_TRACK_COUNT eligible tracks meets the minimum.
+{
+  const tracks = Array.from({ length: FINAL_TRACK_COUNT + 5 }, () => makeTrack({ primaryGenre: 'pop', subgenre: 'city-pop' }));
+  const r = checkGenreSelectionCoverage(tracks, ['pop'], ['city-pop']);
+  check('[32] eligibleCount exceeds FINAL_TRACK_COUNT', r.eligibleCount, FINAL_TRACK_COUNT + 5);
+  check('[32] more than FINAL_TRACK_COUNT meets the minimum', r.meetsMinimum, true);
+}
+
+// [33] One fewer than FINAL_TRACK_COUNT does not meet the minimum (boundary case, other side).
+{
+  const tracks = Array.from({ length: FINAL_TRACK_COUNT - 1 }, () => makeTrack({ primaryGenre: 'pop', subgenre: 'city-pop' }));
+  const r = checkGenreSelectionCoverage(tracks, ['pop'], ['city-pop']);
+  check('[33] eligibleCount is FINAL_TRACK_COUNT - 1', r.eligibleCount, FINAL_TRACK_COUNT - 1);
+  check('[33] one below FINAL_TRACK_COUNT does not meet the minimum', r.meetsMinimum, false);
+}
+
+// [34]-[35] Real-catalog narrow primaries: ambient-experimental (3) and electronic (18) never meet the minimum alone.
+{
+  const { MUSIC_CATALOG } = loadMusicCatalog();
+  const verifiedPool = MUSIC_CATALOG.filter((t) => typeof t.youtubeVideoId === 'string' && t.youtubeVideoId.trim().length > 0);
+
+  const ambient = checkGenreSelectionCoverage(verifiedPool, ['ambient-experimental'], ['ambient-electronic', 'downtempo']);
+  check('[34] ambient-experimental alone: real eligibleCount is 3', ambient.eligibleCount, 3);
+  check('[34] ambient-experimental alone does not meet FINAL_TRACK_COUNT', ambient.meetsMinimum, false);
+
+  const electronic = checkGenreSelectionCoverage(verifiedPool, ['electronic'], ['house', 'deep-house']);
+  check('[35] electronic alone: real eligibleCount is 18', electronic.eligibleCount, 18);
+  check('[35] electronic alone does not meet FINAL_TRACK_COUNT', electronic.meetsMinimum, false);
+
+  // Combining the two smallest primaries together (still a valid 1-3 primary shape) clears the minimum.
+  const combined = checkGenreSelectionCoverage(verifiedPool, ['electronic', 'ambient-experimental'], ['house', 'deep-house']);
+  assertTrue('[35] combining the two narrow primaries together clears FINAL_TRACK_COUNT', combined.meetsMinimum === true, combined.eligibleCount);
 }
 
 // ── Report ──────────────────────────────────────────────────────────────────

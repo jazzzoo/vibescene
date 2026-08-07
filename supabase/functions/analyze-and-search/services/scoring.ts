@@ -12,6 +12,7 @@
 // 런타임 코드가 실행되지 않는다 — 실제 트랙 배열은 항상 호출부(index.ts)가 인자로 전달한다.
 
 import type { CatalogTrack, TrackAffinity, TrackStats } from "../../_shared/musicCatalog.ts";
+import type { PrimaryGenre, Subgenre } from "../../_shared/musicGenreTaxonomy.ts";
 import type { ContextAffinity, TargetStats } from "./gpt.ts";
 
 // 이미지 분석에서 나온 "장면 벡터" — targetStats(17) + contextAffinity(13).
@@ -83,6 +84,47 @@ function findInvalidField(source: Record<string, unknown>, fields: readonly stri
     if (!isValidVectorValue(source[field])) return field;
   }
   return null;
+}
+
+// ── Step 6 genre-first catalog filter: 스코어링 이전 장르 적격성 필터 ──────────────────
+// GPT가 선택한 canonical primaryGenres/subgenres(musicGenreTaxonomy.ts 기준)로 카탈로그를
+// 좁힌 뒤에만 기존 30차원 스코어링을 실행한다. 이 필터는 점수를 매기지 않는다 — 순수하게
+// 포함/제외만 결정하며, genre를 스코어 성분이나 tie-break로 사용하지 않는다
+// (SCORE_WEIGHTS/scoreCatalogTrack/compareScoreBreakdown은 이 파일 안에서 전혀 건드리지 않음).
+//
+// 자격 규칙: selected primaryGenres에 track.primaryGenre가 있거나,
+//           selected subgenres에 track.subgenre가 있으면 적격(OR).
+// crossoverGenres는 이 규칙에서 사용하지 않는다 — track 고유의 primaryGenre/subgenre만 본다.
+export function filterEligibleByGenre<T extends Pick<CatalogTrack, "primaryGenre" | "subgenre">>(
+  tracks: readonly T[],
+  primaryGenres: readonly PrimaryGenre[],
+  subgenres: readonly Subgenre[],
+): T[] {
+  return tracks.filter(
+    (track) => primaryGenres.includes(track.primaryGenre) || subgenres.includes(track.subgenre),
+  );
+}
+
+// 최종 재생목록 트랙 수 — 단일 source of truth. index.ts(시퀀싱)와 gpt.ts(장르 선택 적정성 검사 +
+// 프롬프트 안내) 모두 여기서 import해서 쓴다. 여러 파일에 20을 따로 하드코딩하지 않는다.
+export const FINAL_TRACK_COUNT = 20;
+
+export type GenreCoverageResult = {
+  eligibleCount: number;
+  meetsMinimum: boolean;
+};
+
+// GPT가 고른 canonical primaryGenres/subgenres가 최종 FINAL_TRACK_COUNT곡을 채울 만큼 카탈로그에
+// 충분한 트랙을 갖고 있는지 확인한다. filterEligibleByGenre와 정확히 같은 OR 규칙을 재사용한다 —
+// 별도의 커버리지 판단 로직을 새로 만들지 않는다. 스코어링/시퀀싱보다 먼저(=gpt.ts 응답 검증 단계에서)
+// 실행되어, 부적격 장르 선택이 스코어링 단계까지 내려가지 않도록 한다.
+export function checkGenreSelectionCoverage<T extends Pick<CatalogTrack, "primaryGenre" | "subgenre">>(
+  tracks: readonly T[],
+  primaryGenres: readonly PrimaryGenre[],
+  subgenres: readonly Subgenre[],
+): GenreCoverageResult {
+  const eligibleCount = filterEligibleByGenre(tracks, primaryGenres, subgenres).length;
+  return { eligibleCount, meetsMinimum: eligibleCount >= FINAL_TRACK_COUNT };
 }
 
 // ── Phase 8: 트랙 자격 검사 ────────────────────────────────────────────────

@@ -54,12 +54,21 @@ const CATALOG_PATH = path.join(ROOT, 'supabase/functions/_shared/musicCatalog.ts
 const SEQUENCING_PATH = path.join(ROOT, 'supabase/functions/analyze-and-search/services/sequencing.ts');
 const IMAGES_DIR = path.join(ROOT, 'test-assets/stat-manual-validation');
 const DIAGNOSTICS_DIR = path.join(ROOT, 'diagnostics');
-const JSON_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'real-image-music-evaluation.json');
-const MD_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'real-image-music-evaluation.md');
+// Step 6 genre-first re-run: the original Step 5-C files (real-image-music-evaluation.json/.md)
+// are historical and are never overwritten again — this script now writes to new, dedicated
+// genre-filter-real-image-evaluation.{json,md} paths so a fresh real-GPT run (with canonical
+// primaryGenres/subgenres) never collides with, or gets "resumed" from, the old free-text-genre
+// cached results.
+const JSON_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'genre-filter-real-image-evaluation.json');
+const MD_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'genre-filter-real-image-evaluation.md');
 
 const EXPECTED_IMAGE_COUNT = 12;
-const CATALOG_CANDIDATE_POOL_SIZE = 16;
-const FINAL_TRACK_COUNT = 10;
+// Step 6 genre-first catalog filter + 20-track expansion: kept in sync with the production
+// constants in supabase/functions/analyze-and-search/index.ts (CATALOG_CANDIDATE_POOL_SIZE=30,
+// FINAL_TRACK_COUNT=20). This script is not run as part of this task (no OpenAI calls) — these
+// constants are synced so a future supervised run reflects real production behavior.
+const CATALOG_CANDIDATE_POOL_SIZE = 30;
+const FINAL_TRACK_COUNT = 20;
 
 // ── Generic math/util helpers (shared style with diagnose-music-scoring.mjs) ────────
 function round2(x) {
@@ -154,7 +163,7 @@ try {
   process.exit(1);
 }
 
-const { rankCatalogTracks, selectTopScoredTracks, SCORE_WEIGHTS } = scoringModule;
+const { rankCatalogTracks, selectTopScoredTracks, filterEligibleByGenre, SCORE_WEIGHTS } = scoringModule;
 const { MUSIC_CATALOG } = catalogModule;
 const { sequenceCatalogTracks } = sequencingModule;
 
@@ -329,10 +338,45 @@ async function processImage(filename, reusedGptResult) {
   }
 
   const scene = { targetStats: gptResult.targetStats, contextAffinity: gptResult.contextAffinity };
-  const { ranked } = rankCatalogTracks(scene, verifiedPool);
-  const top16Ranked = ranked.slice(0, 16);
-  const top16Tracks = selectTopScoredTracks(ranked, CATALOG_CANDIDATE_POOL_SIZE);
-  const final10Tracks = sequenceCatalogTracks(top16Tracks, FINAL_TRACK_COUNT);
+
+  // Step 6 genre-first catalog filter: gptResult.music_profile.primaryGenres/subgenres only exist
+  // on responses produced by the NEW canonical-taxonomy prompt/parser. Cached responses captured
+  // before this change (e.g. diagnostics/real-image-music-evaluation.json) only have the OLD
+  // free-text primary_genre/secondary_genre fields — those are never fabricated into canonical
+  // arrays here. When the canonical arrays are absent, the genre filter is skipped explicitly and
+  // logged, and scoring runs over the full verified pool exactly as it did before this task.
+  const hasCanonicalGenres =
+    Array.isArray(gptResult.music_profile?.primaryGenres) &&
+    Array.isArray(gptResult.music_profile?.subgenres) &&
+    gptResult.music_profile.primaryGenres.length > 0 &&
+    gptResult.music_profile.subgenres.length > 0;
+
+  let genreScopedPool = verifiedPool;
+  if (hasCanonicalGenres) {
+    genreScopedPool = filterEligibleByGenre(
+      verifiedPool,
+      gptResult.music_profile.primaryGenres,
+      gptResult.music_profile.subgenres,
+    );
+  } else {
+    console.warn(
+      `  [genre-filter] ${filename}: gptResult has no canonical primaryGenres/subgenres (old cached shape) — ` +
+        `skipping genre filter, scoring the full verified pool (not fabricating genres from old free-text fields).`,
+    );
+  }
+
+  // NOTE: the `top16`/`final10` identifier names below are kept as literal historical labels
+  // matching this script's existing diagnostic JSON/MD schema (top16Rows, final10Rows field names)
+  // — not renamed in this task to avoid touching this script's diagnostic schema beyond the Step 6
+  // genre-filter wiring and constant sync described above. `final10Tracks` now actually holds
+  // FINAL_TRACK_COUNT (20) tracks. The scored-diagnostic slice width below IS widened (from a fixed
+  // 16 to at least CATALOG_CANDIDATE_POOL_SIZE) so every one of the up-to-20 final tracks still has
+  // a matching scored row — with FINAL_TRACK_COUNT=20 > 16, a fixed top-16 slice would otherwise
+  // leave final positions 17-20 with no matching originalScoredRank/totalScore.
+  const { ranked } = rankCatalogTracks(scene, genreScopedPool);
+  const top16Ranked = ranked.slice(0, Math.max(16, CATALOG_CANDIDATE_POOL_SIZE));
+  const topScoredTracks = selectTopScoredTracks(ranked, CATALOG_CANDIDATE_POOL_SIZE);
+  const final10Tracks = sequenceCatalogTracks(topScoredTracks, FINAL_TRACK_COUNT);
 
   const top16Rows = top16Ranked.map((entry, idx) => ({
     rank: idx + 1,
@@ -349,7 +393,9 @@ async function processImage(filename, reusedGptResult) {
     weatherScore: entry.weatherScore,
   }));
 
-  const scoredTop10Ids = top16Rows.slice(0, 10).map((r) => r.youtubeVideoId);
+  // Baseline widened from a hardcoded 10 to FINAL_TRACK_COUNT so "did sequencing preserve the
+  // scored selection" stays meaningful at the new 20-track scale (previously final count == 10).
+  const scoredTop10Ids = top16Rows.slice(0, FINAL_TRACK_COUNT).map((r) => r.youtubeVideoId);
   const final10Rows = final10Tracks.map((track, idx) => {
     const originalScoredRank = top16Rows.findIndex((r) => r.youtubeVideoId === track.youtubeVideoId) + 1;
     const scoreEntry = top16Rows.find((r) => r.youtubeVideoId === track.youtubeVideoId);
@@ -894,7 +940,7 @@ async function main() {
     md.push(`- playlist_concept: ${r.gptResult.playlist_concept}`);
     md.push(`- targetStats: ${Object.entries(r.gptResult.targetStats).map(([k, v]) => `${k}=${v}`).join(' ')}`);
     md.push(`- contextAffinity: ${Object.entries(r.gptResult.contextAffinity).map(([k, v]) => `${k}=${v}`).join(' ')}`);
-    md.push('\n**Top 16 scored**\n');
+    md.push(`\n**Top ${Math.max(16, CATALOG_CANDIDATE_POOL_SIZE)} scored**\n`);
     md.push('| rank | artist | title | youtubeVideoId | primaryGenre | subgenre | total | atmo | sound | season | time | weather |');
     md.push('|---|---|---|---|---|---|---|---|---|---|---|---|');
     for (const row of r.top16) md.push(`| ${row.rank} | ${row.artist} | ${row.title} | ${row.youtubeVideoId} | ${row.primaryGenre} | ${row.subgenre} | ${round2(row.totalScore)} | ${round2(row.atmosphereScore)} | ${round2(row.desiredSoundScore)} | ${round2(row.seasonScore)} | ${round2(row.timeScore)} | ${round2(row.weatherScore)} |`);

@@ -86,6 +86,11 @@ export async function updatePlaylistStatus(
 
 // GPT snake_case → DB 컬럼/JSONB 매핑 후 저장
 // - primary_genre, secondary_genre, energy_score: 개별 컬럼
+//   Step 6 genre-first catalog filter 이후: DB 스키마 변경(마이그레이션) 없이 기존 TEXT 컬럼을
+//   그대로 재사용한다 — 값은 더 이상 GPT 자유 텍스트가 아니라 gpt.music_profile.primaryGenres/
+//   subgenres(정규 taxonomy 배열)의 첫 값에서 파생된 canonical taxonomy id다. 호환 표시 필드로만
+//   유지하며(프론트엔드 MusicProfile.primaryGenre/secondaryGenre는 이미 string 타입), 전체
+//   배열은 저장하지 않는다 — 필요해지면 그때 컬럼을 추가한다.
 // - tempo, valence, confidence: analysis JSONB 안에 포함
 // - primary_lane_id/name: YouTube 검색(failure 가능 지점) 이전에 저장되므로
 //   이후 status가 failed로 끝나도 lane usage tracking을 위해 값이 남는다.
@@ -128,8 +133,8 @@ export async function updatePlaylistAnalysis(
       status: "searching",
       analysis,
       playlist_concept: gpt.playlist_concept,
-      primary_genre: gpt.music_profile.primary_genre,
-      secondary_genre: gpt.music_profile.secondary_genre,
+      primary_genre: gpt.music_profile.primaryGenres[0] ?? null,
+      secondary_genre: gpt.music_profile.subgenres[0] ?? null,
       energy_score: gpt.music_profile.energy_score,
       primary_lane_id: gpt.primary_lane_id,
       primary_lane_name: getCurationLaneName(gpt.primary_lane_id),

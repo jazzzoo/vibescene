@@ -3,13 +3,20 @@ import { type CatalogTrack, type TrackEnergy } from "../../_shared/musicCatalog.
 // catalog 트랙의 순서만 6단계 에너지 아크로 재배치한다. 트랙 추가/삭제/변경 없음.
 //   opener → mood lock → energy lift → emotional peak → cooldown → closer
 //
-// 10곡 기준 목표 배치:
+// computeArcBucketSizes(n)은 트랙 수(n)에 대해 완전히 일반화되어 있다 — opener/closer 1곡씩을
+// 제외한 나머지(n-2)를 4개 중간 스테이지에 고르게 분배(나머지는 MIDDLE_FILL_PRIORITY 순서로 배분)
+// 하므로, 10곡이든 20곡이든 별도 분기 없이 동일한 로직으로 처리된다.
+//
+// 10곡 기준 목표 배치 예시:
 //   1     opener
 //   2-3   mood lock
 //   4-5   energy lift
 //   6-7   emotional peak
 //   8-9   cooldown
 //   10    closer
+//
+// 20곡 기준(Step 6, FINAL_TRACK_COUNT=20)에는 각 중간 스테이지가 비례해서 4-5곡씩 늘어난다 —
+// 알고리즘 변경 없이 finalCount 기본값만 20으로 갱신되었다.
 //
 // Lane 기반 anchor 로직 제거됨 (Phase 7, catalog-genre-reclassification 마이그레이션).
 // 후속 장르-우선 알고리즘 도입 시 anchor 로직을 별도로 재설계한다.
@@ -77,7 +84,7 @@ export function sequencePlaylistArc<T extends Pick<CatalogTrack, "energy">>(trac
 // 실패 시 candidatePool slice 순서(seededShuffle 결과)로 fallback.
 export function sequenceCatalogTracks(
   candidatePool: CatalogTrack[],
-  finalCount = 10,
+  finalCount = 20,
 ): CatalogTrack[] {
   const targetCount = Math.min(finalCount, candidatePool.length);
   if (targetCount <= 0) return [];
@@ -98,7 +105,7 @@ export function sequenceCatalogTracks(
 export function sequenceCatalogTracksWithAnchors(
   candidatePool: CatalogTrack[],
   _seed: string,      // formerly laneId — ignored after lane removal
-  finalCount = 10,
+  finalCount = 20,
 ): CatalogTrack[] {
   return sequenceCatalogTracks(candidatePool, finalCount);
 }

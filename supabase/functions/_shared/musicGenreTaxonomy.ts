@@ -108,6 +108,11 @@ export type Subgenre =
   | "cinematic-ambient"
   | "lofi-ambient";
 
+// Flat canonical primaryGenre ids — single source of truth for GPT prompt
+// construction and response validation (Step 6 genre-first catalog filter).
+// Derived from PRIMARY_GENRES; never independently maintained.
+export const PRIMARY_GENRE_IDS: PrimaryGenre[] = PRIMARY_GENRES.map((g) => g.id);
+
 // Canonical subgenres grouped under each primary genre.
 export const SUBGENRES_BY_PRIMARY: Record<PrimaryGenre, Subgenre[]> = {
   "pop": ["dance-pop", "synth-pop", "electropop", "bedroom-pop", "indie-pop", "k-pop", "j-pop", "city-pop", "teen-pop", "soft-pop", "art-pop"],
@@ -120,6 +125,11 @@ export const SUBGENRES_BY_PRIMARY: Record<PrimaryGenre, Subgenre[]> = {
   "funk-disco": ["disco-funk", "classic-funk", "disco", "nu-disco", "boogie"],
   "ambient-experimental": ["ambient-electronic", "downtempo", "cinematic-ambient", "lofi-ambient"],
 };
+
+// Flat canonical subgenre ids — single source of truth for GPT prompt
+// construction and response validation (Step 6 genre-first catalog filter).
+// Derived from SUBGENRES_BY_PRIMARY; never independently maintained.
+export const SUBGENRE_IDS: Subgenre[] = Object.values(SUBGENRES_BY_PRIMARY).flat();
 
 // Editorial notes on non-obvious subgenre placement decisions.
 export const SUBGENRE_NOTES: Partial<Record<Subgenre, string>> = {
