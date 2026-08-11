@@ -11,12 +11,9 @@
 // from old free-text data), using the same transpile+vm technique as
 // scripts/verify-music-scoring.mjs and scripts/verify-image-vector-parser.mjs.
 //
-// It also writes diagnostics/genre-filter-20-track-comparison.{json,md} — a fixture-based
-// report, clearly separate from any real-GPT validation (see the file headers).
-//
 // Usage: node scripts/verify-genre-filter-20-track.mjs
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import ts from 'typescript';
 import vm from 'vm';
 import path from 'path';
@@ -31,10 +28,6 @@ const SCORING_PATH = path.join(ROOT, 'supabase/functions/analyze-and-search/serv
 const SEQUENCING_PATH = path.join(ROOT, 'supabase/functions/analyze-and-search/services/sequencing.ts');
 const CATALOG_PATH = path.join(ROOT, 'supabase/functions/_shared/musicCatalog.ts');
 const TAXONOMY_PATH = path.join(ROOT, 'supabase/functions/_shared/musicGenreTaxonomy.ts');
-const DIAGNOSTICS_DIR = path.join(ROOT, 'diagnostics');
-const JSON_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'genre-filter-20-track-comparison.json');
-const MD_OUT_PATH = path.join(DIAGNOSTICS_DIR, 'genre-filter-20-track-comparison.md');
-
 const CATALOG_CANDIDATE_POOL_SIZE = 30;
 
 function transpileToSandbox(fullPath, extraSandbox = {}) {
@@ -336,125 +329,6 @@ if (failed > 0) {
   console.error('\nFAILED:');
   for (const f of failures) console.error(`  - ${f.name}`, f.detail !== undefined ? JSON.stringify(f.detail) : '');
 }
-
-// ── Write diagnostics (fixture-based only — NOT a real-GPT validation) ─────────────────────
-const jsonReport = {
-  generatedAt: new Date().toISOString(),
-  mode: 'fixture-only — no OpenAI calls, declared canonical genre selections',
-  finalTrackCount: FINAL_TRACK_COUNT,
-  catalogCandidatePoolSize: CATALOG_CANDIDATE_POOL_SIZE,
-  totalCatalogTracks: MUSIC_CATALOG.length,
-  verifiedCatalogTracks: verifiedPool.length,
-  checks: { total: passed + failed, passed, failed },
-  fixtures: fixtureResults,
-  rejectedSelections: rejectedResults,
-  coverage: {
-    note: 'Only 1-3 primaryGenres + 2-6 compatible subgenres is a shape GPT can actually return. ' +
-      'validSinglePrimaryCoverage below uses each primary + its OWN subgenres (a genuinely valid shape). ' +
-      'artificialSingleSubgenreAlone has NO primaryGenres (0 primaries) and is NOT a valid GPT shape — kept ' +
-      'only for audit-trail comparison against the earlier, uncorrected count; never cited as production risk.',
-    validSinglePrimaryCoverage,
-    genuinelyInsufficientValidSelections,
-    artificialSingleSubgenreAloneCount: artificialCount,
-    artificialInsufficientCount,
-  },
-};
-writeFileSync(JSON_OUT_PATH, JSON.stringify(jsonReport, null, 2) + '\n');
-
-const mdLines = [];
-mdLines.push('# Genre-First Catalog Filter + 20-Track Expansion — Fixture Comparison');
-mdLines.push('');
-mdLines.push(`Generated: ${jsonReport.generatedAt}`);
-mdLines.push('');
-mdLines.push('**Mode: fixture-only.** No OpenAI calls were made. Every `primaryGenres`/`subgenres` selection below is a');
-mdLines.push('manually declared, real canonical id from `musicGenreTaxonomy.ts` — not derived from any GPT response.');
-mdLines.push('This validates the filter/scoring/sequencing pipeline mechanics only. It does **not** validate whether');
-mdLines.push('GPT reliably picks good canonical genres for a real photo — that requires a new real 12-image GPT run');
-mdLines.push('(see the caveat at the bottom of this file).');
-mdLines.push('');
-mdLines.push(`Catalog: ${jsonReport.totalCatalogTracks} total tracks, ${jsonReport.verifiedCatalogTracks} with a verified youtubeVideoId.`);
-mdLines.push(`FINAL_TRACK_COUNT = ${FINAL_TRACK_COUNT}, CATALOG_CANDIDATE_POOL_SIZE = ${CATALOG_CANDIDATE_POOL_SIZE}.`);
-mdLines.push('');
-mdLines.push(`Checks: ${passed + failed} run, ${passed} passed, ${failed} failed.`);
-mdLines.push('');
-mdLines.push('## Fixture results (all genuinely valid AND adequate — every one reaches exactly 20)');
-mdLines.push('');
-mdLines.push('| fixture | primaryGenres | subgenres | genre-eligible | candidate pool | final tracks | reached 20 |');
-mdLines.push('|---|---|---|---|---|---|---|');
-for (const f of fixtureResults) {
-  mdLines.push(
-    `| ${f.name}${f.note ? ' †' : ''} | ${f.primaryGenres.join(', ')} | ${f.subgenres.join(', ')} | ${f.genreEligibleCount} | ${f.candidatePoolCount} | ${f.finalTrackCount} | ${f.reachedFullTwentyTracks ? 'yes' : 'no'} |`,
-  );
-}
-mdLines.push('');
-const notedFixtures = fixtureResults.filter((f) => f.note);
-if (notedFixtures.length > 0) {
-  mdLines.push('† Notes:');
-  for (const f of notedFixtures) mdLines.push(`- **${f.name}**: ${f.note}`);
-  mdLines.push('');
-}
-mdLines.push('## Rejected selections (valid shape, but caught by the Step 6 adequacy gate BEFORE reaching this pipeline)');
-mdLines.push('');
-mdLines.push('These are real, schema-valid GPT-reachable selections (1 primaryGenre + 2-6 of its own compatible');
-mdLines.push('subgenres) that `gpt.ts`\'s `validateGenreSelectionWithCoverage` rejects — and, per the one-time');
-mdLines.push('correction retry, asks GPT to broaden — because the catalog does not have enough tracks for them alone.');
-mdLines.push('');
-mdLines.push('| selection | eligible tracks | meets FINAL_TRACK_COUNT |');
-mdLines.push('|---|---|---|');
-for (const r of rejectedResults) mdLines.push(`| ${r.name} | ${r.eligibleCount} | ${r.meetsMinimum ? 'yes' : 'no'} |`);
-mdLines.push('| electronic + ambient-experimental (combined) | 21 | yes |');
-mdLines.push('');
-mdLines.push('## Corrected Phase 1 coverage audit: valid single-primaryGenre-alone selections (real 795-track catalog)');
-mdLines.push('');
-mdLines.push('Each row uses that one primaryGenre plus its OWN subgenres only (a genuinely valid GPT-output shape —');
-mdLines.push('1 primary + 2-6 compatible subgenres). This is the ONLY way a single-primary selection can be valid,');
-mdLines.push('and it collapses to the primary-alone count since a lone primary\'s subgenre tracks are a subset of it.');
-mdLines.push('');
-mdLines.push('| primaryGenre | eligible tracks | meets FINAL_TRACK_COUNT |');
-mdLines.push('|---|---|---|');
-for (const r of validSinglePrimaryCoverage) mdLines.push(`| ${r.selection} | ${r.count} | ${r.meetsMinimum ? 'yes' : 'no'} |`);
-mdLines.push('');
-mdLines.push(`**Genuinely insufficient valid combinations: exactly ${genuinelyInsufficientValidSelections.length}** — ` +
-  genuinelyInsufficientValidSelections.map((r) => `${r.selection} (${r.count} tracks)`).join(', ') + '.');
-mdLines.push('');
-mdLines.push('Any 2-or-3-primaryGenre combination (the other valid shape GPT can produce) was checked against the two');
-mdLines.push('narrowest primaries together (`electronic` + `ambient-experimental`, the worst realistic case) and');
-mdLines.push('already clears the minimum at 21 eligible tracks — so no multi-primary selection is expected to be');
-mdLines.push('insufficient in practice; only a lone narrow primaryGenre is a real risk.');
-mdLines.push('');
-mdLines.push('### Excluded as artificial (NOT valid GPT output shapes — audit trail only, not production risk)');
-mdLines.push('');
-mdLines.push(`A previous, uncorrected version of this report also computed "subgenre alone with zero primaryGenres"`);
-mdLines.push('(65 such rows) and generic "primary + first 2 subgenres" combos, and cited 52 of 83 tested selections');
-mdLines.push('as "producing fewer than 20" without first checking whether GPT could ever actually emit that shape.');
-mdLines.push('`primaryGenres` requires 1-3 entries — an empty `primaryGenres` array is invalid and rejected by');
-mdLines.push('`validateGenreSelection` before coverage is ever checked, so those rows were never a real production risk.');
-mdLines.push(`This report recomputes them for the record only: ${artificialCount} artificial "subgenre-alone" rows checked,`);
-mdLines.push(`${artificialInsufficientCount} of them under 20 — none of this is cited as production risk in this report.`);
-mdLines.push('');
-mdLines.push('## No contradictory fallback in the dominant genre-filtered path');
-mdLines.push('');
-mdLines.push('`gpt.ts`\'s `analyzeImage()` now rejects (with one correction retry, then an explicit `SafeError`) any');
-mdLines.push('genre selection that does not meet `FINAL_TRACK_COUNT` — so by the time a request reaches `index.ts`,');
-mdLines.push('`genreEligibleCatalogPool.length` is already guaranteed >= `FINAL_TRACK_COUNT`. `index.ts`\'s dominant path');
-mdLines.push('now requires `topScoredTracks.length >= FINAL_TRACK_COUNT` (not just `MIN_CATALOG_TRACKS`) to return a');
-mdLines.push('successful result, and throws an explicit `SafeError` instead of falling through to the genre-blind');
-mdLines.push('`selectFlatCatalogTracks` fallback if that upstream guarantee is somehow not met at request time. The');
-mdLines.push('legacy flat-catalog/YouTube-search fallback code is preserved (not deleted) but is dead/unreachable code');
-mdLines.push('under this architecture — see the comments in `index.ts` around the throw.');
-mdLines.push('');
-mdLines.push('## Real-GPT validation required');
-mdLines.push('');
-mdLines.push('The cached `diagnostics/real-image-music-evaluation.json` (12 real images) only contains the OLD');
-mdLines.push('free-text `primary_genre`/`secondary_genre` fields from before this change — these were NOT fabricated');
-mdLines.push('into canonical `primaryGenres`/`subgenres` arrays for this report. A new real GPT-4o run over the 12');
-mdLines.push('test images (via `scripts/evaluate-real-image-music.mjs`) is required to validate that GPT reliably');
-mdLines.push('selects good, taxonomy-valid canonical genres for real photos end-to-end.');
-mdLines.push('');
-writeFileSync(MD_OUT_PATH, mdLines.join('\n'));
-
-console.log(`\nWrote ${JSON_OUT_PATH}`);
-console.log(`Wrote ${MD_OUT_PATH}`);
 
 if (failed > 0) process.exit(1);
 console.log('\nGENRE FILTER + 20-TRACK VERIFICATION PASSED');
