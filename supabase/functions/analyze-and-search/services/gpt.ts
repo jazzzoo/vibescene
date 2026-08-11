@@ -1,7 +1,22 @@
 import { SafeError } from "../errors.ts";
 import { CURATION_LANES, type CurationLane } from "./curationLanes.ts";
+import {
+  PRIMARY_GENRE_IDS,
+  PRIMARY_GENRES,
+  type PrimaryGenre,
+  type Subgenre,
+  SUBGENRE_IDS,
+  SUBGENRES_BY_PRIMARY,
+} from "../../_shared/musicGenreTaxonomy.ts";
+import { hasYoutubeVideoId, MUSIC_CATALOG } from "../../_shared/musicCatalog.ts";
+import { checkGenreSelectionCoverage, FINAL_TRACK_COUNT } from "./scoring.ts";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+
+// Step 6 genre-selection adequacy 검사에 쓰는 verified catalog pool — index.ts의 동일 필터와
+// 정확히 같은 기준(hasYoutubeVideoId)이다. GPT 응답이 스코어링 단계에 도달하기 전에, 여기서 먼저
+// "이 장르 선택이 실제로 FINAL_TRACK_COUNT곡을 채울 만큼 카탈로그에 트랙이 있는가"를 확인한다.
+const VERIFIED_CATALOG_POOL = MUSIC_CATALOG.filter(hasYoutubeVideoId);
 
 // Curation Lane 목록을 프롬프트에 삽입할 텍스트로 변환
 function buildCurationLanesPrompt(lanes: CurationLane[]): string {
@@ -22,7 +37,35 @@ function buildCurationLanesPrompt(lanes: CurationLane[]): string {
 
 const CURATION_LANES_PROMPT = buildCurationLanesPrompt(CURATION_LANES);
 
-// 시스템 프롬프트 v2 — 임의 수정 금지 (Curation Lane System은 사용자 명시 요청으로 확장됨)
+// Step 6 genre-first catalog filter: canonical primaryGenre/subgenre taxonomy
+// 목록을 프롬프트에 삽입할 텍스트로 변환. musicGenreTaxonomy.ts가 유일한 source of
+// truth — 이 파일 안에 별도의 장르 목록을 다시 만들지 않는다.
+function buildGenreTaxonomyPrompt(): string {
+  return PRIMARY_GENRES.map(({ id, label, description }) => {
+    const subgenres = SUBGENRES_BY_PRIMARY[id].join(", ");
+    return `- **${id}** (${label}) — ${description}\n  Allowed subgenre ids: ${subgenres}`;
+  }).join("\n");
+}
+
+const GENRE_TAXONOMY_PROMPT = buildGenreTaxonomyPrompt();
+
+// Step 6 장르 선택 적정성(coverage) 안내: 특정 primaryGenre 하나만 (그 장르 자신의 subgenre만 곁들여)
+// 선택했을 때 FINAL_TRACK_COUNT(20)에 못 미치는 primaryGenre 목록을 실제 카탈로그/taxonomy로부터
+// 매번 다시 계산한다 — 장르 이름을 프롬프트에 직접 하드코딩하지 않고, 카탈로그가 바뀌어도 이 목록이
+// 조용히 stale해지지 않도록 한다. (별도의 수동 장르 목록을 만들지 않는다.)
+function computeNarrowPrimaryGenres(): PrimaryGenre[] {
+  return PRIMARY_GENRE_IDS.filter((id) => {
+    const ownSubgenres = SUBGENRES_BY_PRIMARY[id];
+    return !checkGenreSelectionCoverage(VERIFIED_CATALOG_POOL, [id], ownSubgenres).meetsMinimum;
+  });
+}
+
+const NARROW_PRIMARY_GENRES = computeNarrowPrimaryGenres();
+
+// 시스템 프롬프트 v2 — 임의 수정 금지 (Curation Lane System은 사용자 명시 요청으로 확장됨;
+// STEP 3-B 정규 장르 taxonomy 출력 추가도 동일하게 사용자 명시 요청으로 확장됨 — genre-first
+// catalog filter를 위해 music_profile.primary_genre/secondary_genre 자유 텍스트를
+// primaryGenres/subgenres 정규 taxonomy 배열로 교체)
 const SYSTEM_PROMPT = `You are a music curator AI that analyzes images and creates perfectly matched playlists.
 
 ## STEP 1: IMAGE TYPE DETECTION
@@ -91,8 +134,8 @@ Before generating the playlist, create an internal music profile:
   "tempo": "slow / mid / uptempo",
   "valence": "positive / neutral / negative",
   "season": "",
-  "primary_genre": "",
-  "secondary_genre": ""
+  "primaryGenres": [],
+  "subgenres": []
 }
 \`\`\`
 
@@ -107,7 +150,33 @@ Important: "energy_score" means expected MUSICAL intensity (how driving/energeti
 
 All 10 songs must stay within ±1 of the energy score.
 
-energy_score, tempo, valence, and season can be finalized now from STEP 2 and STEP 3.5. primary_genre and secondary_genre are the only two fields in this profile that must wait — they MUST be chosen from the allowedGenres of the curation lane you select in STEP 4 below, so finalize them only after completing STEP 4.
+energy_score, tempo, valence, and season can be finalized now from STEP 2 and STEP 3.5. primaryGenres and subgenres are the only fields in this profile that must wait — they MUST be chosen from the canonical genre taxonomy below, consistent with the musical world of the curation lane you select in STEP 4, so finalize them only after completing STEP 4.
+
+---
+
+## STEP 3-B: CANONICAL GENRE TAXONOMY (mandatory structured output)
+
+Unlike the curation lane's own \`allowedGenres\`/\`forbiddenGenres\` (which are descriptive, free-text guidance for picking actual songs in STEP 5), \`primaryGenres\` and \`subgenres\` in STEP 6's JSON output MUST be chosen ONLY from the exact canonical ids listed below — this is a separate, machine-checked taxonomy used to filter the recommendation catalog before scoring, not free text.
+
+**Canonical taxonomy (id — label — description, with each primary genre's allowed subgenre ids):**
+
+${GENRE_TAXONOMY_PROMPT}
+
+**Selection rules:**
+- \`primaryGenres\`: pick the smallest meaningful set that adequately represents the photographed scene's musical direction — normally 1, occasionally 2, at most 3. Do not pick the maximum just because it's allowed.
+- \`subgenres\`: pick the smallest meaningful set — normally 2-3, at most 6. Every subgenre you pick MUST belong to (be listed under) at least one primary genre you also picked.
+- Never invent a descriptive label that is not one of the exact ids above — for example "bright pop", "neon electronic", "soft alternative rock", or "summer K-pop" are NOT valid ids and must never be output, even if they read naturally. If no exact id captures a nuance, choose the closest real id instead of inventing one.
+- \`primaryGenres\`/\`subgenres\` describe the actual sound that should appear in the playlist — they must represent the musical world of the STEP 4 lane you select, not an unrelated or merely "diverse" mix. Do not add an extra genre just for variety.
+- You may pick more than one primary genre or subgenre only when the image naturally supports a genuinely blended sound (e.g. a scene that calls for both jazz and hip-hop) — not by default.
+- No duplicate values within \`primaryGenres\` or within \`subgenres\`.
+
+**Catalog coverage requirement (mandatory — this determines whether your response is accepted):**
+The final playlist is built from ${FINAL_TRACK_COUNT} real catalog tracks that match your \`primaryGenres\`/\`subgenres\` selection. Your selection is REJECTED and you will be asked to correct it if it does not match at least ${FINAL_TRACK_COUNT} catalog tracks.
+- Do not select these primary genres ALONE, with no other primary genre in \`primaryGenres\`: ${
+  NARROW_PRIMARY_GENRES.join(", ")
+}. The catalog does not have enough tracks in that family by itself to fill a ${FINAL_TRACK_COUNT}-track playlist.
+- If one of those narrow genres is genuinely the best fit for the image, do not abandon it and do not pick an unrelated genre just to hit the count — instead combine it with a second, still image-appropriate primary genre (and its compatible subgenres) so the combined selection is both coherent and has enough catalog coverage.
+- Never add a primary genre or subgenre that has nothing to do with the image merely to reach ${FINAL_TRACK_COUNT} — broaden only within what is genuinely appropriate for the photographed scene.
 
 ---
 
@@ -135,6 +204,45 @@ Silently tag the image across each of these dimensions (pick the closest fit, do
 Note the difference between the two "energy" concepts in this prompt: composition energy above describes the image's visual dynamism, while STEP 3's energy_score describes the expected musical intensity — they usually agree but are not the same thing, and a mismatch between them is a signal worth noticing, not an error.
 
 This profile is the primary evidence for STEP 4 — combine it with STEP 2's mood/season/context and STEP 3's energy profile. Visible tone/light/texture/density/motion/social signals should always outweigh cultural or location guesses, and should outweigh any single object in the frame.
+
+---
+
+## STEP 3.6: TARGET SOUND VECTORS (mandatory structured output)
+
+You are not estimating the emotional state, personality, relationship status, or private intention of any person who may appear in the image. You are estimating three things only: the air and atmosphere of the photographed space, the sonic qualities that would plausibly belong in that space, and the environmental context (season, time of day, weather) that should influence music matching. You may describe a visible emotional tone as a quality of the space itself (e.g. "the light and stillness in this room read as tense") — but never invent a personal narrative, relationship, or backstory for anyone in the photo.
+
+Using STEP 2's analysis, STEP 3's music profile, and STEP 3.5's visual profile together, produce two structured numeric vectors for STEP 6's JSON output. Every value in both vectors is an integer from 0 to 100 inclusive, and every field listed below is required — do not omit any of them and do not add commentary around them.
+
+**targetStats — 17 values.**
+
+Atmosphere (10, describing the space itself):
+- brightness: perceived visual and sonic luminosity — dark/muted (0) to radiant/bright (100)
+- warmth: cool/sterile to warm/embracing color and sonic temperature
+- openness: enclosed/compressed to spacious/expansive
+- motion: still/static to kinetic/moving
+- intimacy: distant/public to close/private/near-field
+- socialEnergy: solitary/quiet to communal/busy/celebratory
+- tension: relaxed/safe to uneasy/urgent/pressurized
+- nostalgia: present-focused/modern to memory-laden/retro/reflective
+- playfulness: serious/restrained to whimsical/light/fun
+- dreaminess: literal/crisp to hazy/ethereal/surreal
+
+Desired sound (7, describing the music that would plausibly belong here):
+- energy: low-intensity to high-intensity musical drive
+- groove: free/ungrooved to rhythmically propulsive
+- density: sparse/minimal to layered/full
+- acousticness: synthetic/processed to organic/acoustic
+- electronicness: organic/acoustic to electronic/synth-driven
+- vocalPresence: instrumental/background-vocal to strongly vocal-led
+- climaxIntensity: flat/steady to dramatic/building/peak-oriented
+
+acousticness and electronicness are independent scales, not opposite ends of one scale — they are not required to sum to 100 (an image can plausibly call for something that is high on both, or low on both).
+
+**contextAffinity — 13 values, representing suitability, not probability or a one-hot label.** Multiple values in the same group (season, time, or weather) can be high at once, and no group is required to sum to 100. Assign continuous suitability, not a single winner-take-all label. Example: a nighttime city image might reasonably score night: 90, lateNight: 75, dusk: 55, day: 20, morning: 5 — several nonzero values reflecting genuine partial fit, not a single pick.
+
+- Season: spring, summer, autumn, winter
+- Time: morning, day, dusk, night, lateNight
+- Weather: clear, cloudy, rain, snow
 
 ---
 
@@ -408,8 +516,19 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
     "energy_score": 0,
     "tempo": "",
     "valence": "",
-    "primary_genre": "",
-    "secondary_genre": ""
+    "primaryGenres": [],
+    "subgenres": []
+  },
+  "targetStats": {
+    "brightness": 0, "warmth": 0, "openness": 0, "motion": 0, "intimacy": 0,
+    "socialEnergy": 0, "tension": 0, "nostalgia": 0, "playfulness": 0, "dreaminess": 0,
+    "energy": 0, "groove": 0, "density": 0, "acousticness": 0, "electronicness": 0,
+    "vocalPresence": 0, "climaxIntensity": 0
+  },
+  "contextAffinity": {
+    "spring": 0, "summer": 0, "autumn": 0, "winter": 0,
+    "morning": 0, "day": 0, "dusk": 0, "night": 0, "lateNight": 0,
+    "clear": 0, "cloudy": 0, "rain": 0, "snow": 0
   },
   "playlist": [
     {
@@ -423,6 +542,10 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
   "playlist_subtitle": "Short premium playlist subtitle, 7-16 words, e.g. 'Breezy pop for sunlit ocean views and open skies' — NEVER an AI explanation, NEVER a narrow genre claim, NEVER a mood-tag list",
   "primary_lane_id": "the exact lane_id you selected in STEP 4 — must match one of the lane_id values in the catalogue exactly"
 }
+
+Every targetStats field (17) and every contextAffinity field (13) above is required on every response, per STEP 3.6 — all values must be integers from 0 to 100. Do not omit any of them, and do not substitute a placeholder value like 0 or 50 for a field you didn't actually evaluate.
+
+\`music_profile.primaryGenres\` (1-3 values) and \`music_profile.subgenres\` (2-6 values) are required on every response, per STEP 3-B — every value must be an exact canonical id from that taxonomy, with no duplicates, and every subgenre must belong to at least one of the chosen primaryGenres.
 
 For PERSON type, replace analysis with:
 {
@@ -455,6 +578,61 @@ export type GptAnalysisPerson = {
   color_tone: string;
 };
 
+// Step 4-A: 프로덕션 카탈로그의 17 TrackStats와 정확히 동일한 필드명/개수.
+// 이름을 바꾸면 향후 스코어링 코드에서 musicCatalog.ts의 TrackStats와 맞춰볼 수 없으므로
+// 여기 필드명은 supabase/functions/_shared/musicCatalog.ts의 TrackStats와 반드시 1:1로 일치해야 한다.
+export type TargetStats = {
+  brightness: number;
+  warmth: number;
+  openness: number;
+  motion: number;
+  intimacy: number;
+  socialEnergy: number;
+  tension: number;
+  nostalgia: number;
+  playfulness: number;
+  dreaminess: number;
+  energy: number;
+  groove: number;
+  density: number;
+  acousticness: number;
+  electronicness: number;
+  vocalPresence: number;
+  climaxIntensity: number;
+};
+
+// Step 4-A: 프로덕션 카탈로그의 13 TrackAffinity와 정확히 동일한 필드명/개수.
+export type ContextAffinity = {
+  spring: number;
+  summer: number;
+  autumn: number;
+  winter: number;
+  morning: number;
+  day: number;
+  dusk: number;
+  night: number;
+  lateNight: number;
+  clear: number;
+  cloudy: number;
+  rain: number;
+  snow: number;
+};
+
+// 명시적 필드 목록 — "존재하는 키만 검사"가 아니라 "이 목록에 있는 키가 전부 있는지"를 검사하기 위함.
+// 순서/개수가 musicCatalog.ts의 TrackStats/TrackAffinity와 어긋나면 안 됨.
+export const TARGET_STATS_FIELDS = [
+  "brightness", "warmth", "openness", "motion", "intimacy", "socialEnergy",
+  "tension", "nostalgia", "playfulness", "dreaminess",
+  "energy", "groove", "density", "acousticness", "electronicness",
+  "vocalPresence", "climaxIntensity",
+] as const;
+
+export const CONTEXT_AFFINITY_FIELDS = [
+  "spring", "summer", "autumn", "winter",
+  "morning", "day", "dusk", "night", "lateNight",
+  "clear", "cloudy", "rain", "snow",
+] as const;
+
 export type GptResponse = {
   image_type: "SCENE" | "PERSON" | "MIXED";
   confidence: number;
@@ -463,13 +641,23 @@ export type GptResponse = {
     energy_score: number;
     tempo: string;
     valence: string;
-    primary_genre: string;
-    secondary_genre: string;
+    // Step 6 genre-first catalog filter: canonical taxonomy ids only (musicGenreTaxonomy.ts),
+    // never free text. Replaces the former primary_genre/secondary_genre string fields.
+    primaryGenres: PrimaryGenre[];
+    subgenres: Subgenre[];
   };
+  targetStats: TargetStats;
+  contextAffinity: ContextAffinity;
   playlist: GptPlaylistItem[];
   playlist_concept: string;
   playlist_subtitle: string;
-  primary_lane_id: string;
+  // Step 6 genre-first 아키텍처에서 lane은 더 이상 catalog eligibility/scoring/candidate
+  // selection/sequencing에 쓰이지 않는다 — 호환/DB 저장/분석(usage tracking) 용도로만 남아있다.
+  // 그래서 유효하지 않은 lane 하나 때문에 targetStats/contextAffinity/primaryGenres/subgenres가
+  // 멀쩡한 응답 전체를 실패시키지 않는다: 무효/누락 시 null로 저장한다 (아래
+  // applyCompatibilityValidation 참고). playlists.primary_lane_id/primary_lane_name 컬럼은
+  // 이미 nullable이다(기존 row도 전부 null이었음, 20260625120000 마이그레이션 참고).
+  primary_lane_id: string | null;
 };
 
 // CURATION_LANES에 정의된 lane id만 허용 — GPT가 존재하지 않는 lane id를 만들어내는 것을 방지
@@ -478,10 +666,308 @@ const VALID_LANE_IDS = new Set(CURATION_LANES.map((lane) => lane.id));
 // playlist_subtitle이 없거나 너무 짧을 때 사용하는 기본 문구 — AI/분석/lane 언급 없이 프리미엄한 톤 유지
 const FALLBACK_PLAYLIST_SUBTITLE = "Breezy songs for quiet moments and cinematic city light";
 
-export async function analyzeImage(signedImageUrl: string): Promise<GptResponse> {
-  const apiKey = Deno.env.get("OPENAI_API_KEY");
-  if (!apiKey) throw new SafeError("이미지 분석 서비스가 설정되지 않았습니다.");
+// ── Step 4-A: targetStats/contextAffinity 검증 및 정규화 ──────────────────────
+// 0-100 정수를 살짝 벗어난 값("recoverable")만 반올림/clamp한다.
+// 이 허용폭을 벗어나면 근본적으로 잘못된 값으로 보고 invalid 처리한다 — 조용히 우겨넣지 않는다.
+const VECTOR_RECOVERABLE_MIN = -5;
+const VECTOR_RECOVERABLE_MAX = 105;
 
+type VectorFieldResult =
+  | { status: "ok"; value: number; normalized: boolean }
+  | { status: "invalid"; reason: string };
+
+// 문자열 숫자("80" 등)는 명시적으로 reject한다(안전하게 변환하지 않음) — "80"과 "eighty" 같은
+// 모호한 입력을 조용히 허용하는 대신, 항상 실제 number 타입만 허용해 정책을 명확하게 유지한다.
+function normalizeVectorField(raw: unknown, field: string): VectorFieldResult {
+  if (typeof raw !== "number" || !Number.isFinite(raw)) {
+    return { status: "invalid", reason: `${field}: not a finite number (got ${typeof raw})` };
+  }
+  if (raw < VECTOR_RECOVERABLE_MIN || raw > VECTOR_RECOVERABLE_MAX) {
+    return { status: "invalid", reason: `${field}: out of recoverable range (${raw})` };
+  }
+
+  const rounded = Math.round(raw);
+  const clamped = Math.min(100, Math.max(0, rounded));
+  return { status: "ok", value: clamped, normalized: clamped !== raw };
+}
+
+type VectorObjectResult<T> =
+  | { status: "ok"; value: T; normalized: boolean }
+  | { status: "invalid"; missing: string[]; invalid: string[] };
+
+// raw가 object가 아니면 모든 필드를 missing으로 보고한다 — "typeof obj === 'object'"만 확인하고
+// 넘어가지 않고, 요구되는 키 목록(fields) 각각을 명시적으로 확인한다.
+// fields에 없는 예상 밖의 추가 키는 무시되며 파싱을 깨뜨리지 않는다.
+export function validateVectorObject<K extends string>(
+  raw: unknown,
+  fields: readonly K[],
+): VectorObjectResult<Record<K, number>> {
+  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
+    return { status: "invalid", missing: [...fields], invalid: [] };
+  }
+
+  const source = raw as Record<string, unknown>;
+  const value = {} as Record<K, number>;
+  const missing: string[] = [];
+  const invalid: string[] = [];
+  let normalized = false;
+
+  for (const field of fields) {
+    if (!(field in source)) {
+      missing.push(field);
+      continue;
+    }
+
+    const fieldResult = normalizeVectorField(source[field], field);
+    if (fieldResult.status === "invalid") {
+      invalid.push(fieldResult.reason);
+      continue;
+    }
+
+    value[field] = fieldResult.value;
+    if (fieldResult.normalized) normalized = true;
+  }
+
+  if (missing.length > 0 || invalid.length > 0) {
+    return { status: "invalid", missing, invalid };
+  }
+
+  return { status: "ok", value, normalized };
+}
+
+type VectorValidationOutcome =
+  | { ok: true; targetStats: TargetStats; contextAffinity: ContextAffinity; normalized: boolean }
+  | { ok: false; issues: string[] };
+
+function validateVectors(parsed: Record<string, unknown>): VectorValidationOutcome {
+  const statsResult = validateVectorObject(parsed.targetStats, TARGET_STATS_FIELDS);
+  const affinityResult = validateVectorObject(parsed.contextAffinity, CONTEXT_AFFINITY_FIELDS);
+
+  const issues: string[] = [];
+  if (statsResult.status === "invalid") {
+    issues.push(...statsResult.missing.map((f) => `targetStats.${f} missing`));
+    issues.push(...statsResult.invalid.map((r) => `targetStats.${r}`));
+  }
+  if (affinityResult.status === "invalid") {
+    issues.push(...affinityResult.missing.map((f) => `contextAffinity.${f} missing`));
+    issues.push(...affinityResult.invalid.map((r) => `contextAffinity.${r}`));
+  }
+
+  if (statsResult.status === "invalid" || affinityResult.status === "invalid") {
+    return { ok: false, issues };
+  }
+
+  return {
+    ok: true,
+    targetStats: statsResult.value as TargetStats,
+    contextAffinity: affinityResult.value as ContextAffinity,
+    normalized: statsResult.normalized || affinityResult.normalized,
+  };
+}
+
+// ── Step 6 genre-first catalog filter: music_profile.primaryGenres/subgenres 검증 ──────────
+// musicGenreTaxonomy.ts를 유일한 source of truth로 사용 — 여기서 별도 장르 목록을 다시 만들지 않는다.
+const PRIMARY_GENRE_ID_SET: ReadonlySet<string> = new Set(PRIMARY_GENRE_IDS);
+const SUBGENRE_ID_SET: ReadonlySet<string> = new Set(SUBGENRE_IDS);
+
+const MIN_PRIMARY_GENRES = 1;
+const MAX_PRIMARY_GENRES = 3;
+const MIN_SUBGENRES = 2;
+const MAX_SUBGENRES = 6;
+
+type GenreValidationOutcome =
+  | { ok: true; primaryGenres: PrimaryGenre[]; subgenres: Subgenre[] }
+  | { ok: false; issues: string[] };
+
+// raw가 string[]이 아니면 전체를 invalid로 보고한다 — 부분적으로 살려서 조용히 채우지 않는다.
+export function validateGenreSelection(parsed: Record<string, unknown>): GenreValidationOutcome {
+  const musicProfile = parsed.music_profile;
+  const issues: string[] = [];
+
+  if (musicProfile === null || typeof musicProfile !== "object" || Array.isArray(musicProfile)) {
+    return { ok: false, issues: ["music_profile: missing or not an object"] };
+  }
+
+  const rawPrimary = (musicProfile as Record<string, unknown>).primaryGenres;
+  const rawSubgenres = (musicProfile as Record<string, unknown>).subgenres;
+
+  let primaryGenres: PrimaryGenre[] = [];
+  if (!Array.isArray(rawPrimary)) {
+    issues.push("music_profile.primaryGenres: missing or not an array");
+  } else if (rawPrimary.length === 0) {
+    issues.push("music_profile.primaryGenres: must not be empty");
+  } else if (!rawPrimary.every((v) => typeof v === "string")) {
+    issues.push("music_profile.primaryGenres: all values must be strings");
+  } else {
+    const values = rawPrimary as string[];
+    const unique = new Set(values);
+    if (unique.size !== values.length) {
+      issues.push("music_profile.primaryGenres: contains duplicate values");
+    }
+    const unknown = values.filter((v) => !PRIMARY_GENRE_ID_SET.has(v));
+    if (unknown.length > 0) {
+      issues.push(`music_profile.primaryGenres: unknown taxonomy id(s) ${unknown.join(", ")}`);
+    }
+    if (values.length > MAX_PRIMARY_GENRES) {
+      issues.push(
+        `music_profile.primaryGenres: too many values (${values.length}), max ${MAX_PRIMARY_GENRES}`,
+      );
+    }
+    if (unknown.length === 0 && unique.size === values.length && values.length <= MAX_PRIMARY_GENRES) {
+      primaryGenres = values as PrimaryGenre[];
+    }
+  }
+
+  let subgenres: Subgenre[] = [];
+  if (!Array.isArray(rawSubgenres)) {
+    issues.push("music_profile.subgenres: missing or not an array");
+  } else if (rawSubgenres.length === 0) {
+    issues.push("music_profile.subgenres: must not be empty");
+  } else if (!rawSubgenres.every((v) => typeof v === "string")) {
+    issues.push("music_profile.subgenres: all values must be strings");
+  } else {
+    const values = rawSubgenres as string[];
+    const unique = new Set(values);
+    if (unique.size !== values.length) {
+      issues.push("music_profile.subgenres: contains duplicate values");
+    }
+    const unknown = values.filter((v) => !SUBGENRE_ID_SET.has(v));
+    if (unknown.length > 0) {
+      issues.push(`music_profile.subgenres: unknown taxonomy id(s) ${unknown.join(", ")}`);
+    }
+    if (values.length < MIN_SUBGENRES) {
+      issues.push(`music_profile.subgenres: too few values (${values.length}), min ${MIN_SUBGENRES}`);
+    }
+    if (values.length > MAX_SUBGENRES) {
+      issues.push(`music_profile.subgenres: too many values (${values.length}), max ${MAX_SUBGENRES}`);
+    }
+    if (
+      unknown.length === 0 && unique.size === values.length &&
+      values.length >= MIN_SUBGENRES && values.length <= MAX_SUBGENRES
+    ) {
+      subgenres = values as Subgenre[];
+    }
+  }
+
+  // subgenre <-> primaryGenre 호환성 검사 — 두 배열이 각각 유효할 때만 의미가 있다.
+  if (primaryGenres.length > 0 && subgenres.length > 0) {
+    const incompatible = subgenres.filter(
+      (sg) => !primaryGenres.some((pg) => SUBGENRES_BY_PRIMARY[pg].includes(sg)),
+    );
+    if (incompatible.length > 0) {
+      issues.push(
+        `music_profile.subgenres: incompatible with all selected primaryGenres: ${incompatible.join(", ")}`,
+      );
+    }
+  }
+
+  if (issues.length > 0) {
+    return { ok: false, issues };
+  }
+
+  return { ok: true, primaryGenres, subgenres };
+}
+
+type GenreSelectionWithCoverageOutcome =
+  | { ok: true; primaryGenres: PrimaryGenre[]; subgenres: Subgenre[]; eligibleCount: number }
+  | { ok: false; issues: string[] };
+
+// validateGenreSelection(shape/taxonomy 검증) 위에 Step 6 커버리지 적정성 검사를 얹는다. 응답이
+// 스코어링 단계에 도달하기 전에 "이 장르 선택이 실제로 FINAL_TRACK_COUNT곡을 채울 만큼 카탈로그에
+// 충분한 트랙이 있는가"를 확인한다. filterEligibleByGenre/scoring.ts의 규칙을 그대로 재사용하고,
+// 커버리지 부족을 스코어링 단계까지 내려보내지 않는다 — genre-unfiltered fallback으로 우회하지도,
+// 조용히 unrelated genre를 추가하지도 않는다: 부족하면 명시적으로 invalid 처리해서 기존 1회 재시도로
+// 넘긴다.
+export function validateGenreSelectionWithCoverage(
+  parsed: Record<string, unknown>,
+): GenreSelectionWithCoverageOutcome {
+  const shapeResult = validateGenreSelection(parsed);
+  if (!shapeResult.ok) return shapeResult;
+
+  const coverage = checkGenreSelectionCoverage(
+    VERIFIED_CATALOG_POOL,
+    shapeResult.primaryGenres,
+    shapeResult.subgenres,
+  );
+  if (!coverage.meetsMinimum) {
+    return {
+      ok: false,
+      issues: [
+        `music_profile.primaryGenres/subgenres (${shapeResult.primaryGenres.join(", ")} / ${
+          shapeResult.subgenres.join(", ")
+        }) match only ${coverage.eligibleCount} catalog track(s), fewer than the required ${FINAL_TRACK_COUNT}. ` +
+          `Choose a broader but still image-appropriate canonical genre set — add a second compatible primary ` +
+          `genre and/or additional compatible subgenres from the taxonomy below. Do not add unrelated genres ` +
+          `merely to reach the count.`,
+      ],
+    };
+  }
+
+  return {
+    ok: true,
+    primaryGenres: shapeResult.primaryGenres,
+    subgenres: shapeResult.subgenres,
+    eligibleCount: coverage.eligibleCount,
+  };
+}
+
+// 검증 실패 시 딱 1회만 보내는 교정 요청 문구 — 벡터/장르 문제를 하나의 재요청으로 합친다
+// (재시도 인프라를 두 번 만들지 않는다). 실패한 필드 이름과 유효한 canonical id 목록만 알려주고
+// 전체 JSON을 다시 요청한다.
+export function buildCorrectionPrompt(vectorIssues: string[], genreIssues: string[]): string {
+  const parts: string[] = [];
+
+  if (vectorIssues.length > 0) {
+    parts.push(
+      `The required "targetStats" and/or "contextAffinity" objects had a problem: ${
+        vectorIssues.join("; ")
+      }. Make sure every targetStats field (${TARGET_STATS_FIELDS.join(", ")}) and every ` +
+        `contextAffinity field (${CONTEXT_AFFINITY_FIELDS.join(", ")}) is present as an integer from 0 to 100 inclusive.`,
+    );
+  }
+
+  if (genreIssues.length > 0) {
+    parts.push(
+      `The required "music_profile.primaryGenres" and/or "music_profile.subgenres" arrays had a problem: ${
+        genreIssues.join("; ")
+      }. primaryGenres must contain ${MIN_PRIMARY_GENRES}-${MAX_PRIMARY_GENRES} unique values chosen ONLY from ` +
+        `this exact list: [${PRIMARY_GENRE_IDS.join(", ")}]. subgenres must contain ${MIN_SUBGENRES}-${MAX_SUBGENRES} ` +
+        `unique values chosen ONLY from this exact list: [${SUBGENRE_IDS.join(", ")}], and every subgenre must belong ` +
+        `to at least one of your chosen primaryGenres.`,
+    );
+  }
+
+  return (
+    `Your previous JSON response had a problem with required fields: ${parts.join(" ")} ` +
+    `Resend the COMPLETE JSON response again, in the exact same schema as before, with all of these fields corrected.`
+  );
+}
+
+type ChatMessage = { role: string; content: string | Array<Record<string, unknown>> };
+
+function buildBaseMessages(signedImageUrl: string): ChatMessage[] {
+  return [
+    {
+      role: "system",
+      content: SYSTEM_PROMPT,
+    },
+    {
+      role: "user",
+      content: [
+        {
+          type: "image_url",
+          image_url: { url: signedImageUrl, detail: "auto" },
+        },
+        {
+          type: "text",
+          text: "Analyze this image and create a playlist.",
+        },
+      ],
+    },
+  ];
+}
+
+async function requestChatCompletion(apiKey: string, messages: ChatMessage[]): Promise<string> {
   let response: Response;
   try {
     response = await fetch(OPENAI_API_URL, {
@@ -492,25 +978,7 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
       },
       body: JSON.stringify({
         model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: SYSTEM_PROMPT,
-          },
-          {
-            role: "user",
-            content: [
-              {
-                type: "image_url",
-                image_url: { url: signedImageUrl, detail: "auto" },
-              },
-              {
-                type: "text",
-                text: "Analyze this image and create a playlist.",
-              },
-            ],
-          },
-        ],
+        messages,
         max_tokens: 2000,
         response_format: { type: "json_object" },
       }),
@@ -533,7 +1001,10 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
   const content = body.choices?.[0]?.message?.content;
   if (!content) throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
 
-  let parsed: GptResponse;
+  return content;
+}
+
+export function parseGptJson(content: string): GptResponse {
   try {
     // GPT가 마크다운 코드블록으로 감쌀 경우 제거
     const cleaned = content
@@ -541,22 +1012,104 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
       .replace(/^```\s*/im, "")
       .replace(/```\s*$/im, "")
       .trim();
-    parsed = JSON.parse(cleaned) as GptResponse;
+    return JSON.parse(cleaned) as GptResponse;
   } catch {
     throw new SafeError("이미지 분석 결과를 처리하지 못했습니다.");
   }
+}
 
+// playlist_subtitle/primary_lane_id 호환 필드 검증.
+export function applyCompatibilityValidation(parsed: GptResponse): void {
   // playlist_subtitle이 누락되었거나(구버전 응답 등) 형식이 이상해도 전체 분석을 실패시키지 않고
   // 프리미엄한 기본 문구로 대체 — 빈 문자열로 두면 ResultScreen에서 조용히 사라져 버리므로 항상 값이 있도록 보장한다.
   const rawSubtitle = typeof parsed.playlist_subtitle === "string" ? parsed.playlist_subtitle.trim() : "";
   parsed.playlist_subtitle = rawSubtitle.length >= 10 ? rawSubtitle : FALLBACK_PLAYLIST_SUBTITLE;
 
-  // primary_lane_id가 없거나 CURATION_LANES에 없는 값이면 lane usage tracking이 깨지므로
-  // fallback default 없이 SafeError로 명확히 실패시킨다 (요구사항: GPT가 반드시 유효한 id를 내도록 강제).
+  // primary_lane_id는 genre-first 아키텍처에서 호환/DB 저장/분석 용도로만 쓰이고 catalog
+  // eligibility/scoring/candidate selection/sequencing에는 전혀 관여하지 않는다 — 그래서 lane 하나가
+  // 무효/누락이라고 해서 targetStats/contextAffinity/primaryGenres/subgenres가 유효한 응답 전체를
+  // 실패시키지 않는다. 무효/누락/malformed면 null로 정규화만 하고(추측으로 다른 lane을 대신 고르거나
+  // primaryGenre로부터 lane을 유추하지 않음), 이 필드 때문에 재요청도 하지 않는다 — 아래는 그대로
+  // 진단 로그만 남긴다.
   if (typeof parsed.primary_lane_id !== "string" || !VALID_LANE_IDS.has(parsed.primary_lane_id)) {
     console.error("[gpt] invalid_primary_lane_id", { primaryLaneId: parsed.primary_lane_id });
-    throw new SafeError("이미지 분석 결과를 처리하지 못했습니다.");
+    parsed.primary_lane_id = null;
+  }
+}
+
+export async function analyzeImage(signedImageUrl: string): Promise<GptResponse> {
+  const apiKey = Deno.env.get("OPENAI_API_KEY");
+  if (!apiKey) throw new SafeError("이미지 분석 서비스가 설정되지 않았습니다.");
+
+  const baseMessages = buildBaseMessages(signedImageUrl);
+
+  const firstContent = await requestChatCompletion(apiKey, baseMessages);
+  const firstParsed = parseGptJson(firstContent);
+  applyCompatibilityValidation(firstParsed);
+
+  let finalParsed = firstParsed;
+  let vectors = validateVectors(firstParsed as unknown as Record<string, unknown>);
+  let genre = validateGenreSelectionWithCoverage(firstParsed as unknown as Record<string, unknown>);
+
+  if (!vectors.ok || !genre.ok) {
+    // 이미지/전체 프롬프트/전체 응답은 로그에 남기지 않는다 — 실패한 필드 이름만 남긴다.
+    console.error("[gpt] image_vector_or_genre_invalid_retrying", {
+      vectorIssues: vectors.ok ? [] : vectors.issues,
+      genreIssues: genre.ok ? [] : genre.issues,
+    });
+
+    // Step 4-A 재시도 정책 (Step 6에서 genre 검증까지 같은 재시도에 합류): targetStats/contextAffinity
+    // 그리고/또는 primaryGenres/subgenres가 근본적으로 잘못된 경우에만 딱 1회 재시도한다. 두 문제를
+    // 별도 재시도 라운드로 나누지 않고 하나의 교정 프롬프트로 합쳐서 보낸다 — 재시도 인프라를
+    // 두 번 만들지 않는다. 기존 analyzeImage는 재시도 인프라가 전혀 없었으므로, 큐/외부 재시도
+    // 서비스 등 아키텍처 변경 없이 같은 함수 안에서 OpenAI에 한 번 더 호출을 보내는 형태로
+    // 국소적으로 구현했다 (index.ts 변경 없음).
+    const retryMessages: ChatMessage[] = [
+      ...baseMessages,
+      { role: "assistant", content: firstContent },
+      {
+        role: "user",
+        content: buildCorrectionPrompt(
+          vectors.ok ? [] : vectors.issues,
+          genre.ok ? [] : genre.issues,
+        ),
+      },
+    ];
+
+    const retryContent = await requestChatCompletion(apiKey, retryMessages);
+    const retryParsed = parseGptJson(retryContent);
+    applyCompatibilityValidation(retryParsed);
+
+    const retryVectors = validateVectors(retryParsed as unknown as Record<string, unknown>);
+    const retryGenre = validateGenreSelectionWithCoverage(retryParsed as unknown as Record<string, unknown>);
+    if (!retryVectors.ok || !retryGenre.ok) {
+      console.error("[gpt] image_vector_or_genre_invalid_after_retry", {
+        vectorIssues: retryVectors.ok ? [] : retryVectors.issues,
+        genreIssues: retryGenre.ok ? [] : retryGenre.issues,
+      });
+      throw new SafeError("이미지의 확장 사운드 분석 값을 확인하지 못했습니다. 다시 시도해 주세요.");
+    }
+
+    finalParsed = retryParsed;
+    vectors = retryVectors;
+    genre = retryGenre;
   }
 
-  return parsed;
+  finalParsed.targetStats = vectors.targetStats;
+  finalParsed.contextAffinity = vectors.contextAffinity;
+  finalParsed.music_profile.primaryGenres = genre.primaryGenres;
+  finalParsed.music_profile.subgenres = genre.subgenres;
+
+  // 이미지, 전체 프롬프트, 전체 GPT 응답은 로그에 남기지 않는다 — 검증 성공 여부와 정규화 발생 여부,
+  // 필드 개수만 남기는 압축된 진단 로그.
+  console.log("image_vector_validated", {
+    normalized: vectors.normalized,
+    targetStatsFields: TARGET_STATS_FIELDS.length,
+    contextAffinityFields: CONTEXT_AFFINITY_FIELDS.length,
+    primaryGenreCount: genre.primaryGenres.length,
+    subgenreCount: genre.subgenres.length,
+    genreEligibleCatalogCount: genre.eligibleCount,
+  });
+
+  return finalParsed;
 }

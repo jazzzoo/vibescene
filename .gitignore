@@ -44,3 +44,6 @@ supabase/.temp/
 scratch/
 debug/
 .vercel/
+
+# Local stat pre-check images
+test-assets/stat-precheck/
