@@ -3,7 +3,9 @@ import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'reac
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
+import { getAcquisitionSource } from '../../services/acquisitionSource';
 import { logEvent } from '../../services/analytics';
+import { capture } from '../../services/posthog';
 
 type FeedbackRating = 'nailed_it' | 'pretty_close' | 'not_really';
 
@@ -30,11 +32,18 @@ export default function FeedbackModal({ visible, playlistId, onDismiss, onSubmit
     if (!rating || submitting) return;
     setSubmitting(true);
     try {
-      await logEvent('playlist_feedback', {
+      const succeeded = await logEvent('playlist_feedback', {
         playlist_id: playlistId,
         rating,
         comment: comment.trim() || null,
       });
+      if (succeeded) {
+        capture('feedback_submit', {
+          source: getAcquisitionSource(),
+          playlist_id: playlistId,
+          rating,
+        });
+      }
     } finally {
       setSubmitting(false);
       onSubmitted();

@@ -1,7 +1,9 @@
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
+import { getAcquisitionSource } from '../../services/acquisitionSource';
 import { logEvent } from '../../services/analytics';
+import { capture } from '../../services/posthog';
 import type { Track } from '../../types/playlist';
 
 interface TrackItemProps {
@@ -21,6 +23,11 @@ export default function TrackItem({ track, isLast = false, playlistId }: TrackIt
       rank: track.rank,
       title: track.title,
       artist: track.artist,
+    });
+    capture('track_play', {
+      source: getAcquisitionSource(),
+      playlist_id: playlistId,
+      position: track.rank,
     });
     Linking.openURL(`https://www.youtube.com/watch?v=${track.youtubeVideoId}`).catch(() => {});
   }

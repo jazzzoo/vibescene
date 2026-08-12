@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
+import { getAcquisitionSource } from '../../services/acquisitionSource';
 import { logEvent } from '../../services/analytics';
 import { SafeError } from '../../services/errors';
 import { createShareLink } from '../../services/playlist';
+import { capture } from '../../services/posthog';
 import Button from '../common/Button';
 import type { Track } from '../../types/playlist';
 
@@ -50,6 +52,11 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
       playlist_id: playlistId,
       track_count: tracks.length,
     });
+    capture('playlist_play', {
+      source: getAcquisitionSource(),
+      playlist_id: playlistId,
+      surface: 'in_page',
+    });
 
     // 웹에서는 window.open으로 새 탭/창을 열어 카카오톡 인앱 WebView의
     // 현재 문서가 YouTube로 교체되지 않도록 한다. 팝업이 차단되면 Linking으로 폴백.
@@ -66,6 +73,11 @@ export default function ActionButtons({ tracks, playlistId, onSaveToYouTube, you
 
   async function handleSharePlaylist() {
     if (!playlistId || shareLoading) return;
+    capture('share_click', {
+      source: getAcquisitionSource(),
+      playlist_id: playlistId,
+      surface: 'in_page',
+    });
     setShareLoading(true);
     setShareMessage(null);
 

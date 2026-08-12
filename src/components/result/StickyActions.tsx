@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
+import { getAcquisitionSource } from '../../services/acquisitionSource';
 import { logEvent } from '../../services/analytics';
 import { createShareLink } from '../../services/playlist';
+import { capture } from '../../services/posthog';
 import Button from '../common/Button';
 import type { Track } from '../../types/playlist';
 
@@ -35,6 +37,11 @@ export default function StickyActions({ tracks, playlistId }: StickyActionsProps
   function handlePlayOnYoutube() {
     if (!playOnYoutubeUrl) return;
     void logEvent('playlist_link_opened', { playlist_id: playlistId, track_count: tracks.length });
+    capture('playlist_play', {
+      source: getAcquisitionSource(),
+      playlist_id: playlistId,
+      surface: 'sticky',
+    });
     if (Platform.OS === 'web') {
       const w = window.open(playOnYoutubeUrl, '_blank', 'noopener,noreferrer');
       if (!w) Linking.openURL(playOnYoutubeUrl).catch(() => {});
@@ -45,6 +52,11 @@ export default function StickyActions({ tracks, playlistId }: StickyActionsProps
 
   async function handleSharePlaylist() {
     if (!playlistId || shareLoading) return;
+    capture('share_click', {
+      source: getAcquisitionSource(),
+      playlist_id: playlistId,
+      surface: 'sticky',
+    });
     setShareLoading(true);
     try {
       const { shareId, sharePath, shareUrl: raw } = await createShareLink(playlistId);

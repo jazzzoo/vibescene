@@ -16,9 +16,11 @@ import {
   type LaneSpotlightEntry,
 } from '../../data/loadingContent';
 import { RootParamList } from '../../navigation/MainNavigator';
+import { getAcquisitionSource } from '../../services/acquisitionSource';
 import { logEvent } from '../../services/analytics';
 import { SafeError } from '../../services/errors';
 import { analyzeAndSearchPlaylist } from '../../services/playlist';
+import { capture } from '../../services/posthog';
 import { uploadUserImage } from '../../services/storage';
 
 type LoadingScreenNavigationProp = NativeStackNavigationProp<RootParamList, 'Loading'>;
@@ -67,6 +69,9 @@ export default function LoadingScreen() {
   const isMounted = useRef(true);
   // React Strict Mode 이중 실행 방지 및 초기 1회 실행 보장
   const hasStarted = useRef(false);
+  // photo_submit은 재시도(onRetry)와 무관하게 화면 인스턴스당 정확히 1회만 발생해야 한다 —
+  // hasStarted와 달리 재시도 시에도 리셋되지 않는다 (같은 사진의 재시도는 새 제출이 아니다).
+  const photoSubmitFiredRef = useRef(false);
 
   // ── Processing narrative — 시간 기반 진행 서사, 실제 백엔드 진행률이 아니다 ──────────
   const [processingMessage, setProcessingMessage] = useState<string>(PROCESSING_MESSAGE_SEQUENCE[0]);
@@ -95,6 +100,11 @@ export default function LoadingScreen() {
     if (!isMounted.current) return;
     setStep('uploading');
     setErrorMessage(null);
+
+    if (!photoSubmitFiredRef.current) {
+      photoSubmitFiredRef.current = true;
+      capture('photo_submit', { source: getAcquisitionSource() });
+    }
 
     try {
       // 1단계: Storage 업로드

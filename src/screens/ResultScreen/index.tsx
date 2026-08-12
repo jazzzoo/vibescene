@@ -25,9 +25,11 @@ import LoadingView from '../../components/common/LoadingView';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
 import { RootParamList } from '../../navigation/MainNavigator';
+import { getAcquisitionSource } from '../../services/acquisitionSource';
 import { isAnonymousUser } from '../../services/auth';
 import { SafeError } from '../../services/errors';
 import { createYouTubePlaylist, getPlaylistResult } from '../../services/playlist';
+import { capture } from '../../services/posthog';
 import type { PlaylistResult } from '../../types/playlist';
 
 type ResultScreenNavigationProp = NativeStackNavigationProp<RootParamList, 'Result'>;
@@ -67,8 +69,12 @@ export default function ResultScreen() {
   const feedbackDoneRef = useRef(false);
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // result_view 중복 캡처 방지 — rerender마다가 아니라 playlistId당 1회만 발생해야 한다.
+  const resultViewFiredRef = useRef(false);
+
   useEffect(() => {
     feedbackDoneRef.current = false;
+    resultViewFiredRef.current = false;
     setFeedbackVisible(false);
     if (feedbackTimerRef.current) {
       clearTimeout(feedbackTimerRef.current);
@@ -89,6 +95,14 @@ export default function ResultScreen() {
     try {
       const data = await getPlaylistResult(playlistId);
       setResult(data);
+      if (!resultViewFiredRef.current) {
+        resultViewFiredRef.current = true;
+        capture('result_view', {
+          source: getAcquisitionSource(),
+          playlist_id: playlistId,
+          track_count: data.tracks.length,
+        });
+      }
     } catch (err) {
       const message =
         err instanceof SafeError
