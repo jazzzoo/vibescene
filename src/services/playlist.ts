@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 import { SafeError } from './errors';
-import { createSignedImageUrl, getThumbnailStoragePath } from './storage';
+import { createSignedImageUrl, createSignedImageUrls, getThumbnailStoragePath } from './storage';
 import type { Analysis, MusicProfile, PlaylistHistoryItem, PlaylistResult, PlaylistStatus, SharedPlaylistResult, Track } from '../types/playlist';
 
 // Supabase 쿼리 결과 로컬 타입 (generated types 없이 안전하게 캐스팅)
@@ -182,51 +182,64 @@ type HistoryRow = {
   created_at: string;
 };
 
+// 완료된 플레이리스트의 status 값 — 이 외의 status(pending/analyzing/failed)는 History에 표시하지 않는다.
+const COMPLETED_STATUSES = ['searching', 'creating', 'created'] as const;
+const HISTORY_LIMIT = 20;
+
 /**
- * 현재 사용자의 플레이리스트 히스토리를 조회한다.
- * RLS에 의해 본인 데이터만 반환되므로 별도 user_id 필터 불필요.
- * image_storage_path가 있으면 signed URL 발급 (실패 시 null).
+ * 현재 사용자의 완료된 플레이리스트 히스토리를 조회한다 (최근 20개).
+ * - failed/pending/analyzing 상태는 쿼리 단계에서 제외한다.
+ * - signed URL은 createSignedUrls 배치 API로 단일 요청으로 처리한다.
+ * - RLS에 의해 본인 데이터만 반환되므로 별도 user_id 필터 불필요.
  */
 export async function getPlaylistHistory(): Promise<PlaylistHistoryItem[]> {
   const { data, error } = await supabase
     .from('playlists')
     .select('id, image_storage_path, playlist_concept, status, created_at')
-    .order('created_at', { ascending: false });
+    .in('status', COMPLETED_STATUSES)
+    .order('created_at', { ascending: false })
+    .limit(HISTORY_LIMIT);
 
   if (error) {
     throw new SafeError("We couldn't load your history. Please try again.");
   }
 
   const rows = (data ?? []) as unknown as HistoryRow[];
+  if (rows.length === 0) return [];
 
-  const items = await Promise.all(
-    rows.map(async (row): Promise<PlaylistHistoryItem> => {
-      let imageUri: string | null = null;
-      let fallbackImageUri: string | null = null;
+  // thumbnail + main image 경로를 수집해 단일 배치 요청으로 서명한다.
+  // 각 플레이리스트마다 2N → 총 1 HTTP 요청으로 처리.
+  const pathsToSign: string[] = [];
+  for (const row of rows) {
+    if (row.image_storage_path) {
+      pathsToSign.push(getThumbnailStoragePath(row.image_storage_path));
+      pathsToSign.push(row.image_storage_path);
+    }
+  }
 
-      if (row.image_storage_path) {
-        // thumbnail을 우선 사용하고, 생성에 실패하면(예: 기존 데이터에 thumbnail이 없는 경우)
-        // main image signed URL로 fallback한다.
-        const [thumbnailUri, mainUri] = await Promise.all([
-          createSignedImageUrl(getThumbnailStoragePath(row.image_storage_path)),
-          createSignedImageUrl(row.image_storage_path),
-        ]);
-        imageUri = thumbnailUri ?? mainUri;
-        fallbackImageUri = mainUri;
-      }
+  const signedUrls = await createSignedImageUrls(pathsToSign);
 
-      return {
-        id: row.id,
-        imageUri,
-        fallbackImageUri,
-        playlistConcept: row.playlist_concept ?? '',
-        status: row.status as PlaylistStatus,
-        createdAt: row.created_at,
-      };
-    }),
-  );
+  return rows.map((row): PlaylistHistoryItem => {
+    let imageUri: string | null = null;
+    let fallbackImageUri: string | null = null;
 
-  return items;
+    if (row.image_storage_path) {
+      const thumbUrl = signedUrls.get(getThumbnailStoragePath(row.image_storage_path)) ?? null;
+      const mainUrl = signedUrls.get(row.image_storage_path) ?? null;
+      // thumbnail 우선, 없으면 main. HistoryCard는 로드 실패 시 fallbackImageUri로 전환한다.
+      imageUri = thumbUrl ?? mainUrl;
+      fallbackImageUri = mainUrl;
+    }
+
+    return {
+      id: row.id,
+      imageUri,
+      fallbackImageUri,
+      playlistConcept: row.playlist_concept ?? '',
+      status: row.status as PlaylistStatus,
+      createdAt: row.created_at,
+    };
+  });
 }
 
 export type CreateShareLinkResult = {

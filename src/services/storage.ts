@@ -146,6 +146,26 @@ export async function createSignedImageUrl(path: string): Promise<string | null>
   return data.signedUrl;
 }
 
+/**
+ * 여러 이미지 경로에 대해 Signed URL을 단일 HTTP 요청으로 일괄 발급한다.
+ * 개별 경로의 실패는 Map에서 해당 키를 생략하는 것으로 처리 — 전체가 깨지지 않는다.
+ * 반환: path → signedUrl Map (실패/누락 경로는 키 없음)
+ */
+export async function createSignedImageUrls(paths: string[]): Promise<Map<string, string>> {
+  if (paths.length === 0) return new Map();
+  const { data, error } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .createSignedUrls(paths, SIGNED_URL_TTL_SECONDS);
+  const result = new Map<string, string>();
+  if (error || !data) return result;
+  for (const item of data) {
+    if (item.signedUrl && !item.error && item.path) {
+      result.set(item.path, item.signedUrl);
+    }
+  }
+  return result;
+}
+
 function mimeTypeToExtension(mimeType: string): string {
   const map: Record<string, string> = {
     'image/jpeg': 'jpg',
