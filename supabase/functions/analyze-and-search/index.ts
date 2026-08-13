@@ -1,7 +1,7 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "@supabase/supabase-js";
 import { DbOperationError, SafeError } from "./errors.ts";
-import { analyzeImage, type GptPlaylistItem } from "./services/gpt.ts";
+import { analyzeImage } from "./services/gpt.ts";
 import { searchYouTubeTracks, type YoutubeTrack } from "./services/youtube.ts";
 import {
   ensureProfileExists,
@@ -331,14 +331,12 @@ Deno.serve(async (req) => {
         ? sequenceCatalogTracks(catalogTracks, FINAL_TRACK_COUNT)
         : catalogTracks;
 
-    const tracksForYoutubeSearch: GptPlaylistItem[] = trackSource === "catalog"
-      ? sequencedCatalogTracks.map((track, idx) => ({
-        rank: idx + 1,
-        title: track.title,
-        artist: track.artist,
-        reason: "Catalog pick",
-      }))
-      : gptResult.playlist;
+    const tracksForYoutubeSearch = sequencedCatalogTracks.map((track, idx) => ({
+      rank: idx + 1,
+      title: track.title,
+      artist: track.artist,
+      reason: "Catalog pick",
+    }));
 
     // ── 8. 분석 결과 저장(primary_lane_id, track_source 포함) + status → 'searching' ──────
     // YouTube 검색(9번) 이전에 저장하므로, 이후 단계에서 실패해도 어떤 lane/source가 실패했는지 추적 가능

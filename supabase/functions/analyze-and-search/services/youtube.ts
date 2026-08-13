@@ -1,4 +1,4 @@
-import type { GptPlaylistItem } from "./gpt.ts";
+type PlaylistTrack = { rank: number; title: string; artist: string; reason: string };
 
 const YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
 const YOUTUBE_VIDEOS_URL = "https://www.googleapis.com/youtube/v3/videos";
@@ -387,7 +387,7 @@ async function searchTrackWithFallback(
 }
 
 export async function searchYouTubeTracks(
-  playlist: GptPlaylistItem[],
+  playlist: PlaylistTrack[],
   apiKey: string,
 ): Promise<YoutubeTrack[]> {
   const results: YoutubeTrack[] = [];

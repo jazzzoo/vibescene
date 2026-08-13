@@ -346,33 +346,6 @@ When an image has mixed signals, mentally shortlist the strongest 2-4 candidate 
 
 ${CURATION_LANES_PROMPT}`;
 
-const PROMPT_PLAYLIST_GENERATION = `## STEP 5: PLAYLIST CURATION RULES (within the selected lane)
-
-**Era:** 1980s to present only. Prefer well-known, recognizable tracks.
-
-**Seasonal & sensory matching (within the lane):** Use the season/mood/sensory signals from STEP 2 to decide which tracks *inside* the selected lane fit best — this shapes which songs you pick, not which genres you use. NEVER let an obvious seasonal mismatch slip in (e.g. a winter image must not have summer-sounding tracks), but never let season override the selected lane's allowed genres either.
-
-**Artist rule:** Maximum 1 song per artist. Avoid repeating the same artist.
-
-**Playlist ordering:**
-- Tracks 1-3: Establish the mood
-- Tracks 4-7: Peak mood, most representative songs
-- Tracks 8-10: Gentle landing, wind down
-
-**Playlist flow:** All 8-10 songs must belong to the selected curation lane and feel cohesive like a DJ set curated by someone who deeply knows that genre world. No jumps into unrelated lanes.
-
-**Avoid generic global pop hits** unless they are genuinely a perfect fit for the selected lane. Do not overuse safe Western indie pop. Do not make the playlist eclectic unless the selected lane itself is inherently eclectic (e.g. City Pop / Retro Drive). The result should feel curated, not randomly diverse.
-
-**Track findability (mandatory — this is the #1 cause of playlist generation failure):**
-- Every recommended track must be a real, released song. Do not invent track titles. Do not invent artist names. Do not output imaginary collaborations.
-- Prefer songs that are available on YouTube in some form: official audio, official music video, an artist/label "Topic" channel upload, or a well-known live version.
-- Avoid ultra-obscure, unreleased, private, or hard-to-find tracks that are unlikely to appear in a YouTube search.
-- For niche lanes, choose accessible gateway tracks within that lane — well-known entry points into that genre world — not impossible-to-find deep cuts.
-- If you are not confident a track actually exists and is findable, choose a different, more findable track within the same lane instead.
-- Artist and title must be spelled exactly and specifically enough for a YouTube search to find the right video.
-- Do not output a vague genre description (e.g. "chill jazz instrumental") as a track's title/artist.
-- Do not output a playlist or compilation name as if it were a single track.`;
-
 const PROMPT_PLAYLIST_CONCEPT = `## STEP 5.5: PLAYLIST CONCEPT (TITLE, NOT A SENTENCE, NOT A WORD-MASH)
 Generate "playlist_concept" as a natural, evocative **playlist title** — like a movie poster title, a Spotify playlist name, or a mixtape title someone would actually use. It is NEVER a descriptive sentence, and NEVER three keywords mechanically stapled together.
 
@@ -514,14 +487,6 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
     "morning": 0, "day": 0, "dusk": 0, "night": 0, "lateNight": 0,
     "clear": 0, "cloudy": 0, "rain": 0, "snow": 0
   },
-  "playlist": [
-    {
-      "rank": 1,
-      "title": "",
-      "artist": "",
-      "reason": ""
-    }
-  ],
   "playlist_concept": "Natural evocative playlist title, 2-5 words (6 words max), e.g. 'Platform Daydreams' — NEVER mood+place+genre word-stacking, NEVER a sentence",
   "playlist_subtitle": "Short premium playlist subtitle, 7-16 words, e.g. 'Breezy pop for sunlit ocean views and open skies' — NEVER an AI explanation, NEVER a narrow genre claim, NEVER a mood-tag list",
   "primary_lane_id": "the exact lane_id you selected in STEP 4 — must match one of the lane_id values in the catalogue exactly"
@@ -552,18 +517,10 @@ const SYSTEM_PROMPT = buildSystemPrompt([
   PROMPT_VISUAL_PROFILE,
   PROMPT_TARGET_STATS,
   PROMPT_LANE_DECISION,
-  PROMPT_PLAYLIST_GENERATION,
   PROMPT_PLAYLIST_CONCEPT,
   PROMPT_PLAYLIST_SUBTITLE,
   PROMPT_OUTPUT_CONTRACT,
 ]);
-
-export type GptPlaylistItem = {
-  rank: number;
-  title: string;
-  artist: string;
-  reason: string;
-};
 
 export type GptAnalysisScene = {
   location: string;
@@ -650,7 +607,6 @@ export type GptResponse = {
   };
   targetStats: TargetStats;
   contextAffinity: ContextAffinity;
-  playlist: GptPlaylistItem[];
   playlist_concept: string;
   playlist_subtitle: string;
   // Step 6 genre-first 아키텍처에서 lane은 더 이상 catalog eligibility/scoring/candidate
@@ -1049,20 +1005,6 @@ const GPT_RESPONSE_SCHEMA = {
           ],
           additionalProperties: false,
         },
-        playlist: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              rank: { type: "integer" },
-              title: { type: "string" },
-              artist: { type: "string" },
-              reason: { type: "string" },
-            },
-            required: ["rank", "title", "artist", "reason"],
-            additionalProperties: false,
-          },
-        },
         playlist_concept: { type: "string" },
         playlist_subtitle: { type: "string" },
         primary_lane_id: { anyOf: [{ type: "string" }, { type: "null" }] },
@@ -1074,7 +1016,6 @@ const GPT_RESPONSE_SCHEMA = {
         "music_profile",
         "targetStats",
         "contextAffinity",
-        "playlist",
         "playlist_concept",
         "playlist_subtitle",
         "primary_lane_id",
