@@ -1046,7 +1046,37 @@ function buildBaseMessages(signedImageUrl: string): ChatMessage[] {
   ];
 }
 
+type ValidationFailureReason =
+  | "VECTOR_INVALID"
+  | "GENRE_INVALID"
+  | "GENRE_RELATION_INVALID"
+  | "CATALOG_COVERAGE_INSUFFICIENT"
+  | "MULTIPLE_VALIDATION_FAILURES"
+  | "OTHER";
+
+function classifyValidationFailure(
+  vectors: VectorValidationOutcome,
+  genre: GenreSelectionWithCoverageOutcome,
+): ValidationFailureReason {
+  const vectorFailed = !vectors.ok;
+  const genreFailed = !genre.ok;
+  if (vectorFailed && genreFailed) return "MULTIPLE_VALIDATION_FAILURES";
+  if (vectorFailed) return "VECTOR_INVALID";
+  if (genreFailed) {
+    const issues = genre.issues;
+    if (issues.some((i) => i.includes("catalog track") || i.includes("fewer than the required"))) {
+      return "CATALOG_COVERAGE_INSUFFICIENT";
+    }
+    if (issues.some((i) => i.includes("incompatible with all selected primaryGenres"))) {
+      return "GENRE_RELATION_INVALID";
+    }
+    return "GENRE_INVALID";
+  }
+  return "OTHER";
+}
+
 async function requestChatCompletion(apiKey: string, messages: ChatMessage[]): Promise<string> {
+  const requestStart = Date.now();
   let response: Response;
   try {
     response = await fetch(OPENAI_API_URL, {
@@ -1062,23 +1092,69 @@ async function requestChatCompletion(apiKey: string, messages: ChatMessage[]): P
         response_format: GPT_RESPONSE_SCHEMA,
       }),
     });
-  } catch {
+  } catch (e) {
+    console.error("[gpt] openai_fetch_error", {
+      attempt: 1,
+      elapsed_ms: Date.now() - requestStart,
+      error_name: e instanceof Error ? e.name : "unknown",
+    });
     throw new SafeError("이미지 분석 중 오류가 발생했습니다.");
   }
+
+  const xRequestId = response.headers.get("x-request-id") ?? undefined;
+  const openaiProcessingMs = response.headers.get("openai-processing-ms") ?? undefined;
 
   if (!response.ok) {
+    console.error("[gpt] openai_http_error", {
+      status: response.status,
+      x_request_id: xRequestId,
+      openai_processing_ms: openaiProcessingMs,
+      retry_after: response.headers.get("retry-after") ?? undefined,
+      x_ratelimit_remaining_requests: response.headers.get("x-ratelimit-remaining-requests") ?? undefined,
+      x_ratelimit_remaining_tokens: response.headers.get("x-ratelimit-remaining-tokens") ?? undefined,
+      elapsed_ms: Date.now() - requestStart,
+    });
     throw new SafeError("이미지 분석 중 오류가 발생했습니다.");
   }
 
-  let body: { choices?: Array<{ message?: { content?: string | null; refusal?: string | null } }> };
+  console.log("[gpt] openai_request_completed", {
+    status: response.status,
+    x_request_id: xRequestId,
+    openai_processing_ms: openaiProcessingMs,
+    elapsed_ms: Date.now() - requestStart,
+  });
+
+  let body: {
+    choices?: Array<{
+      finish_reason?: string;
+      message?: { content?: string | null; refusal?: string | null };
+    }>;
+  };
   try {
     body = await response.json();
   } catch {
     throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
   }
 
-  const message = body.choices?.[0]?.message;
-  if (message?.refusal) throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
+  if (!body.choices || body.choices.length === 0) {
+    console.error("[gpt] openai_empty_choices", { x_request_id: xRequestId });
+    throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
+  }
+
+  const firstChoice = body.choices[0];
+  const finishReason = firstChoice?.finish_reason;
+  if (finishReason && finishReason !== "stop") {
+    console.error("[gpt] openai_finish_reason_non_stop", {
+      finish_reason: finishReason,
+      x_request_id: xRequestId,
+    });
+  }
+
+  const message = firstChoice?.message;
+  if (message?.refusal) {
+    console.error("[gpt] openai_model_refusal", { x_request_id: xRequestId });
+    throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
+  }
   const content = message?.content;
   if (!content) throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
 
@@ -1135,6 +1211,7 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
   if (!vectors.ok || !genre.ok) {
     // 이미지/전체 프롬프트/전체 응답은 로그에 남기지 않는다 — 실패한 필드 이름만 남긴다.
     console.error("[gpt] image_vector_or_genre_invalid_retrying", {
+      reason: classifyValidationFailure(vectors, genre),
       vectorIssues: vectors.ok ? [] : vectors.issues,
       genreIssues: genre.ok ? [] : genre.issues,
     });
@@ -1165,6 +1242,7 @@ export async function analyzeImage(signedImageUrl: string): Promise<GptResponse>
     const retryGenre = validateGenreSelectionWithCoverage(retryParsed as unknown as Record<string, unknown>);
     if (!retryVectors.ok || !retryGenre.ok) {
       console.error("[gpt] image_vector_or_genre_invalid_after_retry", {
+        reason: classifyValidationFailure(retryVectors, retryGenre),
         vectorIssues: retryVectors.ok ? [] : retryVectors.issues,
         genreIssues: retryGenre.ok ? [] : retryGenre.issues,
       });
