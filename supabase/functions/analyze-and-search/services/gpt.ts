@@ -947,6 +947,143 @@ export function buildCorrectionPrompt(vectorIssues: string[], genreIssues: strin
 
 type ChatMessage = { role: string; content: string | Array<Record<string, unknown>> };
 
+// OpenAI Structured Outputs 스키마 — GptResponse 계약의 exact mirror.
+// strict=true: 구조 위반 응답 자체가 생성되지 않는다.
+// 의미 검증(primaryGenres taxonomy, subgenre ↔ primaryGenre 호환성, catalog 커버리지)은
+// validateGenreSelection/validateGenreSelectionWithCoverage가 여전히 담당한다.
+const GPT_RESPONSE_SCHEMA = {
+  type: "json_schema",
+  json_schema: {
+    name: "vibe_playlist_analysis",
+    strict: true,
+    schema: {
+      type: "object",
+      properties: {
+        image_type: { type: "string", enum: ["SCENE", "PERSON", "MIXED"] },
+        confidence: { type: "number" },
+        // analysis 필드: SCENE/PERSON/MIXED 분기에 따라 일부 필드가 null이 될 수 있다.
+        // strict 모드에서는 모든 declared 필드가 required이므로, 해당 image_type에서
+        // 사용하지 않는 필드는 null로 출력된다. 하위 코드(db.ts)는 이미 ?? "" / ?? [] 로 처리.
+        analysis: {
+          type: "object",
+          properties: {
+            location: { anyOf: [{ type: "string" }, { type: "null" }] },
+            time_of_day: { anyOf: [{ type: "string" }, { type: "null" }] },
+            season: { anyOf: [{ type: "string" }, { type: "null" }] },
+            mood_keywords: { anyOf: [{ type: "array", items: { type: "string" } }, { type: "null" }] },
+            sensory_impressions: { anyOf: [{ type: "array", items: { type: "string" } }, { type: "null" }] },
+            cultural_context: { anyOf: [{ type: "string" }, { type: "null" }] },
+            style_vibe: { anyOf: [{ type: "string" }, { type: "null" }] },
+            energy: { anyOf: [{ type: "string" }, { type: "null" }] },
+            color_tone: { anyOf: [{ type: "string" }, { type: "null" }] },
+          },
+          required: [
+            "location", "time_of_day", "season", "mood_keywords",
+            "sensory_impressions", "cultural_context",
+            "style_vibe", "energy", "color_tone",
+          ],
+          additionalProperties: false,
+        },
+        music_profile: {
+          type: "object",
+          properties: {
+            energy_score: { type: "number" },
+            tempo: { type: "string" },
+            valence: { type: "string" },
+            primaryGenres: { type: "array", items: { type: "string" } },
+            subgenres: { type: "array", items: { type: "string" } },
+          },
+          required: ["energy_score", "tempo", "valence", "primaryGenres", "subgenres"],
+          additionalProperties: false,
+        },
+        targetStats: {
+          type: "object",
+          properties: {
+            brightness: { type: "integer" },
+            warmth: { type: "integer" },
+            openness: { type: "integer" },
+            motion: { type: "integer" },
+            intimacy: { type: "integer" },
+            socialEnergy: { type: "integer" },
+            tension: { type: "integer" },
+            nostalgia: { type: "integer" },
+            playfulness: { type: "integer" },
+            dreaminess: { type: "integer" },
+            energy: { type: "integer" },
+            groove: { type: "integer" },
+            density: { type: "integer" },
+            acousticness: { type: "integer" },
+            electronicness: { type: "integer" },
+            vocalPresence: { type: "integer" },
+            climaxIntensity: { type: "integer" },
+          },
+          required: [
+            "brightness", "warmth", "openness", "motion", "intimacy", "socialEnergy",
+            "tension", "nostalgia", "playfulness", "dreaminess",
+            "energy", "groove", "density", "acousticness", "electronicness",
+            "vocalPresence", "climaxIntensity",
+          ],
+          additionalProperties: false,
+        },
+        contextAffinity: {
+          type: "object",
+          properties: {
+            spring: { type: "integer" },
+            summer: { type: "integer" },
+            autumn: { type: "integer" },
+            winter: { type: "integer" },
+            morning: { type: "integer" },
+            day: { type: "integer" },
+            dusk: { type: "integer" },
+            night: { type: "integer" },
+            lateNight: { type: "integer" },
+            clear: { type: "integer" },
+            cloudy: { type: "integer" },
+            rain: { type: "integer" },
+            snow: { type: "integer" },
+          },
+          required: [
+            "spring", "summer", "autumn", "winter",
+            "morning", "day", "dusk", "night", "lateNight",
+            "clear", "cloudy", "rain", "snow",
+          ],
+          additionalProperties: false,
+        },
+        playlist: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              rank: { type: "integer" },
+              title: { type: "string" },
+              artist: { type: "string" },
+              reason: { type: "string" },
+            },
+            required: ["rank", "title", "artist", "reason"],
+            additionalProperties: false,
+          },
+        },
+        playlist_concept: { type: "string" },
+        playlist_subtitle: { type: "string" },
+        primary_lane_id: { anyOf: [{ type: "string" }, { type: "null" }] },
+      },
+      required: [
+        "image_type",
+        "confidence",
+        "analysis",
+        "music_profile",
+        "targetStats",
+        "contextAffinity",
+        "playlist",
+        "playlist_concept",
+        "playlist_subtitle",
+        "primary_lane_id",
+      ],
+      additionalProperties: false,
+    },
+  },
+};
+
 function buildBaseMessages(signedImageUrl: string): ChatMessage[] {
   return [
     {
@@ -982,7 +1119,7 @@ async function requestChatCompletion(apiKey: string, messages: ChatMessage[]): P
         model: "gpt-4o",
         messages,
         max_tokens: 2000,
-        response_format: { type: "json_object" },
+        response_format: GPT_RESPONSE_SCHEMA,
       }),
     });
   } catch {
@@ -993,14 +1130,16 @@ async function requestChatCompletion(apiKey: string, messages: ChatMessage[]): P
     throw new SafeError("이미지 분석 중 오류가 발생했습니다.");
   }
 
-  let body: { choices?: Array<{ message?: { content?: string } }> };
+  let body: { choices?: Array<{ message?: { content?: string | null; refusal?: string | null } }> };
   try {
     body = await response.json();
   } catch {
     throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
   }
 
-  const content = body.choices?.[0]?.message?.content;
+  const message = body.choices?.[0]?.message;
+  if (message?.refusal) throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
+  const content = message?.content;
   if (!content) throw new SafeError("이미지 분석 결과를 받지 못했습니다.");
 
   return content;
