@@ -28,7 +28,6 @@ function buildCurationLanesPrompt(lanes: CurationLane[]): string {
 - Forbidden genres: ${lane.forbiddenGenres.join(", ")}
 - Good for (scene/mood signals): ${lane.sceneSignals.join(", ")}
 - Energy: ${lane.energySignals.join(", ")}
-- Reference vibes: ${lane.referenceVibes.join("; ")}
 - Avoid this lane when: ${lane.avoidWhen.join("; ")}
 - Title style examples: ${titleExamples}`;
     })
