@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomNavigation from '../../components/common/BottomNavigation';
+import BrandLogo from '../../components/common/BrandLogo';
 import Button from '../../components/common/Button';
 import { COLORS } from '../../constants/colors';
 import { SPACING } from '../../constants/spacing';
@@ -49,7 +50,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.content}>
         <View style={[styles.header, hasImage && styles.headerCompact]}>
-          <Text style={styles.appName}>VibeScene</Text>
+          <BrandLogo style={styles.brandLogo} />
           {!hasImage && (
             <>
               <Text style={styles.tagline}>Turn your photos into playlists.</Text>
@@ -172,11 +173,7 @@ const styles = StyleSheet.create({
   headerCompact: {
     marginBottom: SPACING.TRACK_GAP,
   },
-  appName: {
-    color: COLORS.ACCENT,
-    fontSize: 36,
-    fontWeight: '700',
-    letterSpacing: 1,
+  brandLogo: {
     marginBottom: SPACING.BASE,
   },
   tagline: {

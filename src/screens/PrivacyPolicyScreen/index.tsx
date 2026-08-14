@@ -7,7 +7,7 @@ export default function PrivacyPolicyScreen() {
   return (
     <LegalLayout title="Privacy Policy">
       <SectionTitle>1. Who We Are</SectionTitle>
-      <Paragraph>VibeScene is operated by the VibeScene team, based in South Korea.</Paragraph>
+      <Paragraph>LEAD-IN is operated by the LEAD-IN team, based in South Korea.</Paragraph>
       <Paragraph>
         If you have questions about this Privacy Policy or want to exercise your privacy
         rights, send us a DM on X at{' '}
@@ -107,13 +107,13 @@ export default function PrivacyPolicyScreen() {
       </Paragraph>
 
       <SectionTitle>6. AI and Automated Recommendations</SectionTitle>
-      <Bullet>VibeScene uses automated image analysis to generate music recommendations.</Bullet>
+      <Bullet>LEAD-IN uses automated image analysis to generate music recommendations.</Bullet>
       <Bullet>
         The system may consider colors, lighting, scene type, objects, atmosphere, and overall
         mood.
       </Bullet>
       <Bullet>
-        It matches the image to a music lane and selects tracks from VibeScene's curated
+        It matches the image to a music lane and selects tracks from LEAD-IN's curated
         catalog.
       </Bullet>
       <Bullet>Recommendations are for entertainment purposes only.</Bullet>
@@ -123,15 +123,15 @@ export default function PrivacyPolicyScreen() {
       </Bullet>
 
       <SectionTitle>7. Google and YouTube API Services</SectionTitle>
-      <Bullet>VibeScene uses YouTube API Services when users choose YouTube-related features.</Bullet>
-      <Bullet>VibeScene only uses YouTube access to create playlists when the user chooses to save.</Bullet>
-      <Bullet>VibeScene does not use YouTube data for advertising targeting.</Bullet>
-      <Bullet>VibeScene does not sell YouTube data.</Bullet>
+      <Bullet>LEAD-IN uses YouTube API Services when users choose YouTube-related features.</Bullet>
+      <Bullet>LEAD-IN only uses YouTube access to create playlists when the user chooses to save.</Bullet>
+      <Bullet>LEAD-IN does not use YouTube data for advertising targeting.</Bullet>
+      <Bullet>LEAD-IN does not sell YouTube data.</Bullet>
       <Bullet>
         By using YouTube-related features, you are also subject to the YouTube Terms of Service
         and Google Privacy Policy.
       </Bullet>
-      <Bullet>You can revoke VibeScene's access from your Google Account security settings.</Bullet>
+      <Bullet>You can revoke LEAD-IN's access from your Google Account security settings.</Bullet>
 
       <SectionTitle>8. Legal Bases for Processing</SectionTitle>
       <Paragraph>
@@ -144,7 +144,7 @@ export default function PrivacyPolicyScreen() {
       <Bullet>Legal obligations</Bullet>
 
       <SectionTitle>9. How We Share Information</SectionTitle>
-      <Paragraph>We work with service providers to operate VibeScene, including:</Paragraph>
+      <Paragraph>We work with service providers to operate LEAD-IN, including:</Paragraph>
       <Bullet>Supabase</Bullet>
       <Bullet>OpenAI or other AI service providers</Bullet>
       <Bullet>Google / YouTube</Bullet>
@@ -172,7 +172,7 @@ export default function PrivacyPolicyScreen() {
       <Bullet>Opt out of sale or sharing, where applicable</Bullet>
       <Bullet>Non-discrimination for exercising your rights</Bullet>
       <Paragraph>
-        VibeScene does not sell or share personal information for cross-context behavioral
+        LEAD-IN does not sell or share personal information for cross-context behavioral
         advertising.
       </Paragraph>
       <Paragraph>
@@ -192,14 +192,14 @@ export default function PrivacyPolicyScreen() {
 
       <SectionTitle>13. Children</SectionTitle>
       <Paragraph>
-        VibeScene is not directed to children under 13, and we do not knowingly collect
+        LEAD-IN is not directed to children under 13, and we do not knowingly collect
         personal information from children under 13. If we learn we have collected personal
         information from a child under 13, we will take steps to delete it.
       </Paragraph>
 
       <SectionTitle>14. International Transfers</SectionTitle>
       <Paragraph>
-        VibeScene may process information in countries other than where you live. This may
+        LEAD-IN may process information in countries other than where you live. This may
         include the United States and other countries where our service providers operate.
         Where required by applicable law, appropriate safeguards may be used for these
         transfers.

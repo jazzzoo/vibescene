@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeError } from '../../services/errors';
 import { signInWithGoogle } from '../../services/auth';
+import BrandLogo from '../../components/common/BrandLogo';
 import Button from '../../components/common/Button';
 import ErrorView from '../../components/common/ErrorView';
 import LoadingView from '../../components/common/LoadingView';
@@ -58,7 +59,7 @@ export default function LoginScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.appName}>VibeScene</Text>
+          <BrandLogo style={styles.brandLogo} />
           <Text style={styles.tagline}>Turn your photos into playlists.</Text>
         </View>
         <Text style={styles.disclaimer}>YouTube playlist saving is coming soon.</Text>
@@ -86,7 +87,7 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.appName}>VibeScene</Text>
+        <BrandLogo style={styles.brandLogo} />
         <Text style={styles.tagline}>Turn your photos into playlists.</Text>
       </View>
 
@@ -123,11 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: SPACING.SECTION_GAP * 2,
   },
-  appName: {
-    color: COLORS.ACCENT,
-    fontSize: 36,
-    fontWeight: '700',
-    letterSpacing: 1,
+  brandLogo: {
     marginBottom: SPACING.BASE,
   },
   tagline: {

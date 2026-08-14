@@ -24,7 +24,7 @@ export async function createYouTubePlaylist(
       body: JSON.stringify({
         snippet: {
           title,
-          description: "VibeScene으로 만든 플레이리스트",
+          description: "LEAD-IN으로 만든 플레이리스트",
         },
         status: {
           privacyStatus: "private",

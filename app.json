@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "vibescene",
+    "name": "LEAD-IN",
     "slug": "vibescene",
     "scheme": "vibescene",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/leadin-app-thumbnail.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
@@ -16,15 +16,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#000000",
+        "foregroundImage": "./assets/leadin-android-foreground.png",
+        "monochromeImage": "./assets/leadin-android-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/leadin-browser-icon.png"
     },
     "plugins": [
       "expo-secure-store",

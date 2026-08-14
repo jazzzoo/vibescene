@@ -71,7 +71,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About VibeScene</Text>
+          <Text style={styles.sectionTitle}>About LEAD-IN</Text>
           <Text style={styles.sectionBody}>
             Turn a photo into a playlist that matches its mood.
           </Text>
